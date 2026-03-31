@@ -1,0 +1,5 @@
+[GET] http://localhost:8000/seas/api/v1/exams?page_index=1&page_size=20 => [FAILED] net::ERR_FAILED
+[GET] http://localhost:8000/seas/api/v1/exams?page_index=1&page_size=20 => [FAILED] net::ERR_FAILED
+[POST] http://localhost:3000/__nextjs_original-stack-frames => [200] OK
+[GET] http://localhost:8000/seas/api/v1/exams?page_index=1&page_size=20 => [FAILED] net::ERR_FAILED
+[GET] http://localhost:8000/seas/api/v1/exams?page_index=1&page_size=20 => [FAILED] net::ERR_FAILED
