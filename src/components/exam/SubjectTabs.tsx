@@ -30,7 +30,7 @@ export default function SubjectTabs({ examId }: SubjectTabsProps) {
 
         {/* 各科按钮 */}
         {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden />
         ) : (
           data?.subjects.map((subject) => (
             <Button

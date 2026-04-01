@@ -28,10 +28,10 @@ export const getDifficultyLevel = (difficulty: number): string => {
 
 // 获取难度等级颜色
 export const getDifficultyColor = (difficulty: number): string => {
-  if (difficulty >= 80) return 'text-green-600'
-  if (difficulty >= 60) return 'text-yellow-600'
-  if (difficulty >= 40) return 'text-orange-600'
-  return 'text-red-600'
+  if (difficulty >= 80) return 'text-emerald-600 dark:text-emerald-400'
+  if (difficulty >= 60) return 'text-amber-600 dark:text-amber-400'
+  if (difficulty >= 40) return 'text-orange-600 dark:text-orange-400'
+  return 'text-destructive'
 }
 
 // 获取成绩等级
@@ -52,9 +52,24 @@ export const getGradeLevelColor = (score: number, config?: any): string => {
   const goodThreshold = config?.good_threshold ?? 70
   const passThreshold = config?.pass_threshold ?? 60
 
-  if (score >= excellentThreshold) return 'bg-green-100 text-green-800'
-  if (score >= goodThreshold) return 'bg-blue-100 text-blue-800'
-  if (score >= passThreshold) return 'bg-yellow-100 text-yellow-800'
-  return 'bg-red-100 text-red-800'
+  if (score >= excellentThreshold) {
+    return 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300'
+  }
+  if (score >= goodThreshold) {
+    return 'bg-primary/15 text-primary'
+  }
+  if (score >= passThreshold) {
+    return 'bg-amber-500/15 text-amber-900 dark:text-amber-200'
+  }
+  return 'bg-destructive/15 text-destructive'
 }
+
+/** 四率表格中各等级的徽章样式（与主题 token 一致） */
+export const ratingTierBadgeClass = {
+  excellent:
+    'rounded bg-emerald-500/15 px-2 py-1 text-emerald-800 dark:text-emerald-300',
+  good: 'rounded bg-primary/15 px-2 py-1 text-primary',
+  pass: 'rounded bg-amber-500/15 px-2 py-1 text-amber-900 dark:text-amber-200',
+  fail: 'rounded bg-destructive/15 px-2 py-1 text-destructive',
+} as const
 

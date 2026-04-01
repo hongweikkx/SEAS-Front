@@ -1,32 +1,83 @@
 'use client'
 
-import { useRatingDistribution } from '@/hooks/useAnalysis'
+import { useQueryClient } from '@tanstack/react-query'
+import {
+  ratingDistributionQueryKey,
+  useRatingDistribution,
+} from '@/hooks/useAnalysis'
+import { analysisService } from '@/services/analysis'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { formatNumber, getGradeLevelColor } from '@/utils/format'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { formatNumber, ratingTierBadgeClass } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 interface RatingChartProps {
   examId: string
 }
 
 export default function RatingChart({ examId }: RatingChartProps) {
-  const { selectedScope, selectedSubjectId, ratingConfig } = useAnalysisStore()
-  const { data, isLoading } = useRatingDistribution(
+  const queryClient = useQueryClient()
+  const { selectedScope, selectedSubjectId, ratingConfig, setRatingConfig } = useAnalysisStore()
+  const [draftConfig, setDraftConfig] = useState(ratingConfig)
+  const { data, isLoading, isFetching } = useRatingDistribution(
     examId,
     selectedScope,
     ratingConfig,
     selectedSubjectId ?? undefined
   )
+  const canQuery =
+    !!examId && (selectedScope !== 'single_subject' || !!selectedSubjectId)
 
-  if (isLoading) {
+  useEffect(() => {
+    setDraftConfig(ratingConfig)
+  }, [ratingConfig])
+
+  const handleRatingConfigChange = (
+    key: 'excellent_threshold' | 'good_threshold' | 'pass_threshold',
+    value: string
+  ) => {
+    const nextValue = Number(value)
+    if (Number.isNaN(nextValue)) return
+
+    setDraftConfig({
+      ...draftConfig,
+      [key]: nextValue,
+    })
+  }
+
+  const handleQuery = () => {
+    const next = { ...draftConfig }
+    setRatingConfig(next)
+    if (!canQuery) return
+    void queryClient.fetchQuery({
+      queryKey: ratingDistributionQueryKey(
+        examId,
+        selectedScope,
+        next,
+        selectedSubjectId ?? undefined
+      ),
+      queryFn: () =>
+        analysisService.getRatingDistribution(
+          examId,
+          selectedScope,
+          next,
+          selectedSubjectId ?? undefined
+        ),
+      staleTime: 5 * 60 * 1000,
+    })
+  }
+
+  if (isLoading && !data) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>四率分析</CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-40">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <CardContent className="flex h-40 items-center justify-center" role="status" aria-label="加载中">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </CardContent>
       </Card>
     )
@@ -36,77 +87,131 @@ export default function RatingChart({ examId }: RatingChartProps) {
     <Card>
       <CardHeader>
         <CardTitle>四率分析</CardTitle>
-        <div className="text-sm text-gray-500 mt-2">
-          优秀: ≥{data?.config.excellent_threshold} | 
-          良好: {data?.config.good_threshold}-{data?.config.excellent_threshold} | 
-          合格: {data?.config.pass_threshold}-{data?.config.good_threshold} | 
-          低分: &lt;{data?.config.pass_threshold}
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-4">
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">优秀分数线</label>
+            <Input
+              type="number"
+              value={draftConfig.excellent_threshold}
+              onChange={(e) => handleRatingConfigChange('excellent_threshold', e.target.value)}
+              min={0}
+              max={100}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">良好分数线</label>
+            <Input
+              type="number"
+              value={draftConfig.good_threshold}
+              onChange={(e) => handleRatingConfigChange('good_threshold', e.target.value)}
+              min={0}
+              max={100}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-muted-foreground">合格分数线</label>
+            <Input
+              type="number"
+              value={draftConfig.pass_threshold}
+              onChange={(e) => handleRatingConfigChange('pass_threshold', e.target.value)}
+              min={0}
+              max={100}
+            />
+          </div>
+          <div className="flex items-end gap-2 pb-0.5">
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleQuery}
+              disabled={!canQuery}
+              aria-busy={isFetching}
+            >
+              {isFetching ? (
+                <>
+                  <Loader2 className="mr-1 size-3.5 animate-spin" />
+                  查询中
+                </>
+              ) : (
+                '查询'
+              )}
+            </Button>
+          </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative">
+        {isFetching ? (
+          <div
+            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/50"
+            aria-hidden
+          >
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : null}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs md:text-sm">
             <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">班级</th>
-                <th className="text-right py-2">平均分</th>
-                <th className="text-right py-2">优秀</th>
-                <th className="text-right py-2">良好</th>
-                <th className="text-right py-2">合格</th>
-                <th className="text-right py-2">低分</th>
+              <tr className="border-b border-border">
+                <th className="py-2 text-left font-medium text-foreground">班级</th>
+                <th className="py-2 text-right font-medium text-foreground">平均分</th>
+                <th className="py-2 text-right font-medium text-foreground">优秀</th>
+                <th className="py-2 text-right font-medium text-foreground">良好</th>
+                <th className="py-2 text-right font-medium text-foreground">合格</th>
+                <th className="py-2 text-right font-medium text-foreground">低分</th>
               </tr>
             </thead>
             <tbody>
-              {/* 全年级汇总 */}
               {data?.overallGrade && (
-                <tr className="border-b bg-blue-50 font-semibold">
+                <tr className="border-b border-border bg-primary/10 font-semibold">
                   <td className="py-2">{data.overallGrade.className}</td>
                   <td className="text-right">{formatNumber(data.overallGrade.avgScore)}</td>
                   <td className="text-right">
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-                      {data.overallGrade.excellent.count} ({formatNumber(data.overallGrade.excellent.percentage)}%)
+                    <span className={ratingTierBadgeClass.excellent}>
+                      {data.overallGrade.excellent.count} (
+                      {formatNumber(data.overallGrade.excellent.percentage)}%)
                     </span>
                   </td>
                   <td className="text-right">
-                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                      {data.overallGrade.good.count} ({formatNumber(data.overallGrade.good.percentage)}%)
+                    <span className={ratingTierBadgeClass.good}>
+                      {data.overallGrade.good.count} (
+                      {formatNumber(data.overallGrade.good.percentage)}%)
                     </span>
                   </td>
                   <td className="text-right">
-                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      {data.overallGrade.pass.count} ({formatNumber(data.overallGrade.pass.percentage)}%)
+                    <span className={ratingTierBadgeClass.pass}>
+                      {data.overallGrade.pass.count} (
+                      {formatNumber(data.overallGrade.pass.percentage)}%)
                     </span>
                   </td>
                   <td className="text-right">
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded">
-                      {data.overallGrade.fail.count} ({formatNumber(data.overallGrade.fail.percentage)}%)
+                    <span className={ratingTierBadgeClass.fail}>
+                      {data.overallGrade.fail.count} (
+                      {formatNumber(data.overallGrade.fail.percentage)}%)
                     </span>
                   </td>
                 </tr>
               )}
 
-              {/* 各班级详情 */}
               {data?.classDetails.map((cls) => (
-                <tr key={cls.classId} className="border-b hover:bg-gray-50">
+                <tr key={cls.classId} className="border-b border-border transition-colors hover:bg-muted/50">
                   <td className="py-2">{cls.className}</td>
                   <td className="text-right">{formatNumber(cls.avgScore)}</td>
                   <td className="text-right">
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                    <span className={`text-xs ${ratingTierBadgeClass.excellent}`}>
                       {cls.excellent.count} ({formatNumber(cls.excellent.percentage)}%)
                     </span>
                   </td>
                   <td className="text-right">
-                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                    <span className={`text-xs ${ratingTierBadgeClass.good}`}>
                       {cls.good.count} ({formatNumber(cls.good.percentage)}%)
                     </span>
                   </td>
                   <td className="text-right">
-                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
+                    <span className={`text-xs ${ratingTierBadgeClass.pass}`}>
                       {cls.pass.count} ({formatNumber(cls.pass.percentage)}%)
                     </span>
                   </td>
                   <td className="text-right">
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">
+                    <span className={`text-xs ${ratingTierBadgeClass.fail}`}>
                       {cls.fail.count} ({formatNumber(cls.fail.percentage)}%)
                     </span>
                   </td>
@@ -119,4 +224,3 @@ export default function RatingChart({ examId }: RatingChartProps) {
     </Card>
   )
 }
-

@@ -59,8 +59,12 @@ export const analysisService = {
     apiClient.get(`/exams/${examId}/analysis/rating-distribution`, {
       params: {
         scope,
-        ...(config && { config }),
         ...(subjectId && { subject_id: subjectId }),
+        ...(config && {
+          excellent_threshold: config.excellent_threshold,
+          good_threshold: config.good_threshold,
+          pass_threshold: config.pass_threshold,
+        }),
       },
     }),
 }
