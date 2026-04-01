@@ -2,7 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { MessageSquareDashed } from "lucide-react"
 
+import ChatPanel from "@/components/chat/ChatPanel"
 import { useExams } from "@/hooks/useAnalysis"
 import { ModeToggle } from "@/components/layout/mode-toggle"
 import {
@@ -13,6 +15,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -56,7 +60,26 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               </Breadcrumb>
             ) : null}
           </div>
-          <ModeToggle />
+          <div className="flex items-center gap-2">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="rounded-full bg-background/80">
+                  <MessageSquareDashed className="h-4 w-4" />
+                  分析助手
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="right"
+                showCloseButton={false}
+                className="w-full gap-0 overflow-hidden border-l border-border/70 p-0 sm:max-w-2xl"
+              >
+                <div className="min-h-0 flex-1 overflow-hidden p-4">
+                  <ChatPanel className="min-h-0 rounded-2xl border-border/60 shadow-none" />
+                </div>
+              </SheetContent>
+            </Sheet>
+            <ModeToggle />
+          </div>
         </div>
       </header>
       <main className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 md:px-6 md:py-8">
