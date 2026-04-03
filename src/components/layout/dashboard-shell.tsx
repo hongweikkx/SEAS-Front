@@ -8,6 +8,7 @@ import { MessageSquareDashed } from "lucide-react"
 import ChatPanel from "@/components/chat/ChatPanel"
 import { useExams } from "@/hooks/useAnalysis"
 import { ModeToggle } from "@/components/layout/mode-toggle"
+import { useAnalysisStore } from "@/store/analysisStore"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,6 +26,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const examMatch = pathname.match(/^\/exams\/([^/]+)$/)
   const examId = examMatch?.[1]
   const { data: examsData } = useExams(1, 200)
+  const {
+    setSelectedExamId,
+    setSelectedExamName,
+    setSelectedScope,
+    setSelectedSubjectId,
+    setSelectedSubjectName,
+  } = useAnalysisStore()
   const [drawerWidth, setDrawerWidth] = useState(() => {
     if (typeof window === "undefined") {
       return 0
@@ -40,8 +48,28 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   })
   const isDraggingRef = useRef(false)
   const examName = examId
-    ? examsData?.exams.find((exam) => String(exam.id) === examId)?.name ?? "考试"
+    ? examsData?.exams.find((exam) => String(exam.id) === examId)?.name ?? ""
     : ""
+
+  useEffect(() => {
+    if (!examId || !examName) {
+      return
+    }
+
+    setSelectedExamId(examId)
+    setSelectedExamName(examName)
+    setSelectedScope("all_subjects")
+    setSelectedSubjectId(null)
+    setSelectedSubjectName(null)
+  }, [
+    examId,
+    examName,
+    setSelectedExamId,
+    setSelectedExamName,
+    setSelectedScope,
+    setSelectedSubjectId,
+    setSelectedSubjectName,
+  ])
 
   useEffect(() => {
     if (drawerWidth <= 0) {
@@ -117,7 +145,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{examName}</BreadcrumbPage>
+                    <BreadcrumbPage>{examName || "考试"}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>

@@ -1,16 +1,40 @@
 'use client'
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
-import { Bot, Loader2, MessageSquareDashed, SendHorizontal, User2, Wrench } from 'lucide-react'
+import {
+  BookOpen,
+  Bot,
+  Check,
+  ChevronDown,
+  GraduationCap,
+  Loader2,
+  MessageSquareDashed,
+  SendHorizontal,
+  User2,
+  Wrench,
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ChatMessageContent } from '@/components/chat/ChatMessageContent'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { chatService } from '@/services/chat'
+import { useAnalysisStore } from '@/store/analysisStore'
+import { useExams, useSubjects } from '@/hooks/useAnalysis'
+import { buildChatContext, chatQuickPrompts } from '@/utils/chatContext'
 import type {
   A2UIMessage,
   A2UISurfaceView,
   ChatHistoryMessage,
+  Exam,
+  Subject,
 } from '@/types'
 
 type ConversationTurn = {
@@ -20,11 +44,22 @@ type ConversationTurn = {
   assistantSurface?: A2UISurfaceView
 }
 
-const quickPrompts = [
-  '最近有哪些考试？',
-  '帮我比较最近一次考试的班级表现',
-  '列出某场考试涉及的学科',
-]
+function formatSelectionLabel(
+  fallback: string,
+  name: string | null | undefined,
+  id: string | null | undefined
+) {
+  const trimmedName = name?.trim()
+  if (trimmedName) {
+    return trimmedName
+  }
+
+  if (id) {
+    return `${fallback} ${id}`
+  }
+
+  return fallback
+}
 
 function createSurfaceView(surfaceId: string, rootComponentId: string, title?: string): A2UISurfaceView {
   return {
@@ -186,10 +221,54 @@ export default function ChatPanel({ className }: { className?: string }) {
   const [input, setInput] = useState('')
   const [isPending, setIsPending] = useState(false)
   const scrollAnchorRef = useRef<HTMLDivElement | null>(null)
+  const examsQuery = useExams(1, 200)
+  const {
+    selectedExamId,
+    selectedExamName,
+    selectedSubjectId,
+    selectedSubjectName,
+    selectedScope,
+    ratingConfig,
+    setSelectedExamId,
+    setSelectedExamName,
+    setSelectedSubjectId,
+    setSelectedSubjectName,
+    setSelectedScope,
+  } = useAnalysisStore()
+  const subjectsQuery = useSubjects(selectedExamId ?? '', 1, 200)
 
   useEffect(() => {
     scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [turns, isPending])
+
+  const context = useMemo(
+    () =>
+      buildChatContext({
+        selectedExamId,
+        selectedExamName,
+        selectedSubjectId,
+        selectedSubjectName,
+        selectedScope,
+        ratingConfig,
+      }),
+    [
+      ratingConfig,
+      selectedExamId,
+      selectedExamName,
+      selectedScope,
+      selectedSubjectId,
+      selectedSubjectName,
+    ]
+  )
+
+  const quickPrompts = useMemo(() => chatQuickPrompts(context), [context])
+  const examOptions = examsQuery.data?.exams ?? []
+  const subjectOptions = subjectsQuery.data?.subjects ?? []
+  const currentExamName = formatSelectionLabel('考试', selectedExamName, selectedExamId)
+  const currentSubjectName =
+    selectedScope === 'single_subject'
+      ? formatSelectionLabel('学科', selectedSubjectName, selectedSubjectId)
+      : '全科'
 
   const history = useMemo<ChatHistoryMessage[]>(
     () =>
@@ -215,6 +294,27 @@ export default function ChatPanel({ className }: { className?: string }) {
 
   function updateTurn(turnId: string, updater: (turn: ConversationTurn) => ConversationTurn) {
     setTurns((current) => current.map((turn) => (turn.id === turnId ? updater(turn) : turn)))
+  }
+
+  function selectExam(exam: Exam) {
+    setSelectedExamId(exam.id)
+    setSelectedExamName(exam.name)
+    setSelectedSubjectId(null)
+    setSelectedSubjectName(null)
+    setSelectedScope('all_subjects')
+  }
+
+  function selectSubject(subject: Subject | null) {
+    if (!subject) {
+      setSelectedSubjectId(null)
+      setSelectedSubjectName(null)
+      setSelectedScope('all_subjects')
+      return
+    }
+
+    setSelectedSubjectId(subject.id)
+    setSelectedSubjectName(subject.name)
+    setSelectedScope('single_subject')
   }
 
   function handleA2UIMessage(turnId: string, message: A2UIMessage) {
@@ -271,6 +371,7 @@ export default function ChatPanel({ className }: { className?: string }) {
       const response = await chatService.streamMessage({
         message: content,
         history: requestHistory,
+        context,
       })
 
       await readA2UIStream(response, (message) => {
@@ -433,7 +534,76 @@ export default function ChatPanel({ className }: { className?: string }) {
         </div>
 
         <form onSubmit={handleSubmit} className="border-t border-border/60 bg-background/80 p-4">
-          <label className="mb-2 block text-sm font-medium text-foreground">输入你的分析问题</label>
+          <div className="mb-3 flex flex-wrap gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-full border-dashed"
+                  disabled={isPending}
+                >
+                  <BookOpen className="h-4 w-4" />
+                  {currentExamName}
+                  <ChevronDown className="h-4 w-4 opacity-70" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-72">
+                <DropdownMenuLabel>选择考试</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {examsQuery.isLoading ? (
+                  <DropdownMenuItem disabled>正在加载考试列表…</DropdownMenuItem>
+                ) : examOptions.length > 0 ? (
+                  examOptions.map((exam) => (
+                    <DropdownMenuItem key={exam.id} onSelect={() => selectExam(exam)}>
+                      <span className="flex-1 truncate">{exam.name}</span>
+                      {selectedExamId === exam.id ? <Check className="h-4 w-4" /> : null}
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  <DropdownMenuItem disabled>暂无考试数据</DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-full border-dashed"
+                  disabled={isPending || !selectedExamId}
+                >
+                  <GraduationCap className="h-4 w-4" />
+                  {currentSubjectName}
+                  <ChevronDown className="h-4 w-4 opacity-70" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-72">
+                <DropdownMenuLabel>选择学科</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => selectSubject(null)}>
+                  <span className="flex-1 truncate">全科</span>
+                  {selectedScope === 'all_subjects' ? <Check className="h-4 w-4" /> : null}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {subjectsQuery.isLoading ? (
+                  <DropdownMenuItem disabled>正在加载学科列表…</DropdownMenuItem>
+                ) : subjectOptions.length > 0 ? (
+                  subjectOptions.map((subject) => (
+                    <DropdownMenuItem key={subject.id} onSelect={() => selectSubject(subject)}>
+                      <span className="flex-1 truncate">{subject.name}</span>
+                      {selectedScope === 'single_subject' && selectedSubjectId === subject.id ? (
+                        <Check className="h-4 w-4" />
+                      ) : null}
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  <DropdownMenuItem disabled>请先选择考试</DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="flex items-end gap-3">
             <textarea
               value={input}

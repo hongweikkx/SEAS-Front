@@ -1,11 +1,25 @@
+import type { RatingConfig } from './analysis'
+
 export interface ChatHistoryMessage {
   role: 'user' | 'assistant'
   content: string
 }
 
+export type ChatScope = 'exam_list' | 'all_subjects' | 'single_subject'
+
+export interface ChatContext {
+  scope: ChatScope
+  examId: string | null
+  examName: string | null
+  subjectId: string | null
+  subjectName: string | null
+  ratingConfig?: RatingConfig
+}
+
 export interface ChatRequest {
   message: string
   history?: ChatHistoryMessage[]
+  context?: ChatContext
 }
 
 export type A2UISurfaceID = string

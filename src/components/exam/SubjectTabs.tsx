@@ -11,8 +11,13 @@ interface SubjectTabsProps {
 
 export default function SubjectTabs({ examId }: SubjectTabsProps) {
   const { data, isLoading } = useSubjects(examId, 1, 100)
-  const { selectedScope, selectedSubjectId, setSelectedSubjectId, setSelectedScope } =
-    useAnalysisStore()
+  const {
+    selectedScope,
+    selectedSubjectId,
+    setSelectedSubjectId,
+    setSelectedSubjectName,
+    setSelectedScope,
+  } = useAnalysisStore()
 
   return (
     <div className="space-y-4">
@@ -23,6 +28,7 @@ export default function SubjectTabs({ examId }: SubjectTabsProps) {
           onClick={() => {
             setSelectedScope('all_subjects')
             setSelectedSubjectId(null)
+            setSelectedSubjectName(null)
           }}
         >
           全科
@@ -43,6 +49,7 @@ export default function SubjectTabs({ examId }: SubjectTabsProps) {
               onClick={() => {
                 setSelectedScope('single_subject')
                 setSelectedSubjectId(subject.id)
+                setSelectedSubjectName(subject.name)
               }}
             >
               {subject.name}
@@ -53,4 +60,3 @@ export default function SubjectTabs({ examId }: SubjectTabsProps) {
     </div>
   )
 }
-

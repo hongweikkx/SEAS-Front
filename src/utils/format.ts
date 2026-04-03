@@ -1,3 +1,5 @@
+import type { RatingConfig } from '@/types'
+
 // 格式化日期
 export const formatDate = (dateString: string): string => {
   try {
@@ -35,7 +37,7 @@ export const getDifficultyColor = (difficulty: number): string => {
 }
 
 // 获取成绩等级
-export const getGradeLevel = (score: number, config?: any): string => {
+export const getGradeLevel = (score: number, config?: RatingConfig): string => {
   const excellentThreshold = config?.excellent_threshold ?? 90
   const goodThreshold = config?.good_threshold ?? 70
   const passThreshold = config?.pass_threshold ?? 60
@@ -47,7 +49,7 @@ export const getGradeLevel = (score: number, config?: any): string => {
 }
 
 // 获取成绩等级颜色
-export const getGradeLevelColor = (score: number, config?: any): string => {
+export const getGradeLevelColor = (score: number, config?: RatingConfig): string => {
   const excellentThreshold = config?.excellent_threshold ?? 90
   const goodThreshold = config?.good_threshold ?? 70
   const passThreshold = config?.pass_threshold ?? 60
@@ -72,4 +74,3 @@ export const ratingTierBadgeClass = {
   pass: 'rounded bg-amber-500/15 px-2 py-1 text-amber-900 dark:text-amber-200',
   fail: 'rounded bg-destructive/15 px-2 py-1 text-destructive',
 } as const
-
