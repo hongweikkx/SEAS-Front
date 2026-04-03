@@ -1,4 +1,4 @@
-import type { ChatRequest, ChatResponse } from '@/types'
+import type { ChatRequest } from '@/types'
 
 function getChatEndpoint() {
   const explicitChatURL = process.env.NEXT_PUBLIC_CHAT_API_URL?.trim()
@@ -23,20 +23,21 @@ function getChatEndpoint() {
 }
 
 export const chatService = {
-  sendMessage: async (payload: ChatRequest): Promise<ChatResponse> => {
+  streamMessage: async (payload: ChatRequest) => {
     const response = await fetch(getChatEndpoint(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
       },
       body: JSON.stringify(payload),
     })
 
-    const data = (await response.json()) as ChatResponse | { error?: string }
     if (!response.ok) {
-      throw new Error('error' in data && data.error ? data.error : '聊天请求失败')
+      const data = (await response.json().catch(() => ({}))) as { error?: string }
+      throw new Error(data.error ?? '聊天请求失败')
     }
 
-    return data as ChatResponse
+    return response
   },
 }
