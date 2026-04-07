@@ -5,17 +5,17 @@ import SubjectTabs from '@/components/exam/SubjectTabs'
 import SubjectSummary from '@/components/analysis/SubjectSummary'
 import ClassSummary from '@/components/analysis/ClassSummary'
 import RatingChart from '@/components/analysis/RatingChart'
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function ExamDetailPage({ params }: PageProps) {
   const { setSelectedExamId } = useAnalysisStore()
-  const { id: examId } = params
+  const { id: examId } = use(params)
 
   useEffect(() => {
     setSelectedExamId(examId)

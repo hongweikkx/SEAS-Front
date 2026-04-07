@@ -1,7 +1,8 @@
 'use client'
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { FormEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
+  ArrowUp,
   BookOpen,
   Bot,
   Check,
@@ -9,7 +10,6 @@ import {
   GraduationCap,
   Loader2,
   MessageSquareDashed,
-  SendHorizontal,
   User2,
   Wrench,
 } from 'lucide-react'
@@ -221,6 +221,7 @@ export default function ChatPanel({ className }: { className?: string }) {
   const [input, setInput] = useState('')
   const [isPending, setIsPending] = useState(false)
   const scrollAnchorRef = useRef<HTMLDivElement | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const examsQuery = useExams(1, 200)
   const {
     selectedExamId,
@@ -240,6 +241,18 @@ export default function ChatPanel({ className }: { className?: string }) {
   useEffect(() => {
     scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [turns, isPending])
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current
+    if (!textarea) {
+      return
+    }
+
+    textarea.style.height = '0px'
+    const nextHeight = Math.min(textarea.scrollHeight, 220)
+    textarea.style.height = `${nextHeight}px`
+    textarea.style.overflowY = textarea.scrollHeight > 220 ? 'auto' : 'hidden'
+  }, [input])
 
   const context = useMemo(
     () =>
@@ -417,6 +430,10 @@ export default function ChatPanel({ className }: { className?: string }) {
     void submitMessage(input)
   }
 
+  function handleTextareaChange(value: string) {
+    setInput(value)
+  }
+
   return (
     <div className={cn('flex h-full min-h-[38rem] flex-col gap-4', className)}>
       <div className="flex items-start justify-between gap-4">
@@ -534,13 +551,13 @@ export default function ChatPanel({ className }: { className?: string }) {
         </div>
 
         <form onSubmit={handleSubmit} className="border-t border-border/60 bg-background/80 p-4">
-          <div className="mb-3 flex flex-wrap gap-2">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-full border-dashed"
+                  className="rounded-full border-dashed bg-background/80 px-3 text-sm shadow-none"
                   disabled={isPending}
                 >
                   <BookOpen className="h-4 w-4" />
@@ -571,7 +588,7 @@ export default function ChatPanel({ className }: { className?: string }) {
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-full border-dashed"
+                  className="rounded-full border-dashed bg-background/80 px-3 text-sm shadow-none"
                   disabled={isPending || !selectedExamId}
                 >
                   <GraduationCap className="h-4 w-4" />
@@ -604,22 +621,25 @@ export default function ChatPanel({ className }: { className?: string }) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
           <div className="flex items-end gap-3">
             <textarea
+              ref={textareaRef}
               value={input}
-              onChange={(event) => setInput(event.target.value)}
+              onChange={(event) => handleTextareaChange(event.target.value)}
               placeholder="例如：帮我找出最近一次考试并概括各班平均分差异"
-              className="min-h-28 min-w-0 flex-1 resize-y rounded-2xl border border-input bg-background px-4 py-3 text-sm leading-6 outline-none transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+              rows={1}
+              spellCheck={false}
+              className="min-h-[72px] flex-1 resize-none rounded-2xl border border-border/70 bg-background px-4 py-3 text-[15px] leading-7 text-foreground outline-none transition placeholder:text-muted-foreground/80 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30"
               disabled={isPending}
             />
             <Button
               type="submit"
-              size="lg"
-              className="shrink-0 rounded-full px-5"
+              size="icon-lg"
+              className="h-10 w-10 shrink-0 rounded-full bg-primary text-primary-foreground shadow-none disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100"
               disabled={isPending || input.trim().length === 0}
             >
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <SendHorizontal className="h-4 w-4" />}
-              发送
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
             </Button>
           </div>
         </form>
