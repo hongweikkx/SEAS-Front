@@ -81,6 +81,17 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.708 0 0);
+  /* 学术风配色 */
+  --academic-deep-blue: #1E3A8A;
+  --academic-cyan: #06B6D4;
+  --academic-purple: #F5F3FF;
+  --academic-purple-glow: rgba(139, 92, 246, 0.15);
+  --academic-card-blue: rgba(59, 130, 246, 0.05);
+  --academic-card-cyan: rgba(6, 182, 212, 0.05);
+  --academic-card-purple: rgba(139, 92, 246, 0.05);
+  --academic-shadow-blue: 0 4px 20px -4px rgba(59, 130, 246, 0.2);
+  --academic-shadow-cyan: 0 4px 20px -4px rgba(6, 182, 212, 0.2);
+  --academic-shadow-purple: 0 4px 20px -4px rgba(139, 92, 246, 0.2);
 }
 
 .dark {
@@ -115,6 +126,17 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.439 0 0);
+  /* 学术风配色 */
+  --academic-deep-blue: #1E3A8A;
+  --academic-cyan: #06B6D4;
+  --academic-purple: #F5F3FF;
+  --academic-purple-glow: rgba(139, 92, 246, 0.15);
+  --academic-card-blue: rgba(59, 130, 246, 0.05);
+  --academic-card-cyan: rgba(6, 182, 212, 0.05);
+  --academic-card-purple: rgba(139, 92, 246, 0.05);
+  --academic-shadow-blue: 0 4px 20px -4px rgba(59, 130, 246, 0.2);
+  --academic-shadow-cyan: 0 4px 20px -4px rgba(6, 182, 212, 0.2);
+  --academic-shadow-purple: 0 4px 20px -4px rgba(139, 92, 246, 0.2);
 }
 
 @layer base {
@@ -126,5 +148,26 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .shadow-card-blue {
+    box-shadow: var(--academic-shadow-blue);
+  }
+  .shadow-card-cyan {
+    box-shadow: var(--academic-shadow-cyan);
+  }
+  .shadow-card-purple {
+    box-shadow: var(--academic-shadow-purple);
+  }
+  .bg-card-blue {
+    background-color: var(--academic-card-blue);
+  }
+  .bg-card-cyan {
+    background-color: var(--academic-card-cyan);
+  }
+  .bg-card-purple {
+    background-color: var(--academic-card-purple);
   }
 }
