@@ -42,12 +42,12 @@ interface AnalysisState {
 const defaultState = {
   isAuthenticated: false,
   sidebarCollapsed: false,
-  activeDetailSection: 'class-overview',
-  selectedExamId: null,
-  selectedExamName: null,
-  selectedSubjectId: null,
-  selectedSubjectName: null,
-  selectedScope: 'all_subjects',
+  activeDetailSection: 'class-overview' as const,
+  selectedExamId: null as string | null,
+  selectedExamName: null as string | null,
+  selectedSubjectId: null as string | null,
+  selectedSubjectName: null as string | null,
+  selectedScope: 'all_subjects' as const,
   activeAnalysisModule: 'subject-summary' as AnalysisModule,
   ratingConfig: {
     excellent_threshold: 90,
