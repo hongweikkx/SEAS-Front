@@ -2,37 +2,55 @@
 
 import { useClassSummary } from '@/hooks/useAnalysis'
 import { useAnalysisStore } from '@/store/analysisStore'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { AnalysisModuleCard } from './AnalysisModuleCard'
 import { formatNumber, getDifficultyColor } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 
 interface ClassSummaryProps {
   examId: string
 }
 
 export default function ClassSummary({ examId }: ClassSummaryProps) {
-  const { selectedScope, selectedSubjectId } = useAnalysisStore()
+  const { selectedScope, selectedSubjectId, classSummaryConfig, setClassSummaryConfig } =
+    useAnalysisStore()
   const { data, isLoading } = useClassSummary(examId, selectedScope, selectedSubjectId ?? undefined)
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>班级情况汇总</CardTitle>
-        </CardHeader>
-        <CardContent className="flex h-40 items-center justify-center" role="status" aria-label="加载中">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </CardContent>
-      </Card>
-    )
-  }
+  const configPanel = (
+    <div className="flex flex-wrap gap-4">
+      <div className="flex items-center gap-2">
+        <Switch
+          id="show-deviation"
+          checked={classSummaryConfig.showDeviation}
+          onCheckedChange={(v) => setClassSummaryConfig({ showDeviation: v })}
+        />
+        <Label htmlFor="show-deviation" className="text-sm">显示离均差</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <Switch
+          id="show-stddev"
+          checked={classSummaryConfig.showStdDev}
+          onCheckedChange={(v) => setClassSummaryConfig({ showStdDev: v })}
+        />
+        <Label htmlFor="show-stddev" className="text-sm">显示标准差</Label>
+      </div>
+    </div>
+  )
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>班级情况汇总</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <AnalysisModuleCard
+      title="班级情况汇总"
+      subtitle="各班级的成绩分布与差异分析"
+      configPanel={configPanel}
+      variant="cyan"
+      isLoading={isLoading}
+    >
+      {isLoading && !data ? (
+        <div className="flex h-40 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-xs md:text-sm">
             <thead>
@@ -42,13 +60,16 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
                 <th className="py-2 text-right font-medium text-foreground">平均分</th>
                 <th className="py-2 text-right font-medium text-foreground">最高分</th>
                 <th className="py-2 text-right font-medium text-foreground">最低分</th>
-                <th className="py-2 text-right font-medium text-foreground">离均差</th>
+                {classSummaryConfig.showDeviation && (
+                  <th className="py-2 text-right font-medium text-foreground">离均差</th>
+                )}
                 <th className="py-2 text-right font-medium text-foreground">难度</th>
-                <th className="py-2 text-right font-medium text-foreground">标准差</th>
+                {classSummaryConfig.showStdDev && (
+                  <th className="py-2 text-right font-medium text-foreground">标准差</th>
+                )}
               </tr>
             </thead>
             <tbody>
-              {/* 全年级汇总 */}
               {data?.overallGrade && (
                 <tr className="border-b border-border bg-primary/10 font-semibold">
                   <td className="py-2">{data.overallGrade.className}</td>
@@ -56,17 +77,19 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
                   <td className="text-right">{formatNumber(data.overallGrade.avgScore)}</td>
                   <td className="text-right">{formatNumber(data.overallGrade.highestScore)}</td>
                   <td className="text-right">{formatNumber(data.overallGrade.lowestScore)}</td>
-                  <td className="text-right text-muted-foreground">
-                    {formatNumber(data.overallGrade.scoreDeviation)}
-                  </td>
+                  {classSummaryConfig.showDeviation && (
+                    <td className="text-right text-muted-foreground">
+                      {formatNumber(data.overallGrade.scoreDeviation)}
+                    </td>
+                  )}
                   <td className={`text-right ${getDifficultyColor(data.overallGrade.difficulty)}`}>
                     {formatNumber(data.overallGrade.difficulty)}%
                   </td>
-                  <td className="text-right">{formatNumber(data.overallGrade.stdDev)}</td>
+                  {classSummaryConfig.showStdDev && (
+                    <td className="text-right">{formatNumber(data.overallGrade.stdDev)}</td>
+                  )}
                 </tr>
               )}
-
-              {/* 各班级详情 */}
               {data?.classDetails.map((cls) => (
                 <tr key={cls.classId} className="border-b border-border transition-colors hover:bg-muted/50">
                   <td className="py-2">{cls.className}</td>
@@ -74,28 +97,31 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
                   <td className="text-right">{formatNumber(cls.avgScore)}</td>
                   <td className="text-right">{formatNumber(cls.highestScore)}</td>
                   <td className="text-right">{formatNumber(cls.lowestScore)}</td>
-                  <td className="text-right">
-                    <span
-                      className={
-                        cls.scoreDeviation >= 0
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-destructive'
-                      }
-                    >
-                      {formatNumber(cls.scoreDeviation)}
-                    </span>
-                  </td>
+                  {classSummaryConfig.showDeviation && (
+                    <td className="text-right">
+                      <span
+                        className={
+                          cls.scoreDeviation >= 0
+                            ? 'text-emerald-600 dark:text-emerald-400'
+                            : 'text-destructive'
+                        }
+                      >
+                        {formatNumber(cls.scoreDeviation)}
+                      </span>
+                    </td>
+                  )}
                   <td className={`text-right ${getDifficultyColor(cls.difficulty)}`}>
                     {formatNumber(cls.difficulty)}%
                   </td>
-                  <td className="text-right">{formatNumber(cls.stdDev)}</td>
+                  {classSummaryConfig.showStdDev && (
+                    <td className="text-right">{formatNumber(cls.stdDev)}</td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </AnalysisModuleCard>
   )
 }
-
