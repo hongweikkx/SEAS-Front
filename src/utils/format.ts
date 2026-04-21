@@ -74,3 +74,21 @@ export const ratingTierBadgeClass = {
   pass: 'rounded bg-amber-500/15 px-2 py-1 text-amber-900 dark:text-amber-200',
   fail: 'rounded bg-destructive/15 px-2 py-1 text-destructive',
 } as const
+
+// 考试分类检测
+export function detectExamType(name: string): '期中' | '期末' | '月考' | '模拟' | '其他' {
+  if (name.includes('期中')) return '期中'
+  if (name.includes('期末')) return '期末'
+  if (name.includes('月考')) return '月考'
+  if (name.includes('模拟') || name.includes('模考')) return '模拟'
+  return '其他'
+}
+
+// 分类标签颜色
+export const examTypeColors: Record<string, string> = {
+  期中: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  期末: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+  月考: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+  模拟: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+  其他: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+} as const
