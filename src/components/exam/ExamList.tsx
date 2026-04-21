@@ -1,9 +1,8 @@
 'use client'
 
 import { useExams } from '@/hooks/useAnalysis'
-import { formatDate } from '@/utils/format'
-import Link from 'next/link'
-import { ChevronRight, Loader2 } from 'lucide-react'
+import { Loader2, FileQuestion } from 'lucide-react'
+import { ExamCard } from './ExamCard'
 
 export default function ExamList() {
   const { data, isLoading, error } = useExams(1, 20)
@@ -18,7 +17,7 @@ export default function ExamList() {
 
   if (error) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-destructive/30 bg-destructive/5">
+      <div className="flex h-48 items-center justify-center rounded-2xl border border-destructive/30 bg-destructive/5">
         <p className="text-destructive">加载失败，请检查后端服务是否运行</p>
       </div>
     )
@@ -26,30 +25,19 @@ export default function ExamList() {
 
   if (!data?.exams.length) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-border/70 bg-muted/20 text-sm text-muted-foreground">
-        暂无可分析的考试数据
+      <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-border/60 bg-card/60 text-muted-foreground">
+        <FileQuestion className="h-12 w-12 opacity-30" />
+        <p className="mt-3 text-sm">暂无可分析的考试数据</p>
+        <p className="mt-1 text-xs opacity-60">新建一个分析开始吧</p>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {data?.exams.map((exam) => (
-        <Link
-          href={`/exams/${exam.id}`}
-          key={exam.id}
-          className="group rounded-xl border border-border/70 bg-card/70 px-4 py-4 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:bg-card/40"
-        >
-          <div className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <p className="truncate text-base font-medium text-foreground md:text-lg">{exam.name}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{formatDate(exam.examDate)}</p>
-            </div>
-            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
-          </div>
-        </Link>
+        <ExamCard key={exam.id} exam={exam} />
       ))}
     </div>
   )
 }
-
