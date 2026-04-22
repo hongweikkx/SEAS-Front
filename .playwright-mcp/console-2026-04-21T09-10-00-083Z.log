@@ -1,0 +1,49 @@
+[     281ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[     304ms] [LOG] [HMR] connected @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[     335ms] [ERROR] API Error: AxiosError: Network Error
+    at XMLHttpRequest.handleError (http://localhost:3001/_next/static/chunks/node_modules_0t4sn9l._.js:8856:25) @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[     337ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/seas/api/v1/exams?page_index=1&page_size=200:0
+[     416ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[     429ms] [LOG] [Fast Refresh] done in 114ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[    1342ms] [ERROR] API Error: AxiosError: Network Error
+    at XMLHttpRequest.handleError (http://localhost:3001/_next/static/chunks/node_modules_0t4sn9l._.js:8856:25) @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[    1342ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/seas/api/v1/exams?page_index=1&page_size=200:0
+[   80568ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[   80660ms] [ERROR] Encountered a script tag while rendering React component. Scripts inside React components are never executed when rendering on the client. Consider using template tag instead (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template). @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[   80666ms] [ERROR] In HTML, %s cannot be a child of <%s>.%s
+This will cause a hydration error.%s <html> body  
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:"...", ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/login" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="zh" className="geist_a715..." suppressHydrationWarning={true}>
+>                         <body className="min-h-svh flex flex-col">
+                            ...
+                              <SegmentViewNode type="layout" pagePath="login/layo...">
+                                <SegmentTrieNode>
+                                <LoginLayout>
+>                                 <html
+>                                   lang="zh"
+>                                   className="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li..."
+>                                   suppressHydrationWarning={true}
+>                                 >
+                  ...
+ @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[   80666ms] [ERROR] <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. body <html> @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[   80736ms] [LOG] [Fast Refresh] done in 190ms @ http://localhost:3001/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431

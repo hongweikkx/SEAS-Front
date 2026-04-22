@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { Upload, FileSpreadsheet, X } from 'lucide-react'
+import { CloudUpload, FileSpreadsheet, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface FileUploadZoneProps {
@@ -27,7 +27,7 @@ export function FileUploadZone({ onFileSelect }: FileUploadZoneProps) {
       e.preventDefault()
       setIsDragging(false)
       const file = e.dataTransfer.files[0]
-      if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.csv'))) {
+      if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.csv') || file.name.endsWith('.pdf'))) {
         setSelectedFile(file)
         onFileSelect?.(file)
       }
@@ -52,16 +52,22 @@ export function FileUploadZone({ onFileSelect }: FileUploadZoneProps) {
 
   if (selectedFile) {
     return (
-      <div className="rounded-2xl border border-primary/20 bg-card-blue p-6 shadow-card-blue">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+      <div className="rounded-xl border border-primary/20 bg-primary/5 p-5"
+      >
+        <div className="flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10"
+            >
               <FileSpreadsheet className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="text-sm font-medium text-foreground">{selectedFile.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {(selectedFile.size / 1024).toFixed(1)} KB
+              <p className="text-sm font-medium text-foreground"
+              >{selectedFile.name}</p>
+              <p className="text-xs text-muted-foreground"
+              >
+                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
           </div>
@@ -82,25 +88,29 @@ export function FileUploadZone({ onFileSelect }: FileUploadZoneProps) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={cn(
-        'relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed p-12 transition-all',
+        'relative flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-16 transition-all',
         isDragging
-          ? 'border-primary bg-primary/5 shadow-card-blue'
-          : 'border-border/60 bg-card/60 hover:border-primary/40 hover:bg-card-blue'
+          ? 'border-primary bg-primary/5'
+          : 'border-border/60 bg-muted/30 hover:border-primary/40 hover:bg-muted/50'
       )}
     >
       <input
         type="file"
-        accept=".xlsx,.csv"
+        accept=".xlsx,.csv,.pdf"
         onChange={handleFileInput}
         className="absolute inset-0 cursor-pointer opacity-0"
       />
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-        <Upload className="h-8 w-8 text-primary" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10"
+      >
+        <CloudUpload className="h-7 w-7 text-primary" />
       </div>
       <div className="text-center">
-        <p className="text-base font-medium text-foreground">拖拽文件到此处上传</p>
-        <p className="mt-1 text-sm text-muted-foreground">或点击选择文件</p>
-        <p className="mt-2 text-xs text-muted-foreground/70">支持 .xlsx 和 .csv 格式</p>
+        <p className="text-base font-medium text-foreground"
+        >点击或拖拽报表至此处</p>
+        <p className="mt-1 text-xs text-muted-foreground"
+        >
+          支持 PDF, Excel (XLSX) 格式，单个文件最大 20MB
+        </p>
       </div>
     </div>
   )

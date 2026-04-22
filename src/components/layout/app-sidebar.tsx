@@ -3,23 +3,16 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
+  BarChart3,
   BookOpen,
-  ChevronLeft,
-  ChevronRight,
   GraduationCap,
   Home,
+  LayoutList,
   PlusCircle,
-  Settings,
-  User,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAnalysisStore } from '@/store/analysisStore'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 
 interface NavItem {
   label: string
@@ -27,112 +20,101 @@ interface NavItem {
   icon: React.ReactNode
 }
 
-const navItems: NavItem[] = [
-  { label: '首页', href: '/', icon: <Home className="h-5 w-5" /> },
-  { label: '分析列表', href: '/exams', icon: <BookOpen className="h-5 w-5" /> },
-  { label: '新建分析', href: '/create', icon: <PlusCircle className="h-5 w-5" /> },
+const mainNavItems: NavItem[] = [
+  { label: '主页', href: '/', icon: <Home className="h-[18px] w-[18px]" /> },
+  { label: '分析列表', href: '/exams', icon: <BookOpen className="h-[18px] w-[18px]" /> },
+  { label: '新建分析', href: '/create', icon: <PlusCircle className="h-[18px] w-[18px]" /> },
+]
+
+const analysisModules = [
+  { key: 'subject-summary' as const, label: '学科情况汇总', icon: <LayoutList className="h-[15px] w-[15px]" /> },
+  { key: 'class-summary' as const, label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" /> },
+  { key: 'rating-analysis' as const, label: '四率分析', icon: <BarChart3 className="h-[15px] w-[15px]" /> },
 ]
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { sidebarCollapsed, setSidebarCollapsed } = useAnalysisStore()
+  const examMatch = pathname.match(/^\/exams\/([^/]+)$/)
+  const examId = examMatch?.[1]
+
+  const {
+    activeAnalysisModule,
+    setActiveAnalysisModule,
+    selectedScope,
+  } = useAnalysisStore()
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
     return pathname.startsWith(href)
   }
 
-  return (
-    <TooltipProvider delayDuration={0}>
-      <aside
-        className={cn(
-          'fixed left-0 top-0 z-30 flex h-svh flex-col border-r border-border/60 bg-[#1E3A8A] text-white transition-all duration-300',
-          sidebarCollapsed ? 'w-[3.5rem]' : 'w-[15rem]'
-        )}
-      >
-        <div className="flex h-16 items-center gap-3 border-b border-white/10 px-4">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15">
-            <GraduationCap className="h-5 w-5 text-white" />
-          </div>
-          {!sidebarCollapsed && (
-            <span className="text-lg font-bold tracking-tight">SEAS</span>
-          )}
-        </div>
+  const isExamDetail = !!examId
 
-        <nav className="flex-1 space-y-1 px-2 py-4">
-          {navItems.map((item) => {
+  const availableModules = selectedScope === 'single_subject'
+    ? analysisModules.filter((m) => m.key !== 'subject-summary')
+    : analysisModules
+
+  return (
+    <aside
+      className="fixed left-0 top-0 z-30 flex h-svh w-[160px] flex-col border-r border-border/40 bg-sidebar"
+    >
+      {/* 品牌区 */}
+      <div className="px-2 py-3.5 border-b border-border/30">
+        <div className="flex items-center gap-2.5 px-2.5">
+          <GraduationCap className="h-5 w-5 shrink-0 text-primary" />
+          <span className="text-base font-bold tracking-tight text-sidebar-foreground">SEAS</span>
+        </div>
+      </div>
+
+      {/* 主导航 */}
+      <nav className="flex-1 px-2 py-2">
+        <div className="flex flex-col gap-0.5">
+          {mainNavItems.map((item) => {
             const active = isActive(item.href)
             return (
-              <Tooltip key={item.href}>
-                <TooltipTrigger asChild>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
-                      active
-                        ? 'bg-white/15 text-white shadow-sm'
-                        : 'text-white/70 hover:bg-white/10 hover:text-white'
-                    )}
-                  >
-                    {item.icon}
-                    {!sidebarCollapsed && <span>{item.label}</span>}
-                  </Link>
-                </TooltipTrigger>
-                {sidebarCollapsed && (
-                  <TooltipContent side="right" className="border border-border/60">
-                    {item.label}
-                  </TooltipContent>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',
+                  active
+                    ? 'bg-primary/[0.08] text-primary'
+                    : 'text-sidebar-foreground/65 hover:bg-accent hover:text-sidebar-foreground'
                 )}
-              </Tooltip>
+              >
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </Link>
             )
           })}
-        </nav>
-
-        <div className="border-t border-white/10 px-2 py-3">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white"
-              >
-                {sidebarCollapsed ? (
-                  <ChevronRight className="h-5 w-5" />
-                ) : (
-                  <ChevronLeft className="h-5 w-5" />
-                )}
-                {!sidebarCollapsed && <span>收起侧边栏</span>}
-              </button>
-            </TooltipTrigger>
-            {sidebarCollapsed && (
-              <TooltipContent side="right">展开侧边栏</TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white">
-                <User className="h-5 w-5" />
-                {!sidebarCollapsed && <span>个人中心</span>}
-              </button>
-            </TooltipTrigger>
-            {sidebarCollapsed && (
-              <TooltipContent side="right">个人中心</TooltipContent>
-            )}
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white">
-                <Settings className="h-5 w-5" />
-                {!sidebarCollapsed && <span>系统设置</span>}
-              </button>
-            </TooltipTrigger>
-            {sidebarCollapsed && (
-              <TooltipContent side="right">系统设置</TooltipContent>
-            )}
-          </Tooltip>
         </div>
-      </aside>
-    </TooltipProvider>
+
+        {/* 分析维度子导航 */}
+        {isExamDetail && (
+          <div className="mt-5">
+            <div className="mb-1.5 px-2.5 text-[11px] font-medium tracking-wide text-muted-foreground/70">
+              分析维度
+            </div>
+            <div className="flex flex-col gap-0.5">
+              {availableModules.map((module) => (
+                <button
+                  key={module.key}
+                  onClick={() => setActiveAnalysisModule(module.key)}
+                  className={cn(
+                    'flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',
+                    activeAnalysisModule === module.key
+                      ? 'bg-primary/[0.08] text-primary'
+                      : 'text-sidebar-foreground/65 hover:bg-accent hover:text-sidebar-foreground'
+                  )}
+                >
+                  {module.icon}
+                  <span className="truncate">{module.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+    </aside>
   )
 }

@@ -1,0 +1,65 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - img [ref=e5]
+        - generic [ref=e8]:
+          - generic [ref=e9]: SEAS
+          - generic [ref=e10]: 智能学业分析系统
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - link "主页" [ref=e13] [cursor=pointer]:
+            - /url: /
+            - img [ref=e14]
+            - generic [ref=e17]: 主页
+          - link "分析列表" [ref=e18] [cursor=pointer]:
+            - /url: /exams
+            - img [ref=e19]
+            - generic [ref=e21]: 分析列表
+          - link "新建分析" [ref=e22] [cursor=pointer]:
+            - /url: /create
+            - img [ref=e23]
+            - generic [ref=e25]: 新建分析
+    - generic [ref=e26]:
+      - banner [ref=e27]:
+        - generic [ref=e28]:
+          - navigation "breadcrumb" [ref=e30]:
+            - list [ref=e31]:
+              - listitem [ref=e32]:
+                - link "首页" [ref=e33] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e34]:
+                - img [ref=e35]
+              - listitem [ref=e37]:
+                - link "分析列表" [disabled] [ref=e38]
+          - generic [ref=e39]:
+            - button [ref=e40]:
+              - img [ref=e41]
+            - generic [ref=e45]: 智
+      - main [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - heading "分析列表" [level=2] [ref=e50]
+              - paragraph [ref=e51]: 管理您的所有成绩分析
+            - link "新建成绩分析" [ref=e52] [cursor=pointer]:
+              - /url: /create
+              - img
+              - text: 新建成绩分析
+          - generic [ref=e53]:
+            - img [ref=e54]
+            - generic [ref=e57]: 搜索考试名称...
+          - status "加载中" [ref=e58]:
+            - img [ref=e59]
+  - generic [ref=e65] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e66]:
+      - img [ref=e67]
+    - generic [ref=e70]:
+      - button "Open issues overlay" [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]: "0"
+          - generic [ref=e74]: "1"
+        - generic [ref=e75]: Issue
+      - button "Collapse issues badge" [ref=e76]:
+        - img [ref=e77]
+  - alert [ref=e79]

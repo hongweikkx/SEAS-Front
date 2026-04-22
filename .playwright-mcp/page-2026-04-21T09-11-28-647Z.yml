@@ -1,0 +1,30 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: SEAS
+      - generic [ref=e6]: "|"
+      - generic [ref=e7]: 智能学业分析系统
+    - generic [ref=e10]:
+      - img [ref=e12]
+      - heading "欢迎回来" [level=2] [ref=e14]
+      - paragraph [ref=e15]: 驱动数据，成就卓越学业
+      - generic [ref=e17]:
+        - generic [ref=e18]: 📱
+        - paragraph [ref=e19]: 二维码加载中...
+      - paragraph [ref=e20]: 微信扫码安全登录
+      - paragraph [ref=e21]: 请使用手机微信扫描上方二维码
+      - button "刷新二维码" [ref=e22]:
+        - img
+        - text: 刷新二维码
+    - generic [ref=e23]:
+      - generic [ref=e24]: © 2024 SEAS Intelligent Workspace. All rights reserved.
+      - generic [ref=e25]:
+        - link "帮助中心" [ref=e26] [cursor=pointer]:
+          - /url: "#"
+        - link "隐私政策" [ref=e27] [cursor=pointer]:
+          - /url: "#"
+        - link "服务条款" [ref=e28] [cursor=pointer]:
+          - /url: "#"
+  - button "Open Next.js Dev Tools" [ref=e34] [cursor=pointer]:
+    - img [ref=e35]
+  - alert [ref=e38]

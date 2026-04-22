@@ -1,15 +1,14 @@
 'use client'
 
 import { useAnalysisStore } from '@/store/analysisStore'
-import { AnalysisNav } from '@/components/analysis/AnalysisNav'
 import SubjectSummary from '@/components/analysis/SubjectSummary'
 import ClassSummary from '@/components/analysis/ClassSummary'
 import RatingChart from '@/components/analysis/RatingChart'
-import { CriticalStudents } from '@/components/analysis/CriticalStudents'
-import { ScoreFluctuation } from '@/components/analysis/ScoreFluctuation'
 import { use, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Download } from 'lucide-react'
+import { Download, Share2 } from 'lucide-react'
+import { useSubjects } from '@/hooks/useAnalysis'
+import { cn } from '@/lib/utils'
 
 interface PageProps {
   params: Promise<{
@@ -18,12 +17,29 @@ interface PageProps {
 }
 
 export default function ExamDetailPage({ params }: PageProps) {
-  const { setSelectedExamId, activeAnalysisModule, selectedScope } = useAnalysisStore()
+  const {
+    setSelectedExamId,
+    activeAnalysisModule,
+    setActiveAnalysisModule,
+    selectedScope,
+    selectedSubjectId,
+    setSelectedScope,
+    setSelectedSubjectId,
+    setSelectedSubjectName,
+  } = useAnalysisStore()
   const { id: examId } = use(params)
+  const { data: subjectsData } = useSubjects(examId, 1, 100)
 
   useEffect(() => {
     setSelectedExamId(examId)
   }, [examId, setSelectedExamId])
+
+  // 单科模式下自动切换到可用模块
+  useEffect(() => {
+    if (selectedScope === 'single_subject' && activeAnalysisModule === 'subject-summary') {
+      setActiveAnalysisModule('class-summary')
+    }
+  }, [selectedScope, activeAnalysisModule, setActiveAnalysisModule])
 
   const renderModule = () => {
     switch (activeAnalysisModule) {
@@ -33,55 +49,69 @@ export default function ExamDetailPage({ params }: PageProps) {
         return <ClassSummary examId={examId} />
       case 'rating-analysis':
         return <RatingChart examId={examId} />
-      case 'critical-students':
-        return <CriticalStudents examId={examId} />
-      case 'score-fluctuation':
-        return <ScoreFluctuation examId={examId} />
       default:
         return <SubjectSummary examId={examId} />
     }
   }
 
-  const showDefaultModules = selectedScope === 'all_subjects'
-    ? activeAnalysisModule === 'subject-summary'
-    : activeAnalysisModule === 'class-summary'
-
   return (
-    <div className="flex gap-6">
-      <aside className="sticky top-24 h-fit w-56 shrink-0 space-y-4">
-        <AnalysisNav examId={examId} />
-      </aside>
-
-      <div className="min-w-0 flex-1 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">分析报告</h2>
-            <p className="text-sm text-muted-foreground">基于当前配置生成的多维分析</p>
+    <div className="space-y-6">
+      {/* 学科筛选 + 操作按钮 */}
+      <div className="flex items-center justify-between gap-4">
+        {/* 学科筛选 */}
+        {subjectsData?.subjects && subjectsData.subjects.length > 0 && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setSelectedScope('all_subjects')
+                setSelectedSubjectId(null)
+                setSelectedSubjectName(null)
+              }}
+              className={cn(
+                'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                selectedScope === 'all_subjects'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              )}
+            >
+              全科
+            </button>
+            {subjectsData.subjects.map((subject) => (
+              <button
+                key={subject.id}
+                onClick={() => {
+                  setSelectedScope('single_subject')
+                  setSelectedSubjectId(subject.id)
+                  setSelectedSubjectName(subject.name)
+                }}
+                className={cn(
+                  'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                  selectedScope === 'single_subject' && selectedSubjectId === subject.id
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                )}
+              >
+                {subject.name}
+              </button>
+            ))}
           </div>
-          <Button variant="outline" className="gap-2 rounded-xl">
+        )}
+
+        {/* 操作按钮 */}
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="outline" size="sm" className="rounded-lg gap-2">
             <Download className="h-4 w-4" />
-            下载整体分析报告
+            PDF
+          </Button>
+          <Button size="sm" className="rounded-lg gap-2">
+            <Share2 className="h-4 w-4" />
+            共享报告
           </Button>
         </div>
-
-        {renderModule()}
-
-        {showDefaultModules && (
-          <>
-            {selectedScope === 'all_subjects' && activeAnalysisModule === 'subject-summary' && (
-              <>
-                <ClassSummary examId={examId} />
-                <RatingChart examId={examId} />
-              </>
-            )}
-            {selectedScope === 'single_subject' && activeAnalysisModule === 'class-summary' && (
-              <>
-                <RatingChart examId={examId} />
-              </>
-            )}
-          </>
-        )}
       </div>
+
+      {/* 分析内容 */}
+      {renderModule()}
     </div>
   )
 }

@@ -1,0 +1,96 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - img [ref=e5]
+        - generic [ref=e8]:
+          - generic [ref=e9]: SEAS
+          - generic [ref=e10]: 智能学业分析系统
+      - navigation [ref=e11]:
+        - generic [ref=e12]:
+          - link "主页" [ref=e13] [cursor=pointer]:
+            - /url: /
+            - img [ref=e14]
+            - generic [ref=e17]: 主页
+          - link "分析列表" [ref=e18] [cursor=pointer]:
+            - /url: /exams
+            - img [ref=e19]
+            - generic [ref=e21]: 分析列表
+          - link "新建分析" [ref=e22] [cursor=pointer]:
+            - /url: /create
+            - img [ref=e23]
+            - generic [ref=e25]: 新建分析
+        - generic [ref=e26]:
+          - generic [ref=e27]: 分析维度
+          - generic [ref=e28]:
+            - button "学科情况汇总" [ref=e29]:
+              - img [ref=e30]
+              - generic [ref=e33]: 学科情况汇总
+            - button "班级情况汇总" [ref=e34]:
+              - img [ref=e35]
+              - generic [ref=e40]: 班级情况汇总
+            - button "四率分析" [ref=e41]:
+              - img [ref=e42]
+              - generic [ref=e44]: 四率分析
+    - generic [ref=e45]:
+      - banner [ref=e46]:
+        - generic [ref=e47]:
+          - navigation "breadcrumb" [ref=e49]:
+            - list [ref=e50]:
+              - listitem [ref=e51]:
+                - link "首页" [ref=e52] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e53]:
+                - img [ref=e54]
+              - listitem [ref=e56]:
+                - link "分析列表" [ref=e57] [cursor=pointer]:
+                  - /url: /exams
+              - listitem [ref=e58]:
+                - img [ref=e59]
+              - listitem [ref=e61]:
+                - link "考试" [disabled] [ref=e62]
+          - generic [ref=e63]:
+            - button [ref=e64]:
+              - img [ref=e65]
+            - generic [ref=e69]: 智
+      - main [ref=e70]:
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - img [ref=e75]
+                - generic [ref=e77]: 发布日期：2027年1月20日
+              - heading "2027年1月月考 - 深度分析报告" [level=1] [ref=e78]
+              - paragraph [ref=e79]: 基于认知画布架构生成的全维度教学评估。本报告整合了12个班级的多维学科数据，旨在识别教学盲区并优化资源配置。
+            - generic [ref=e80]:
+              - button "PDF" [ref=e81]:
+                - img
+                - text: PDF
+              - button "共享报告" [ref=e82]:
+                - img
+                - text: 共享报告
+          - generic [ref=e83]:
+            - heading "学科情况汇总" [level=2] [ref=e86]
+            - img [ref=e89]
+          - generic [ref=e91]:
+            - heading "班级情况汇总" [level=2] [ref=e94]
+            - img [ref=e96]
+          - generic [ref=e98]:
+            - heading "四率分析" [level=2] [ref=e101]
+            - generic [ref=e102]:
+              - generic [ref=e104]:
+                - generic [ref=e105]:
+                  - generic [ref=e106]: 优秀分数线
+                  - spinbutton [ref=e107]: "90"
+                - generic [ref=e108]:
+                  - generic [ref=e109]: 良好分数线
+                  - spinbutton [ref=e110]: "70"
+                - generic [ref=e111]:
+                  - generic [ref=e112]: 合格分数线
+                  - spinbutton [ref=e113]: "60"
+                - button "查询中" [ref=e115]:
+                  - img
+                  - text: 查询中
+              - img [ref=e117]
+  - button "Open Next.js Dev Tools" [ref=e124] [cursor=pointer]:
+    - img [ref=e125]

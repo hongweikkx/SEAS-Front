@@ -1,0 +1,7 @@
+- generic [active]:
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic [ref=e2]
+          - group [ref=e12]
