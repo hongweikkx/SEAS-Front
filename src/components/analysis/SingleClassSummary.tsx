@@ -11,7 +11,7 @@ interface SingleClassSummaryProps {
 }
 
 export default function SingleClassSummary({ examId }: SingleClassSummaryProps) {
-  const { selectedSubjectId, drillDownParams } = useAnalysisStore()
+  const { selectedSubjectId } = useAnalysisStore()
   const { data, isLoading } = useSingleClassSummary(examId, selectedSubjectId ?? undefined)
 
   const {

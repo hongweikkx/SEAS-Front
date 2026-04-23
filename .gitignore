@@ -45,3 +45,7 @@ next-env.d.ts
 
 # superpowers brainstorming
 .superpowers/
+
+# playwright mcp temp files
+.playwright-mcp/
+integration-test-*.png

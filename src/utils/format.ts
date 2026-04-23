@@ -75,6 +75,13 @@ export const ratingTierBadgeClass = {
   fail: 'rounded bg-destructive/15 px-2 py-1 text-destructive',
 } as const
 
+// 难度标签映射
+export const difficultyLabel: Record<string, { label: string; className: string }> = {
+  easy: { label: '易', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  medium: { label: '中', className: 'bg-amber-50 text-amber-700 border-amber-200' },
+  hard: { label: '难', className: 'bg-red-50 text-red-700 border-red-200' },
+}
+
 // 考试分类检测
 export function detectExamType(name: string): '期中' | '期末' | '月考' | '模拟' | '其他' {
   if (name.includes('期中')) return '期中'

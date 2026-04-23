@@ -53,7 +53,8 @@ export default function ExamDetailPage({ params }: PageProps) {
     setSelectedExamId(examId)
   }, [examId, setSelectedExamId])
 
-  // Sync URL query param to store state on mount
+  // Sync URL query param to store state on mount (intentionally run once)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const url = new URL(window.location.href)
     const viewParam = url.searchParams.get('view') as AnalysisView | null
@@ -161,7 +162,7 @@ export default function ExamDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      <BreadcrumbNav examId={examId} />
+      <BreadcrumbNav />
 
       {renderModule()}
     </div>

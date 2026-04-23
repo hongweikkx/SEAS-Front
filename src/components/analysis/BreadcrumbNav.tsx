@@ -4,11 +4,7 @@ import { useAnalysisStore } from '@/store/analysisStore'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface BreadcrumbNavProps {
-  examId: string
-}
-
-export default function BreadcrumbNav({ examId }: BreadcrumbNavProps) {
+export default function BreadcrumbNav() {
   const {
     selectedScope,
     selectedSubjectName,
