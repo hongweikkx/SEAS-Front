@@ -10,9 +10,13 @@ import {
   LayoutList,
   PlusCircle,
   Users,
+  Search,
+  FileText,
+  ClipboardList,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAnalysisStore } from '@/store/analysisStore'
+import type { AnalysisView } from '@/store/analysisStore'
 
 interface NavItem {
   label: string
@@ -26,10 +30,20 @@ const mainNavItems: NavItem[] = [
   { label: '新建分析', href: '/create', icon: <PlusCircle className="h-[18px] w-[18px]" /> },
 ]
 
-const analysisModules = [
-  { key: 'subject-summary' as const, label: '学科情况汇总', icon: <LayoutList className="h-[15px] w-[15px]" /> },
-  { key: 'class-summary' as const, label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" /> },
-  { key: 'rating-analysis' as const, label: '四率分析', icon: <BarChart3 className="h-[15px] w-[15px]" /> },
+// 所有7个分析维度
+const allAnalysisDimensions: Array<{
+  key: AnalysisView
+  label: string
+  icon: React.ReactNode
+  scope: 'all' | 'single'
+}> = [
+  { key: 'class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'all' },
+  { key: 'subject-summary', label: '学科情况汇总', icon: <LayoutList className="h-[15px] w-[15px]" />, scope: 'all' },
+  { key: 'class-subject-summary', label: '班级学科汇总', icon: <BarChart3 className="h-[15px] w-[15px]" />, scope: 'all' },
+  { key: 'single-class-summary', label: '单科班级汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-class-question', label: '单科班级题目', icon: <FileText className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-question-summary', label: '单科题目汇总', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-question-detail', label: '单科班级题目详情', icon: <Search className="h-[15px] w-[15px]" />, scope: 'single' },
 ]
 
 export function AppSidebar() {
@@ -38,9 +52,14 @@ export function AppSidebar() {
   const examId = examMatch?.[1]
 
   const {
-    activeAnalysisModule,
-    setActiveAnalysisModule,
+    currentView,
+    setCurrentView,
     selectedScope,
+    setSelectedScope,
+    setSelectedSubjectId,
+    setSelectedSubjectName,
+    resetDrillDown,
+    setDrillDownParam,
   } = useAnalysisStore()
 
   const isActive = (href: string) => {
@@ -50,15 +69,36 @@ export function AppSidebar() {
 
   const isExamDetail = !!examId
 
-  const availableModules = selectedScope === 'single_subject'
-    ? analysisModules.filter((m) => m.key !== 'subject-summary')
-    : analysisModules
+  // 根据当前模式过滤维度
+  const availableDimensions = allAnalysisDimensions.filter((d) =>
+    selectedScope === 'all_subjects' ? d.scope === 'all' : d.scope === 'single'
+  )
+
+  const handleDimensionClick = (dimension: (typeof allAnalysisDimensions)[0]) => {
+    if (dimension.scope === 'all' && selectedScope !== 'all_subjects') {
+      setSelectedScope('all_subjects')
+      setSelectedSubjectId(null)
+      setSelectedSubjectName(null)
+    } else if (dimension.scope === 'single' && selectedScope !== 'single_subject') {
+      setSelectedScope('single_subject')
+    }
+
+    setCurrentView(dimension.key)
+    resetDrillDown()
+
+    if (dimension.key === 'class-summary' || dimension.key === 'subject-summary') {
+      setDrillDownParam('classId', undefined)
+    }
+    if (dimension.key === 'single-class-summary') {
+      setDrillDownParam('classId', undefined)
+      setDrillDownParam('questionId', undefined)
+    }
+  }
 
   return (
     <aside
       className="fixed left-0 top-0 z-30 flex h-svh w-[160px] flex-col border-r border-border/40 bg-sidebar"
     >
-      {/* 品牌区 */}
       <div className="px-2 py-3.5 border-b border-border/30">
         <div className="flex items-center gap-2.5 px-2.5">
           <GraduationCap className="h-5 w-5 shrink-0 text-primary" />
@@ -66,7 +106,6 @@ export function AppSidebar() {
         </div>
       </div>
 
-      {/* 主导航 */}
       <nav className="flex-1 px-2 py-2">
         <div className="flex flex-col gap-0.5">
           {mainNavItems.map((item) => {
@@ -89,26 +128,25 @@ export function AppSidebar() {
           })}
         </div>
 
-        {/* 分析维度子导航 */}
         {isExamDetail && (
           <div className="mt-5">
             <div className="mb-1.5 px-2.5 text-[11px] font-medium tracking-wide text-muted-foreground/70">
               分析维度
             </div>
             <div className="flex flex-col gap-0.5">
-              {availableModules.map((module) => (
+              {availableDimensions.map((dimension) => (
                 <button
-                  key={module.key}
-                  onClick={() => setActiveAnalysisModule(module.key)}
+                  key={dimension.key}
+                  onClick={() => handleDimensionClick(dimension)}
                   className={cn(
                     'flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',
-                    activeAnalysisModule === module.key
+                    currentView === dimension.key
                       ? 'bg-primary/[0.08] text-primary'
                       : 'text-sidebar-foreground/65 hover:bg-accent hover:text-sidebar-foreground'
                   )}
                 >
-                  {module.icon}
-                  <span className="truncate">{module.label}</span>
+                  {dimension.icon}
+                  <span className="truncate">{dimension.label}</span>
                 </button>
               ))}
             </div>
