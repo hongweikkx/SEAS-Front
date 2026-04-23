@@ -13,6 +13,7 @@ export type ExamType = '期中' | '期末' | '月考' | '模拟' | '其他'
 export type AnalysisView =
   | 'class-summary'
   | 'subject-summary'
+  | 'rating-analysis'
   | 'class-subject-summary'
   | 'single-class-summary'
   | 'single-class-question'

@@ -4,11 +4,18 @@ import { useAnalysisStore } from '@/store/analysisStore'
 import SubjectSummary from '@/components/analysis/SubjectSummary'
 import ClassSummary from '@/components/analysis/ClassSummary'
 import RatingChart from '@/components/analysis/RatingChart'
+import ClassSubjectSummary from '@/components/analysis/ClassSubjectSummary'
+import SingleClassSummary from '@/components/analysis/SingleClassSummary'
+import SingleClassQuestion from '@/components/analysis/SingleClassQuestion'
+import SingleQuestionSummary from '@/components/analysis/SingleQuestionSummary'
+import SingleQuestionDetail from '@/components/analysis/SingleQuestionDetail'
+import BreadcrumbNav from '@/components/analysis/BreadcrumbNav'
 import { use, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Download, Share2 } from 'lucide-react'
 import { useSubjects } from '@/hooks/useAnalysis'
 import { cn } from '@/lib/utils'
+import type { AnalysisView } from '@/store/analysisStore'
 
 interface PageProps {
   params: Promise<{
@@ -16,16 +23,28 @@ interface PageProps {
   }>
 }
 
+const viewComponentMap: Record<AnalysisView, React.ComponentType<{ examId: string }>> = {
+  'class-summary': ClassSummary,
+  'subject-summary': SubjectSummary,
+  'rating-analysis': RatingChart,
+  'class-subject-summary': ClassSubjectSummary,
+  'single-class-summary': SingleClassSummary,
+  'single-class-question': SingleClassQuestion,
+  'single-question-summary': SingleQuestionSummary,
+  'single-question-detail': SingleQuestionDetail,
+}
+
 export default function ExamDetailPage({ params }: PageProps) {
   const {
     setSelectedExamId,
-    activeAnalysisModule,
-    setActiveAnalysisModule,
+    currentView,
+    setCurrentView,
     selectedScope,
     selectedSubjectId,
     setSelectedScope,
     setSelectedSubjectId,
     setSelectedSubjectName,
+    drillDownParams,
   } = useAnalysisStore()
   const { id: examId } = use(params)
   const { data: subjectsData } = useSubjects(examId, 1, 100)
@@ -34,31 +53,58 @@ export default function ExamDetailPage({ params }: PageProps) {
     setSelectedExamId(examId)
   }, [examId, setSelectedExamId])
 
-  // 单科模式下自动切换到可用模块
+  // Sync URL query param to store state on mount
   useEffect(() => {
-    if (selectedScope === 'single_subject' && activeAnalysisModule === 'subject-summary') {
-      setActiveAnalysisModule('class-summary')
+    const url = new URL(window.location.href)
+    const viewParam = url.searchParams.get('view') as AnalysisView | null
+
+    if (viewParam && viewParam !== currentView) {
+      setCurrentView(viewParam)
     }
-  }, [selectedScope, activeAnalysisModule, setActiveAnalysisModule])
+
+    const classId = url.searchParams.get('classId')
+    const subjectId = url.searchParams.get('subjectId')
+    const qId = url.searchParams.get('qId')
+
+    if (classId) useAnalysisStore.getState().setDrillDownParam('classId', classId)
+    if (subjectId) useAnalysisStore.getState().setDrillDownParam('subjectId', subjectId)
+    if (qId) useAnalysisStore.getState().setDrillDownParam('questionId', qId)
+  }, [])
+
+  // Sync store state to URL when it changes
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('view', currentView)
+
+    if (drillDownParams.classId) {
+      url.searchParams.set('classId', drillDownParams.classId)
+    } else {
+      url.searchParams.delete('classId')
+    }
+
+    if (drillDownParams.subjectId) {
+      url.searchParams.set('subjectId', drillDownParams.subjectId)
+    } else {
+      url.searchParams.delete('subjectId')
+    }
+
+    if (drillDownParams.questionId) {
+      url.searchParams.set('qId', drillDownParams.questionId)
+    } else {
+      url.searchParams.delete('qId')
+    }
+
+    window.history.replaceState({}, '', url.toString())
+  }, [currentView, drillDownParams])
 
   const renderModule = () => {
-    switch (activeAnalysisModule) {
-      case 'subject-summary':
-        return <SubjectSummary examId={examId} />
-      case 'class-summary':
-        return <ClassSummary examId={examId} />
-      case 'rating-analysis':
-        return <RatingChart examId={examId} />
-      default:
-        return <SubjectSummary examId={examId} />
-    }
+    const Component = viewComponentMap[currentView] || ClassSummary
+    return <Component examId={examId} />
   }
 
   return (
-    <div className="space-y-6">
-      {/* 学科筛选 + 操作按钮 */}
+    <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
-        {/* 学科筛选 */}
         {subjectsData?.subjects && subjectsData.subjects.length > 0 && (
           <div className="flex items-center gap-2">
             <button
@@ -66,6 +112,7 @@ export default function ExamDetailPage({ params }: PageProps) {
                 setSelectedScope('all_subjects')
                 setSelectedSubjectId(null)
                 setSelectedSubjectName(null)
+                setCurrentView('class-summary')
               }}
               className={cn(
                 'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
@@ -83,6 +130,7 @@ export default function ExamDetailPage({ params }: PageProps) {
                   setSelectedScope('single_subject')
                   setSelectedSubjectId(subject.id)
                   setSelectedSubjectName(subject.name)
+                  setCurrentView('single-class-summary')
                 }}
                 className={cn(
                   'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
@@ -97,7 +145,6 @@ export default function ExamDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* 操作按钮 */}
         <div className="flex items-center gap-2 shrink-0">
           <Button variant="outline" size="sm" className="rounded-lg gap-2">
             <Download className="h-4 w-4" />
@@ -110,7 +157,8 @@ export default function ExamDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* 分析内容 */}
+      <BreadcrumbNav examId={examId} />
+
       {renderModule()}
     </div>
   )
