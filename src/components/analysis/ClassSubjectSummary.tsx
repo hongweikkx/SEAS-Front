@@ -1,13 +1,128 @@
 'use client'
 
+import { useClassSubjectSummary } from '@/hooks/useDrilldown'
+import { useAnalysisStore } from '@/store/analysisStore'
+import { formatNumber } from '@/utils/format'
+import { Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
 interface ClassSubjectSummaryProps {
   examId: string
 }
 
 export default function ClassSubjectSummary({ examId }: ClassSubjectSummaryProps) {
+  const { drillDownParams } = useAnalysisStore()
+  const classId = drillDownParams.classId ? Number(drillDownParams.classId) : undefined
+  const { data, isLoading } = useClassSubjectSummary(examId, classId)
+
+  const {
+    setCurrentView,
+    setSelectedScope,
+    setSelectedSubjectId,
+    setSelectedSubjectName,
+    setDrillDownParam,
+    pushDrillDown,
+  } = useAnalysisStore()
+
+  const handleSubjectClick = (subjectId: string, subjectName: string) => {
+    setSelectedScope('single_subject')
+    setSelectedSubjectId(subjectId)
+    setSelectedSubjectName(subjectName)
+    setDrillDownParam('subjectId', subjectId)
+    pushDrillDown({
+      view: 'single-class-question',
+      label: subjectName,
+      params: { subjectId, classId: String(classId) },
+    })
+    setCurrentView('single-class-question')
+  }
+
   return (
-    <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
-      <p className="text-sm text-muted-foreground">开发中...</p>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <div className="h-5 w-1 rounded-full bg-primary" />
+        <h2 className="text-lg font-semibold text-foreground">
+          {data?.className || '班级'} — 学科情况汇总
+        </h2>
+      </div>
+      <p className="text-xs text-muted-foreground">该班级各学科成绩与全年级对比</p>
+
+      {isLoading && !data ? (
+        <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border/60 bg-muted/30">
+                <th className="py-3 px-5 text-left font-medium text-muted-foreground">学科</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级均分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级均分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">分差</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级最高</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级最低</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级排名</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.overall && (
+                <tr className="border-b border-border/40 bg-primary/5 font-semibold">
+                  <td className="py-3 px-5">{data.overall.subjectName}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.classAvgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.gradeAvgScore)}</td>
+                  <td className={cn(
+                    'py-3 px-5 text-right',
+                    (data.overall.scoreDiff || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'
+                  )}>
+                    {(data.overall.scoreDiff || 0) >= 0 ? '+' : ''}{formatNumber(data.overall.scoreDiff)}
+                  </td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.classHighest)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.classLowest)}</td>
+                  <td className="py-3 px-5 text-right">{data.overall.classRank}/{data.overall.totalClasses}</td>
+                </tr>
+              )}
+              {data?.subjects.map((subject) => (
+                <tr
+                  key={subject.subjectId}
+                  className="border-b border-border/40 transition-colors hover:bg-muted/20"
+                >
+                  <td className="py-3 px-5">
+                    {subject.subjectId === 'overall' ? (
+                      <span className="font-medium">{subject.subjectName}</span>
+                    ) : (
+                      <button
+                        onClick={() => handleSubjectClick(subject.subjectId, subject.subjectName)}
+                        className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
+                      >
+                        {subject.subjectName}
+                      </button>
+                    )}
+                  </td>
+                  <td className="py-3 px-5 text-right">{formatNumber(subject.classAvgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(subject.gradeAvgScore)}</td>
+                  <td className={cn(
+                    'py-3 px-5 text-right font-medium',
+                    subject.scoreDiff >= 0 ? 'text-emerald-600' : 'text-red-600'
+                  )}>
+                    {subject.scoreDiff >= 0 ? '+' : ''}{formatNumber(subject.scoreDiff)}
+                  </td>
+                  <td className="py-3 px-5 text-right">{formatNumber(subject.classHighest)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(subject.classLowest)}</td>
+                  <td className="py-3 px-5 text-right">{subject.classRank}/{subject.totalClasses}</td>
+                </tr>
+              ))}
+              {(!data?.subjects || data.subjects.length === 0) && (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                    暂无数据
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
