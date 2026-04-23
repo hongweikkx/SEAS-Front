@@ -10,6 +10,21 @@ export type AnalysisModule =
 
 export type ExamType = '期中' | '期末' | '月考' | '模拟' | '其他'
 
+export type AnalysisView =
+  | 'class-summary'
+  | 'subject-summary'
+  | 'class-subject-summary'
+  | 'single-class-summary'
+  | 'single-class-question'
+  | 'single-question-summary'
+  | 'single-question-detail'
+
+export interface DrillDownNode {
+  view: AnalysisView
+  label: string
+  params?: Record<string, string>
+}
+
 interface AnalysisState {
   isAuthenticated: boolean
   sidebarCollapsed: boolean
@@ -23,6 +38,13 @@ interface AnalysisState {
   ratingConfig: RatingConfig
   classSummaryConfig: { showDeviation: boolean; showStdDev: boolean }
   subjectSummaryConfig: { showDifficulty: boolean; showStudentCount: boolean }
+  currentView: AnalysisView
+  drillDownPath: DrillDownNode[]
+  drillDownParams: {
+    classId?: string
+    subjectId?: string
+    questionId?: string
+  }
 
   setAuthenticated: (isAuthenticated: boolean) => void
   setSidebarCollapsed: (collapsed: boolean) => void
@@ -36,6 +58,11 @@ interface AnalysisState {
   setRatingConfig: (config: RatingConfig) => void
   setClassSummaryConfig: (config: Partial<AnalysisState['classSummaryConfig']>) => void
   setSubjectSummaryConfig: (config: Partial<AnalysisState['subjectSummaryConfig']>) => void
+  setCurrentView: (view: AnalysisView) => void
+  pushDrillDown: (node: DrillDownNode) => void
+  popDrillDownTo: (view: AnalysisView) => void
+  setDrillDownParam: (key: keyof AnalysisState['drillDownParams'], value: string | undefined) => void
+  resetDrillDown: () => void
   reset: () => void
 }
 
@@ -56,6 +83,9 @@ const defaultState = {
   },
   classSummaryConfig: { showDeviation: true, showStdDev: true },
   subjectSummaryConfig: { showDifficulty: true, showStudentCount: true },
+  currentView: 'class-summary' as AnalysisView,
+  drillDownPath: [] as DrillDownNode[],
+  drillDownParams: {} as AnalysisState['drillDownParams'],
 }
 
 export const useAnalysisStore = create<AnalysisState>((set) => ({
@@ -75,5 +105,33 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
     set((state) => ({ classSummaryConfig: { ...state.classSummaryConfig, ...config } })),
   setSubjectSummaryConfig: (config) =>
     set((state) => ({ subjectSummaryConfig: { ...state.subjectSummaryConfig, ...config } })),
+
+  setCurrentView: (currentView) => set({ currentView }),
+
+  pushDrillDown: (node) =>
+    set((state) => ({
+      drillDownPath: [...state.drillDownPath, node],
+    })),
+
+  popDrillDownTo: (view) =>
+    set((state) => {
+      const index = state.drillDownPath.findIndex((n) => n.view === view)
+      if (index === -1) return { drillDownPath: [] }
+      return {
+        drillDownPath: state.drillDownPath.slice(0, index + 1),
+      }
+    }),
+
+  setDrillDownParam: (key, value) =>
+    set((state) => ({
+      drillDownParams: { ...state.drillDownParams, [key]: value },
+    })),
+
+  resetDrillDown: () =>
+    set({
+      drillDownPath: [],
+      drillDownParams: {},
+    }),
+
   reset: () => set({ ...defaultState }),
 }))
