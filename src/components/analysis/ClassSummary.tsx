@@ -14,6 +14,22 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
   const { selectedScope, selectedSubjectId } = useAnalysisStore()
   const { data, isLoading } = useClassSummary(examId, selectedScope, selectedSubjectId ?? undefined)
 
+  const {
+    setCurrentView,
+    setDrillDownParam,
+    pushDrillDown,
+  } = useAnalysisStore()
+
+  const handleClassClick = (classId: number, className: string) => {
+    setDrillDownParam('classId', String(classId))
+    pushDrillDown({
+      view: 'class-subject-summary',
+      label: className,
+      params: { classId: String(classId) },
+    })
+    setCurrentView('class-subject-summary')
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -26,71 +42,66 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3">
-          {data?.classDetails.map((cls, index) => {
-            const passRate = cls.difficulty ?? 0
-            return (
-              <div key={cls.classId} className="rounded-xl border border-border/60 bg-card p-5">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground">{cls.className}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {index % 3 === 0 ? '实验班' : index % 3 === 1 ? '平行班' : '特色班'} / 班主任：{' '}
-                      {['李建华', '王晓红', '陈明', '张丽', '刘强', '赵敏'][index % 6]}
-                    </p>
-                  </div>
-                  <div className={cn(
-                    'flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium',
-                    index % 3 === 0 ? 'bg-blue-100 text-blue-600' :
-                    index % 3 === 1 ? 'bg-purple-100 text-purple-600' :
-                    'bg-emerald-100 text-emerald-600'
+        <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border/60 bg-muted/30">
+                <th className="py-3 px-5 text-left font-medium text-muted-foreground">班级</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">人数</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">平均分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">最高分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">最低分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">离均差</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.overallGrade && (
+                <tr className="border-b border-border/40 bg-primary/5 font-semibold">
+                  <td className="py-3 px-5">{data.overallGrade.className}</td>
+                  <td className="py-3 px-5 text-right">{data.overallGrade.totalStudents}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.avgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.highestScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.lowestScore)}</td>
+                  <td className="py-3 px-5 text-right">—</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.stdDev)}</td>
+                </tr>
+              )}
+              {data?.classDetails.map((cls) => (
+                <tr
+                  key={cls.classId}
+                  className="border-b border-border/40 transition-colors hover:bg-muted/20"
+                >
+                  <td className="py-3 px-5">
+                    <button
+                      onClick={() => handleClassClick(cls.classId, cls.className)}
+                      className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
+                    >
+                      {cls.className}
+                    </button>
+                  </td>
+                  <td className="py-3 px-5 text-right">{cls.totalStudents}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.avgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.highestScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.lowestScore)}</td>
+                  <td className={cn(
+                    'py-3 px-5 text-right font-medium',
+                    cls.scoreDeviation >= 0 ? 'text-emerald-600' : 'text-red-600'
                   )}>
-                    {index + 1}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">平均分</span>
-                    <span className="text-lg font-bold text-foreground">{formatNumber(cls.avgScore)}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">离均差</span>
-                    <span className={cn(
-                      'text-sm font-medium',
-                      cls.scoreDeviation >= 0 ? 'text-emerald-600' : 'text-red-600'
-                    )}>
-                      {cls.scoreDeviation >= 0 ? '+' : ''}{formatNumber(cls.scoreDeviation)}
-                    </span>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm text-muted-foreground">达标率</span>
-                      <span className="text-sm font-medium text-foreground">{formatNumber(passRate)}%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                      <div
-                        className={cn(
-                          'h-full rounded-full transition-all',
-                          passRate >= 90 ? 'bg-emerald-500' :
-                          passRate >= 80 ? 'bg-blue-500' :
-                          passRate >= 70 ? 'bg-amber-500' : 'bg-red-500'
-                        )}
-                        style={{ width: `${Math.min(passRate, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-          {(!data?.classDetails || data.classDetails.length === 0) && (
-            <div className="col-span-3 py-8 text-center text-sm text-muted-foreground rounded-xl border border-border/60 bg-card">
-              暂无班级数据
-            </div>
-          )}
+                    {cls.scoreDeviation >= 0 ? '+' : ''}{formatNumber(cls.scoreDeviation)}
+                  </td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.stdDev)}</td>
+                </tr>
+              ))}
+              {(!data?.classDetails || data.classDetails.length === 0) && (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                    暂无班级数据
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
