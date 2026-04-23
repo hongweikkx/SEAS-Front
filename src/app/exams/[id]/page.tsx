@@ -67,7 +67,11 @@ export default function ExamDetailPage({ params }: PageProps) {
     const qId = url.searchParams.get('qId')
 
     if (classId) useAnalysisStore.getState().setDrillDownParam('classId', classId)
-    if (subjectId) useAnalysisStore.getState().setDrillDownParam('subjectId', subjectId)
+    if (subjectId) {
+      useAnalysisStore.getState().setDrillDownParam('subjectId', subjectId)
+      useAnalysisStore.getState().setSelectedSubjectId(subjectId)
+      useAnalysisStore.getState().setSelectedScope('single_subject')
+    }
     if (qId) useAnalysisStore.getState().setDrillDownParam('questionId', qId)
   }, [])
 
