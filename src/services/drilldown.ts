@@ -224,7 +224,7 @@ const mockSingleQuestionDetail = (
         answerContent: score >= fullScore * 0.6 ? '回答正确' : '回答有误',
       }
     }).sort((a, b) => b.score - a.score)
-      .map((s, i) => ({ ...s, classRank: i + 1 })),
+      .map((s, i) => ({ ...s, classRank: i + 1, gradeRank: i + 1 })),
   }
 }
 
