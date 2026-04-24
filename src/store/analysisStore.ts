@@ -40,6 +40,7 @@ interface AnalysisState {
   popDrillDownTo: (view: AnalysisView) => void
   setDrillDownParam: (key: keyof AnalysisState['drillDownParams'], value: string | undefined) => void
   resetDrillDown: () => void
+  updateLastDrillDownLabel: (label: string) => void
 
   aiAnalysisResults: Record<AnalysisView, AIAnalysisResult | null>
   aiAnalysisLoading: Record<AnalysisView, boolean>
@@ -135,6 +136,14 @@ export const useAnalysisStore = create<AnalysisState>()(
         set({
           drillDownPath: [],
           drillDownParams: {},
+        }),
+
+      updateLastDrillDownLabel: (label) =>
+        set((state) => {
+          if (state.drillDownPath.length === 0) return state
+          const newPath = [...state.drillDownPath]
+          newPath[newPath.length - 1] = { ...newPath[newPath.length - 1], label }
+          return { drillDownPath: newPath }
         }),
 
       generateAIAnalysis: async (view, examId, params) => {

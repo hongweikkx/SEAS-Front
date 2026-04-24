@@ -3,15 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  BarChart3,
   BookOpen,
   GraduationCap,
   Home,
   LayoutList,
   PlusCircle,
   Users,
-  Search,
-  FileText,
   ClipboardList,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -30,7 +27,7 @@ const mainNavItems: NavItem[] = [
   { label: '新建分析', href: '/create', icon: <PlusCircle className="h-[18px] w-[18px]" /> },
 ]
 
-// 所有7个分析维度
+// 侧边栏直接可进入的顶层分析维度（下钻视图需从上层表格点击进入）
 const allAnalysisDimensions: Array<{
   key: AnalysisView
   label: string
@@ -39,11 +36,9 @@ const allAnalysisDimensions: Array<{
 }> = [
   { key: 'class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'subject-summary', label: '学科情况汇总', icon: <LayoutList className="h-[15px] w-[15px]" />, scope: 'all' },
-  { key: 'class-subject-summary', label: '班级学科汇总', icon: <BarChart3 className="h-[15px] w-[15px]" />, scope: 'all' },
+  { key: 'class-subject-summary', label: '班级学科汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'single-class-summary', label: '单科班级汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
-  { key: 'single-class-question', label: '单科班级题目', icon: <FileText className="h-[15px] w-[15px]" />, scope: 'single' },
   { key: 'single-question-summary', label: '单科题目汇总', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
-  { key: 'single-question-detail', label: '单科班级题目详情', icon: <Search className="h-[15px] w-[15px]" />, scope: 'single' },
 ]
 
 export function AppSidebar() {

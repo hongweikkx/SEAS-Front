@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useClassSubjectSummary } from '@/hooks/useDrilldown'
+import { useClassSummary } from '@/hooks/useAnalysis'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
@@ -13,8 +15,28 @@ interface ClassSubjectSummaryProps {
 }
 
 export default function ClassSubjectSummary({ examId }: ClassSubjectSummaryProps) {
-  const { drillDownParams } = useAnalysisStore()
+  const {
+    drillDownParams,
+    setDrillDownParam,
+    pushDrillDown,
+    updateLastDrillDownLabel,
+    drillDownPath,
+  } = useAnalysisStore()
+
   const classId = drillDownParams.classId ? Number(drillDownParams.classId) : undefined
+
+  // 获取班级列表用于筛选
+  const { data: classSummaryData } = useClassSummary(examId, 'all_subjects')
+
+
+  // 如果没有 classId，默认选择第一个班级
+  useEffect(() => {
+    if (!classId && classSummaryData?.classDetails && classSummaryData.classDetails.length > 0) {
+      const firstClassId = String(classSummaryData.classDetails[0].classId)
+      setDrillDownParam('classId', firstClassId)
+    }
+  }, [classId, classSummaryData, setDrillDownParam])
+
   const { data, isLoading } = useClassSubjectSummary(examId, classId)
 
   const {
@@ -22,9 +44,23 @@ export default function ClassSubjectSummary({ examId }: ClassSubjectSummaryProps
     setSelectedScope,
     setSelectedSubjectId,
     setSelectedSubjectName,
-    setDrillDownParam,
-    pushDrillDown,
   } = useAnalysisStore()
+
+  // 切换班级时更新参数和面包屑
+  const handleClassChange = (newClassId: number, newClassName: string) => {
+    setDrillDownParam('classId', String(newClassId))
+    // 如果有下钻路径，更新最后一个节点的标签
+    if (drillDownPath.length > 0) {
+      updateLastDrillDownLabel(newClassName)
+    } else {
+      // 如果没有下钻路径（直接从侧边栏进入），添加一个
+      pushDrillDown({
+        view: 'class-subject-summary',
+        label: newClassName,
+        params: { classId: String(newClassId) },
+      })
+    }
+  }
 
   const handleSubjectClick = (subjectId: string, subjectName: string) => {
     setSelectedScope('single_subject')
@@ -44,13 +80,35 @@ export default function ClassSubjectSummary({ examId }: ClassSubjectSummaryProps
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
-          <h2 className="text-lg font-semibold text-foreground">
-            {data?.className || '班级'} — 学科情况汇总
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground">班级学科汇总</h2>
         </div>
         <AIAnalysisTrigger view="class-subject-summary" examId={examId} />
       </div>
-      <p className="text-xs text-muted-foreground">该班级各学科成绩与全年级对比</p>
+
+      {/* 班级筛选器 */}
+      {classSummaryData?.classDetails && classSummaryData.classDetails.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm text-muted-foreground">筛选班级：</span>
+          {classSummaryData.classDetails.map((cls) => (
+            <button
+              key={cls.classId}
+              onClick={() => handleClassChange(cls.classId, cls.className)}
+              className={cn(
+                'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                String(classId) === String(cls.classId)
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              )}
+            >
+              {cls.className}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <p className="text-xs text-muted-foreground">
+        {data?.className || '选中班级'}各学科成绩与全年级对比
+      </p>
 
       {isLoading && !data ? (
         <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
