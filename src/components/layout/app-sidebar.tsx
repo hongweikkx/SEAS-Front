@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAnalysisStore } from '@/store/analysisStore'
-import type { AnalysisView } from '@/store/analysisStore'
+import type { AnalysisView } from '@/types'
 
 interface NavItem {
   label: string

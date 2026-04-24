@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Download, Share2 } from 'lucide-react'
 import { useSubjects } from '@/hooks/useAnalysis'
 import { cn } from '@/lib/utils'
-import type { AnalysisView } from '@/store/analysisStore'
+import type { AnalysisView } from '@/types'
 
 interface PageProps {
   params: Promise<{

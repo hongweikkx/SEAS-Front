@@ -1,4 +1,4 @@
-import type { AnalysisView } from '@/store/analysisStore'
+import type { AnalysisView } from '@/types'
 
 /** 可点击词的跳转协议 */
 export interface AILink {

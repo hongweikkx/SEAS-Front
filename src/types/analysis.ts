@@ -1,3 +1,19 @@
+export type AnalysisView =
+  | 'class-summary'
+  | 'subject-summary'
+  | 'rating-analysis'
+  | 'class-subject-summary'
+  | 'single-class-summary'
+  | 'single-class-question'
+  | 'single-question-summary'
+  | 'single-question-detail'
+
+export interface DrillDownNode {
+  view: AnalysisView
+  label: string
+  params?: Record<string, string>
+}
+
 // 学科相关类型定义
 export interface Subject {
   id: string
