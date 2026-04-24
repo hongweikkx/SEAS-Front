@@ -93,7 +93,7 @@ const defaultState = {
 
 export const useAnalysisStore = create<AnalysisState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...defaultState,
 
       setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
@@ -162,7 +162,7 @@ export const useAnalysisStore = create<AnalysisState>()(
 
       executeAILink: (link) => {
         const { targetView, params } = link
-        const state = useAnalysisStore.getState()
+        const state = get()
 
         if (params?.classId) state.setDrillDownParam('classId', params.classId)
         if (params?.subjectId) {
