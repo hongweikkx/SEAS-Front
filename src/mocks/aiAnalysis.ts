@@ -6,7 +6,7 @@ import type { AnalysisView, AIAnalysisResult, AILink } from '@/types'
 export function generateMockAIAnalysis(
   view: AnalysisView,
   _examId: string,
-  _params: Record<string, string | undefined>
+  _params: { classId?: string; subjectId?: string; questionId?: string }
 ): AIAnalysisResult {
   const now = Date.now()
 
