@@ -5,6 +5,8 @@ import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
+import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
 interface ClassSubjectSummaryProps {
   examId: string
@@ -39,11 +41,14 @@ export default function ClassSubjectSummary({ examId }: ClassSubjectSummaryProps
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="h-5 w-1 rounded-full bg-primary" />
-        <h2 className="text-lg font-semibold text-foreground">
-          {data?.className || '班级'} — 学科情况汇总
-        </h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-1 rounded-full bg-primary" />
+          <h2 className="text-lg font-semibold text-foreground">
+            {data?.className || '班级'} — 学科情况汇总
+          </h2>
+        </div>
+        <AIAnalysisTrigger view="class-subject-summary" examId={examId} />
       </div>
       <p className="text-xs text-muted-foreground">该班级各学科成绩与全年级对比</p>
 
@@ -123,6 +128,7 @@ export default function ClassSubjectSummary({ examId }: ClassSubjectSummaryProps
           </table>
         </div>
       )}
+      <AIAnalysisPanel view="class-subject-summary" />
     </div>
   )
 }

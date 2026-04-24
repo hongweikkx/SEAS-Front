@@ -4,6 +4,8 @@ import { useSubjectSummary } from '@/hooks/useAnalysis'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
+import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
+import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
 interface SubjectSummaryProps {
   examId: string
@@ -37,9 +39,12 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="h-5 w-1 rounded-full bg-primary" />
-        <h2 className="text-lg font-semibold text-foreground">学科情况汇总</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-1 rounded-full bg-primary" />
+          <h2 className="text-lg font-semibold text-foreground">学科情况汇总</h2>
+        </div>
+        <AIAnalysisTrigger view="subject-summary" examId={examId} />
       </div>
 
       <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
@@ -94,6 +99,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
           </table>
         )}
       </div>
+      <AIAnalysisPanel view="subject-summary" />
     </div>
   )
 }

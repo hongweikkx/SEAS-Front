@@ -5,6 +5,8 @@ import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
+import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
 interface SingleQuestionSummaryProps {
   examId: string
@@ -37,11 +39,14 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="h-5 w-1 rounded-full bg-primary" />
-        <h2 className="text-lg font-semibold text-foreground">
-          {data?.subjectName || '单科'} — 题目汇总
-        </h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-1 rounded-full bg-primary" />
+          <h2 className="text-lg font-semibold text-foreground">
+            {data?.subjectName || '单科'} — 题目汇总
+          </h2>
+        </div>
+        <AIAnalysisTrigger view="single-question-summary" examId={examId} />
       </div>
       <p className="text-xs text-muted-foreground">各题目班级得分对比</p>
 
@@ -101,6 +106,7 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           </table>
         </div>
       )}
+      <AIAnalysisPanel view="single-question-summary" />
     </div>
   )
 }

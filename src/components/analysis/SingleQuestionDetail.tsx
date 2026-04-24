@@ -4,6 +4,8 @@ import { useSingleQuestionDetail } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
+import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
+import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
 interface SingleQuestionDetailProps {
   examId: string
@@ -29,11 +31,14 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="h-5 w-1 rounded-full bg-primary" />
-        <h2 className="text-lg font-semibold text-foreground">
-          {data?.className || '班级'} {data?.subjectName || '学科'} — 第{data?.questionNumber ?? ''}题学生得分详情
-        </h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-1 rounded-full bg-primary" />
+          <h2 className="text-lg font-semibold text-foreground">
+            {data?.className || '班级'} {data?.subjectName || '学科'} — 第{data?.questionNumber ?? ''}题学生得分详情
+          </h2>
+        </div>
+        <AIAnalysisTrigger view="single-question-detail" examId={examId} />
       </div>
       <p className="text-xs text-muted-foreground">各学生该题得分、排名与作答情况</p>
       {data?.questionContent && (
@@ -88,6 +93,7 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           </table>
         </div>
       )}
+      <AIAnalysisPanel view="single-question-detail" />
     </div>
   )
 }
