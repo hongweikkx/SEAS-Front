@@ -2,3 +2,4 @@
 export * from './exam'
 export * from './analysis'
 export * from './drilldown'
+export * from './ai'
