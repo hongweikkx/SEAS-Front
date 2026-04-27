@@ -55,13 +55,15 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
                 <th className="py-3 px-5 text-left font-medium text-muted-foreground">班级</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">人数</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">该科均分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级均分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">分差</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级排名</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">及格率</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">优秀率</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">平均分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">最高分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">最低分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">离均差</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
               </tr>
             </thead>
             <tbody>
@@ -69,12 +71,14 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
                 <tr className="border-b border-border/40 bg-primary/5 font-semibold">
                   <td className="py-3 px-5">{data.overall.className}</td>
                   <td className="py-3 px-5 text-right">{data.overall.totalStudents}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.subjectAvgScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.gradeAvgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.fullScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.avgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.highestScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.lowestScore)}</td>
                   <td className="py-3 px-5 text-right">—</td>
-                  <td className="py-3 px-5 text-right">—</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.passRate)}%</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.excellentRate)}%</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.difficulty)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.stdDev)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.discrimination)}</td>
                 </tr>
               )}
               {data?.classes.map((cls) => (
@@ -91,22 +95,24 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
                     </button>
                   </td>
                   <td className="py-3 px-5 text-right">{cls.totalStudents}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.subjectAvgScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.gradeAvgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.fullScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.avgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.highestScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.lowestScore)}</td>
                   <td className={cn(
                     'py-3 px-5 text-right font-medium',
-                    cls.scoreDiff >= 0 ? 'text-emerald-600' : 'text-red-600'
+                    cls.scoreDeviation >= 0 ? 'text-emerald-600' : 'text-red-600'
                   )}>
-                    {cls.scoreDiff >= 0 ? '+' : ''}{formatNumber(cls.scoreDiff)}
+                    {cls.scoreDeviation >= 0 ? '+' : ''}{formatNumber(cls.scoreDeviation)}
                   </td>
-                  <td className="py-3 px-5 text-right">{cls.classRank}/{cls.totalClasses}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.passRate)}%</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.excellentRate)}%</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.difficulty)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.stdDev)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.discrimination)}</td>
                 </tr>
               ))}
               {(!data?.classes || data.classes.length === 0) && (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={10} className="py-8 text-center text-sm text-muted-foreground">
                     暂无数据
                   </td>
                 </tr>

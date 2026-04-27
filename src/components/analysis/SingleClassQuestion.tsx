@@ -12,7 +12,7 @@ interface SingleClassQuestionProps {
   examId: string
 }
 
-import { difficultyLabel } from '@/utils/format'
+import { getDifficultyLevel, getDifficultyColor } from '@/utils/format'
 
 export default function SingleClassQuestion({ examId }: SingleClassQuestionProps) {
   const { selectedSubjectId, drillDownParams } = useAnalysisStore()
@@ -75,34 +75,31 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
               </tr>
             </thead>
             <tbody>
-              {data?.questions.map((q) => {
-                const diff = difficultyLabel[q.difficulty] || difficultyLabel.medium
-                return (
-                  <tr
-                    key={q.questionId}
-                    className="border-b border-border/40 transition-colors hover:bg-muted/20"
-                  >
-                    <td className="py-3 px-5">
-                      <button
-                        onClick={() => handleQuestionClick(q.questionId, q.questionNumber)}
-                        className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
-                      >
-                        第{q.questionNumber}题
-                      </button>
-                    </td>
-                    <td className="py-3 px-5">{q.questionType}</td>
-                    <td className="py-3 px-5 text-right">{q.fullScore}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(q.classAvgScore)}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(q.scoreRate)}%</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(q.gradeAvgScore)}</td>
-                    <td className="py-3 px-5 text-center">
-                      <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium', diff.className)}>
-                        {diff.label}
-                      </span>
-                    </td>
-                  </tr>
-                )
-              })}
+              {data?.questions.map((q) => (
+                <tr
+                  key={q.questionId}
+                  className="border-b border-border/40 transition-colors hover:bg-muted/20"
+                >
+                  <td className="py-3 px-5">
+                    <button
+                      onClick={() => handleQuestionClick(q.questionId, q.questionNumber)}
+                      className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
+                    >
+                      第{q.questionNumber}题
+                    </button>
+                  </td>
+                  <td className="py-3 px-5">{q.questionType}</td>
+                  <td className="py-3 px-5 text-right">{q.fullScore}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(q.classAvgScore)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(q.scoreRate)}%</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(q.gradeAvgScore)}</td>
+                  <td className="py-3 px-5 text-center">
+                    <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium', getDifficultyColor(q.difficulty))}>
+                      {getDifficultyLevel(q.difficulty)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
               {(!data?.questions || data.questions.length === 0) && (
                 <tr>
                   <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">

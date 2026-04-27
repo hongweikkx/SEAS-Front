@@ -21,27 +21,14 @@ export interface ClassSubjectSummaryResponse {
   subjects: ClassSubjectItem[]
 }
 
-// 视图4：单科班级汇总
-export interface SingleClassSummaryItem {
-  classId: number
-  className: string
-  totalStudents: number
-  subjectAvgScore: number
-  gradeAvgScore: number
-  scoreDiff: number
-  classRank: number
-  totalClasses: number
-  passRate: number
-  excellentRate: number
-}
-
+// 视图4：单科班级汇总（复用 ClassSummary 结构）
 export interface SingleClassSummaryResponse {
   examId: string
   examName: string
   subjectId: string
   subjectName: string
-  overall: SingleClassSummaryItem  // 全年级行
-  classes: SingleClassSummaryItem[]
+  overall: import('./analysis').ClassSummary  // 全年级行
+  classes: import('./analysis').ClassSummary[]
 }
 
 // 视图5：单科班级题目
@@ -53,7 +40,7 @@ export interface ClassQuestionItem {
   classAvgScore: number
   scoreRate: number
   gradeAvgScore: number
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: number
 }
 
 export interface SingleClassQuestionResponse {
@@ -81,7 +68,7 @@ export interface SingleQuestionSummaryItem {
   gradeAvgScore: number
   classBreakdown: QuestionClassBreakdown[]
   scoreRate: number
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: number
 }
 
 export interface SingleQuestionSummaryResponse {

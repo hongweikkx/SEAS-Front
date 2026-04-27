@@ -126,56 +126,65 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
                     <th className="py-3 px-5 text-left font-medium text-muted-foreground">学科</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">平均分</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">最高分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度系数</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">学科表现</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">最低分</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">离均差</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.overall && (
                     <tr className="border-b border-border/40 bg-primary/5 font-semibold">
                       <td className="py-3 px-5">{data.overall.name}</td>
+                      <td className="py-3 px-5 text-right">{data.overall.studentCount}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.fullScore)}</td>
                       <td className="py-3 px-5 text-right">{formatNumber(data.overall.avgScore)}</td>
                       <td className="py-3 px-5 text-right">{formatNumber(data.overall.highestScore)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.difficulty / 100)}</td>
-                      <td className="py-3 px-5 text-right">
-                        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${getPerformanceTag(data.overall.difficulty).className}`}>
-                          {getPerformanceTag(data.overall.difficulty).label}
-                        </span>
-                      </td>
+                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.lowestScore)}</td>
+                      <td className="py-3 px-5 text-right">—</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.difficulty)}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.stdDev)}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.discrimination)}</td>
                     </tr>
                   )}
-                  {data?.subjects.map((subject) => {
-                    const perf = getPerformanceTag(subject.difficulty)
-                    return (
-                      <tr key={subject.id} className="border-b border-border/40 transition-colors hover:bg-muted/20">
-                        <td className="py-3 px-5">
-                          {selectedScope === 'all_subjects' ? (
-                            <button
-                              onClick={() => handleSubjectClick(subject.id, subject.name)}
-                              className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
-                            >
-                              {subject.name}
-                            </button>
-                          ) : (
-                            <span className="font-medium text-foreground">{subject.name}</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-5 text-right font-medium">{formatNumber(subject.avgScore)}</td>
-                        <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.highestScore)}</td>
-                        <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.difficulty / 100)}</td>
-                        <td className="py-3 px-5 text-right">
-                          <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${perf.className}`}>
-                            {perf.label}
-                          </span>
-                        </td>
-                      </tr>
-                    )
-                  })}
+                  {data?.subjects.map((subject) => (
+                    <tr key={subject.id} className="border-b border-border/40 transition-colors hover:bg-muted/20">
+                      <td className="py-3 px-5">
+                        {selectedScope === 'all_subjects' ? (
+                          <button
+                            onClick={() => handleSubjectClick(subject.id, subject.name)}
+                            className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
+                          >
+                            {subject.name}
+                          </button>
+                        ) : (
+                          <span className="font-medium text-foreground">{subject.name}</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-5 text-right">{subject.studentCount}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(subject.fullScore)}</td>
+                      <td className="py-3 px-5 text-right font-medium">{formatNumber(subject.avgScore)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.highestScore)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.lowestScore)}</td>
+                      <td className={cn(
+                        'py-3 px-5 text-right font-medium',
+                        subject.scoreDeviation >= 0 ? 'text-emerald-600' : 'text-red-600'
+                      )}>
+                        {subject.scoreDeviation >= 0 ? '+' : ''}{formatNumber(subject.scoreDeviation)}
+                      </td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.difficulty)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.stdDev)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.discrimination)}</td>
+                    </tr>
+                  ))}
                   {(!data?.subjects || data.subjects.length === 0) && (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                      <td colSpan={10} className="py-8 text-center text-sm text-muted-foreground">
                         暂无学科数据
                       </td>
                     </tr>

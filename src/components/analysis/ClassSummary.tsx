@@ -52,12 +52,15 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
                 <th className="py-3 px-5 text-left font-medium text-muted-foreground">班级</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">人数</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">平均分</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">最高分</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">最低分</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">离均差</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
               </tr>
             </thead>
             <tbody>
@@ -65,11 +68,14 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
                 <tr className="border-b border-border/40 bg-primary/5 font-semibold">
                   <td className="py-3 px-5">{data.overallGrade.className}</td>
                   <td className="py-3 px-5 text-right">{data.overallGrade.totalStudents}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.fullScore)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.avgScore)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.highestScore)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.lowestScore)}</td>
                   <td className="py-3 px-5 text-right">—</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.difficulty)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.stdDev)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.discrimination)}</td>
                 </tr>
               )}
               {data?.classDetails.map((cls) => (
@@ -86,6 +92,7 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
                     </button>
                   </td>
                   <td className="py-3 px-5 text-right">{cls.totalStudents}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.fullScore)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(cls.avgScore)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(cls.highestScore)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(cls.lowestScore)}</td>
@@ -95,12 +102,14 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
                   )}>
                     {cls.scoreDeviation >= 0 ? '+' : ''}{formatNumber(cls.scoreDeviation)}
                   </td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.difficulty)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(cls.stdDev)}</td>
+                  <td className="py-3 px-5 text-right">{formatNumber(cls.discrimination)}</td>
                 </tr>
               ))}
               {(!data?.classDetails || data.classDetails.length === 0) && (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={10} className="py-8 text-center text-sm text-muted-foreground">
                     暂无班级数据
                   </td>
                 </tr>

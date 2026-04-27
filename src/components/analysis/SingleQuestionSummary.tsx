@@ -12,7 +12,7 @@ interface SingleQuestionSummaryProps {
   examId: string
 }
 
-import { difficultyLabel } from '@/utils/format'
+import { getDifficultyLevel, getDifficultyColor } from '@/utils/format'
 
 export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryProps) {
   const { selectedSubjectId, drillDownParams, setDrillDownParam } = useAnalysisStore()
@@ -102,7 +102,6 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
             </thead>
             <tbody>
               {data?.questions.map((q) => {
-                const diff = difficultyLabel[q.difficulty] || difficultyLabel.medium
                 const classBreakdown = selectedClassId === 'all'
                   ? null
                   : q.classBreakdown.find((c) => String(c.classId) === selectedClassId)
@@ -125,8 +124,8 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
                     <td className="py-3 px-5 text-right">{formatNumber(avgScore)}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(q.scoreRate)}%</td>
                     <td className="py-3 px-5 text-center">
-                      <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium', diff.className)}>
-                        {diff.label}
+                      <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium', getDifficultyColor(q.difficulty))}>
+                        {getDifficultyLevel(q.difficulty)}
                       </span>
                     </td>
                   </tr>

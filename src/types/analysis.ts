@@ -36,6 +36,9 @@ export interface SubjectSummary {
   lowestScore: number
   difficulty: number
   studentCount: number
+  scoreDeviation: number
+  stdDev: number
+  discrimination: number
 }
 
 export interface SubjectSummaryResponse {
@@ -54,12 +57,14 @@ export interface ClassSummary {
   classId: number
   className: string
   totalStudents: number
+  fullScore: number
   avgScore: number
   highestScore: number
   lowestScore: number
   scoreDeviation: number
   difficulty: number
   stdDev: number
+  discrimination: number
 }
 
 export interface ClassSummaryResponse {
