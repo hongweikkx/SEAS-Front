@@ -74,7 +74,6 @@ const defaultState = {
     'class-summary': null,
     'subject-summary': null,
     'rating-analysis': null,
-    'class-subject-summary': null,
     'single-class-summary': null,
     'single-class-question': null,
     'single-question-summary': null,
@@ -84,7 +83,6 @@ const defaultState = {
     'class-summary': false,
     'subject-summary': false,
     'rating-analysis': false,
-    'class-subject-summary': false,
     'single-class-summary': false,
     'single-class-question': false,
     'single-question-summary': false,
@@ -193,7 +191,7 @@ export const useAnalysisStore = create<AnalysisState>()(
 
         state.pushDrillDown({
           view: targetView,
-          label: link.label,
+          label: `智能分析${link.label}`,
           params,
         })
         state.setCurrentView(targetView)

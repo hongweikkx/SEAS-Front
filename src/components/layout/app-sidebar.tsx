@@ -36,9 +36,8 @@ const allAnalysisDimensions: Array<{
 }> = [
   { key: 'class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'subject-summary', label: '学科情况汇总', icon: <LayoutList className="h-[15px] w-[15px]" />, scope: 'all' },
-  { key: 'class-subject-summary', label: '班级学科汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'all' },
-  { key: 'single-class-summary', label: '单科班级汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
-  { key: 'single-question-summary', label: '单科题目汇总', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-question-summary', label: '试题分析', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
 ]
 
 export function AppSidebar() {

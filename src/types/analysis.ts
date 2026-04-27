@@ -2,7 +2,6 @@ export type AnalysisView =
   | 'class-summary'
   | 'subject-summary'
   | 'rating-analysis'
-  | 'class-subject-summary'
   | 'single-class-summary'
   | 'single-class-question'
   | 'single-question-summary'
@@ -46,6 +45,7 @@ export interface SubjectSummaryResponse {
   totalParticipants: number
   subjectsInvolved?: number
   classesInvolved?: number
+  overall?: SubjectSummary
   subjects: SubjectSummary[]
 }
 

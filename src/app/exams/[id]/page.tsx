@@ -4,7 +4,6 @@ import { useAnalysisStore } from '@/store/analysisStore'
 import SubjectSummary from '@/components/analysis/SubjectSummary'
 import ClassSummary from '@/components/analysis/ClassSummary'
 import RatingChart from '@/components/analysis/RatingChart'
-import ClassSubjectSummary from '@/components/analysis/ClassSubjectSummary'
 import SingleClassSummary from '@/components/analysis/SingleClassSummary'
 import SingleClassQuestion from '@/components/analysis/SingleClassQuestion'
 import SingleQuestionSummary from '@/components/analysis/SingleQuestionSummary'
@@ -27,7 +26,6 @@ const viewComponentMap: Record<AnalysisView, React.ComponentType<{ examId: strin
   'class-summary': ClassSummary,
   'subject-summary': SubjectSummary,
   'rating-analysis': RatingChart,
-  'class-subject-summary': ClassSubjectSummary,
   'single-class-summary': SingleClassSummary,
   'single-class-question': SingleClassQuestion,
   'single-question-summary': SingleQuestionSummary,
@@ -45,6 +43,7 @@ export default function ExamDetailPage({ params }: PageProps) {
     setSelectedSubjectId,
     setSelectedSubjectName,
     drillDownParams,
+    resetDrillDown,
   } = useAnalysisStore()
   const { id: examId } = use(params)
   const { data: subjectsData } = useSubjects(examId, 1, 100)
@@ -118,6 +117,7 @@ export default function ExamDetailPage({ params }: PageProps) {
                 setSelectedSubjectId(null)
                 setSelectedSubjectName(null)
                 setCurrentView('class-summary')
+                resetDrillDown()
               }}
               className={cn(
                 'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
@@ -136,6 +136,7 @@ export default function ExamDetailPage({ params }: PageProps) {
                   setSelectedSubjectId(subject.id)
                   setSelectedSubjectName(subject.name)
                   setCurrentView('single-class-summary')
+                  resetDrillDown()
                 }}
                 className={cn(
                   'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',

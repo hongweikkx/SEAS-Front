@@ -15,12 +15,12 @@ interface SingleQuestionSummaryProps {
 import { difficultyLabel } from '@/utils/format'
 
 export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryProps) {
-  const { selectedSubjectId } = useAnalysisStore()
+  const { selectedSubjectId, drillDownParams, setDrillDownParam } = useAnalysisStore()
   const { data, isLoading } = useSingleQuestionSummary(examId, selectedSubjectId ?? undefined)
+  const selectedClassId = drillDownParams.classId ?? 'all'
 
   const {
     setCurrentView,
-    setDrillDownParam,
     pushDrillDown,
   } = useAnalysisStore()
 
@@ -28,7 +28,7 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
     setDrillDownParam('questionId', questionId)
     pushDrillDown({
       view: 'single-question-detail',
-      label: `第${questionNumber}题`,
+      label: `试题分析第${questionNumber}题`,
       params: {
         questionId,
         subjectId: selectedSubjectId || '',
@@ -37,18 +37,49 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
     setCurrentView('single-question-detail')
   }
 
+  // 从数据中提取班级列表
+  const classList = data?.questions[0]?.classBreakdown ?? []
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
-          <h2 className="text-lg font-semibold text-foreground">
-            {data?.subjectName || '单科'} — 题目汇总
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground">试题分析</h2>
         </div>
         <AIAnalysisTrigger view="single-question-summary" examId={examId} />
       </div>
-      <p className="text-xs text-muted-foreground">各题目班级得分对比</p>
+
+      {/* 班级刷选项 */}
+      {classList.length > 0 && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setDrillDownParam('classId', undefined)}
+            className={cn(
+              'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+              selectedClassId === 'all'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+            )}
+          >
+            全年级
+          </button>
+          {classList.map((cls) => (
+            <button
+              key={cls.classId}
+              onClick={() => setDrillDownParam('classId', String(cls.classId))}
+              className={cn(
+                'rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                selectedClassId === String(cls.classId)
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              )}
+            >
+              {cls.className}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isLoading && !data ? (
         <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
@@ -62,7 +93,9 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
                 <th className="py-3 px-5 text-left font-medium text-muted-foreground">题号</th>
                 <th className="py-3 px-5 text-left font-medium text-muted-foreground">题型</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">分值</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级均分</th>
+                <th className="py-3 px-5 text-right font-medium text-muted-foreground">
+                  {selectedClassId === 'all' ? '年级均分' : '班级均分'}
+                </th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">得分率</th>
                 <th className="py-3 px-5 text-center font-medium text-muted-foreground">难度</th>
               </tr>
@@ -70,6 +103,10 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
             <tbody>
               {data?.questions.map((q) => {
                 const diff = difficultyLabel[q.difficulty] || difficultyLabel.medium
+                const classBreakdown = selectedClassId === 'all'
+                  ? null
+                  : q.classBreakdown.find((c) => String(c.classId) === selectedClassId)
+                const avgScore = classBreakdown?.avgScore ?? q.gradeAvgScore
                 return (
                   <tr
                     key={q.questionId}
@@ -85,7 +122,7 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
                     </td>
                     <td className="py-3 px-5">{q.questionType}</td>
                     <td className="py-3 px-5 text-right">{q.fullScore}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(q.gradeAvgScore)}</td>
+                    <td className="py-3 px-5 text-right">{formatNumber(avgScore)}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(q.scoreRate)}%</td>
                     <td className="py-3 px-5 text-center">
                       <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium', diff.className)}>

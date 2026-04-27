@@ -46,17 +46,8 @@ export function generateMockAIAnalysis(
       return {
         segments: [
           makeText('四率分布显示：优秀率12%，良好率35%，及格率78%。'),
-          makeLink('查看班级详情', 'class-subject-summary'),
+          makeLink('查看学科详情', 'subject-summary'),
           makeText('以了解各班级四率差异。'),
-        ],
-        generatedAt: now,
-      }
-    case 'class-subject-summary':
-      return {
-        segments: [
-          makeText('班级学科交叉分析表明，'),
-          makeLink('高三1班数学', 'single-class-summary', { classId: '1', subjectId: 'math' }),
-          makeText('表现突出，可作为教学案例。'),
         ],
         generatedAt: now,
       }

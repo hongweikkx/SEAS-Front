@@ -33,7 +33,7 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
     setDrillDownParam('questionId', questionId)
     pushDrillDown({
       view: 'single-question-detail',
-      label: `第${questionNumber}题`,
+      label: `单科班级题目第${questionNumber}题`,
       params: {
         questionId,
         classId: String(classId),

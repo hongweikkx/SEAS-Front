@@ -25,11 +25,11 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
   const handleClassClick = (classId: number, className: string) => {
     setDrillDownParam('classId', String(classId))
     pushDrillDown({
-      view: 'class-subject-summary',
-      label: className,
+      view: 'subject-summary',
+      label: `全科班级情况汇总${className}`,
       params: { classId: String(classId) },
     })
-    setCurrentView('class-subject-summary')
+    setCurrentView('subject-summary')
   }
 
   return (

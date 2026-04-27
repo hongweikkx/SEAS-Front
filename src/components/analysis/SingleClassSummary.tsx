@@ -26,7 +26,7 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
     setDrillDownParam('classId', String(classId))
     pushDrillDown({
       view: 'single-class-question',
-      label: className,
+      label: `(${data?.subjectName || '单科'})班级情况汇总${className}`,
       params: { classId: String(classId), subjectId: selectedSubjectId || '' },
     })
     setCurrentView('single-class-question')
@@ -38,7 +38,7 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">
-            {data?.subjectName || '单科'} — 班级情况汇总
+            ({data?.subjectName || '单科'})班级情况汇总
           </h2>
         </div>
         <AIAnalysisTrigger view="single-class-summary" examId={examId} />
