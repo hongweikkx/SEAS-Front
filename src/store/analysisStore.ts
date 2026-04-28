@@ -149,11 +149,21 @@ export const useAnalysisStore = create<AnalysisState>()(
           aiAnalysisLoading: { ...state.aiAnalysisLoading, [view]: true },
         }))
         try {
-          const { generateMockAIAnalysis } = await import('@/mocks/aiAnalysis')
-          await new Promise((r) => setTimeout(r, 500))
-          const result = generateMockAIAnalysis(view, examId, params)
+          const { aiAnalysisService } = await import('@/services/aiAnalysis')
+          const result = await aiAnalysisService.generate(view, examId, params)
           set((state) => ({
             aiAnalysisResults: { ...state.aiAnalysisResults, [view]: result },
+          }))
+        } catch (err) {
+          console.error('AI analysis failed:', err)
+          set((state) => ({
+            aiAnalysisResults: {
+              ...state.aiAnalysisResults,
+              [view]: {
+                segments: [{ type: 'text' as const, content: '智能分析服务暂时不可用，请稍后重试。' }],
+                generatedAt: Date.now(),
+              },
+            },
           }))
         } finally {
           set((state) => ({
