@@ -40,7 +40,6 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
         </div>
         <AIAnalysisTrigger view="single-question-detail" examId={examId} />
       </div>
-      <p className="text-xs text-muted-foreground">各学生该题得分、排名与作答情况</p>
       {data?.questionContent && (
         <p className="text-xs text-muted-foreground">
           题目内容：{data.questionContent}
@@ -93,7 +92,7 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           </table>
         </div>
       )}
-      <AIAnalysisPanel view="single-question-detail" />
+      <AIAnalysisPanel view="single-question-detail" examId={examId} />
     </div>
   )
 }

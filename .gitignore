@@ -48,4 +48,8 @@ next-env.d.ts
 
 # playwright mcp temp files
 .playwright-mcp/
+.playwright-cli/
 integration-test-*.png
+
+# superpowers docs
+docs/superpowers/

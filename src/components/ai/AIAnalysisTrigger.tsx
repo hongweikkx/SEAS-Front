@@ -13,8 +13,9 @@ interface AIAnalysisTriggerProps {
 export default function AIAnalysisTrigger({ view, examId }: AIAnalysisTriggerProps) {
   const { aiAnalysisResults, aiAnalysisLoading, generateAIAnalysis, drillDownParams } =
     useAnalysisStore()
-  const result = aiAnalysisResults[view]
-  const isGenerating = aiAnalysisLoading[view]
+  const key = `${examId}:${view}`
+  const result = aiAnalysisResults[key]
+  const isGenerating = aiAnalysisLoading[key]
 
   const handleClick = () => {
     generateAIAnalysis(view, examId, drillDownParams)

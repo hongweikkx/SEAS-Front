@@ -118,7 +118,7 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
           </table>
         </div>
       )}
-      <AIAnalysisPanel view="class-summary" />
+      <AIAnalysisPanel view="class-summary" examId={examId} />
     </div>
   )
 }

@@ -4,8 +4,12 @@ import { useExams } from '@/hooks/useAnalysis'
 import { Loader2, FileQuestion } from 'lucide-react'
 import { ExamCard } from './ExamCard'
 
-export default function ExamList() {
-  const { data, isLoading, error } = useExams(1, 20)
+interface ExamListProps {
+  keyword?: string
+}
+
+export default function ExamList({ keyword }: ExamListProps) {
+  const { data, isLoading, error } = useExams(1, 20, keyword)
 
   if (isLoading) {
     return (

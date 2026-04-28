@@ -4,6 +4,7 @@ export interface Exam {
   name: string
   examDate: string
   createdAt: string
+  studentCount?: number
 }
 
 export interface ExamsResponse {

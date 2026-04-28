@@ -43,8 +43,6 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
         </div>
         <AIAnalysisTrigger view="single-class-summary" examId={examId} />
       </div>
-      <p className="text-xs text-muted-foreground">各班级该学科成绩对比</p>
-
       {isLoading && !data ? (
         <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -121,7 +119,7 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
           </table>
         </div>
       )}
-      <AIAnalysisPanel view="single-class-summary" />
+      <AIAnalysisPanel view="single-class-summary" examId={examId} />
     </div>
   )
 }

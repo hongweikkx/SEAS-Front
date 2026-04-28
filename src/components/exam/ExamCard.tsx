@@ -33,7 +33,7 @@ export function ExamCard({ exam }: ExamCardProps) {
         </div>
         <div className="flex items-center gap-1.5">
           <Users className="h-3.5 w-3.5" />
-          <span>-- 人</span>
+          <span>{exam.studentCount ?? '--'} 人</span>
         </div>
       </div>
     </Link>

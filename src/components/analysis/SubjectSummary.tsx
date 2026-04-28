@@ -107,12 +107,6 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
         </div>
       )}
 
-      {classId && (
-        <p className="text-xs text-muted-foreground">
-          {classSubjectData?.className || '选中班级'}各学科成绩与全年级对比
-        </p>
-      )}
-
       <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
         {/* 全年级模式 */}
         {!classId && (
@@ -207,11 +201,16 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
                     <th className="py-3 px-5 text-left font-medium text-muted-foreground">学科</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级均分</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级均分</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">分差</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级最高</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级最低</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
+                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级排名</th>
                   </tr>
                 </thead>
@@ -219,6 +218,8 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                   {classSubjectData?.overall && (
                     <tr className="border-b border-border/40 bg-primary/5 font-semibold">
                       <td className="py-3 px-5">{classSubjectData.overall.subjectName}</td>
+                      <td className="py-3 px-5 text-right">{classSubjectData.overall.studentCount}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.fullScore)}</td>
                       <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.classAvgScore)}</td>
                       <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.gradeAvgScore)}</td>
                       <td className={cn(
@@ -229,6 +230,9 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                       </td>
                       <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.classHighest)}</td>
                       <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.classLowest)}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.difficulty)}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.stdDev)}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(classSubjectData.overall.discrimination)}</td>
                       <td className="py-3 px-5 text-right">{classSubjectData.overall.classRank}/{classSubjectData.overall.totalClasses}</td>
                     </tr>
                   )}
@@ -249,22 +253,27 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                           </button>
                         )}
                       </td>
-                      <td className="py-3 px-5 text-right">{formatNumber(subject.classAvgScore)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(subject.gradeAvgScore)}</td>
+                      <td className="py-3 px-5 text-right">{subject.studentCount}</td>
+                      <td className="py-3 px-5 text-right">{formatNumber(subject.fullScore)}</td>
+                      <td className="py-3 px-5 text-right font-medium">{formatNumber(subject.classAvgScore)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.gradeAvgScore)}</td>
                       <td className={cn(
                         'py-3 px-5 text-right font-medium',
                         subject.scoreDiff >= 0 ? 'text-emerald-600' : 'text-red-600'
                       )}>
                         {subject.scoreDiff >= 0 ? '+' : ''}{formatNumber(subject.scoreDiff)}
                       </td>
-                      <td className="py-3 px-5 text-right">{formatNumber(subject.classHighest)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(subject.classLowest)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.classHighest)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.classLowest)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.difficulty)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.stdDev)}</td>
+                      <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.discrimination)}</td>
                       <td className="py-3 px-5 text-right">{subject.classRank}/{subject.totalClasses}</td>
                     </tr>
                   ))}
                   {(!classSubjectData?.subjects || classSubjectData.subjects.length === 0) && (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                      <td colSpan={12} className="py-8 text-center text-sm text-muted-foreground">
                         暂无数据
                       </td>
                     </tr>
@@ -275,7 +284,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
           </>
         )}
       </div>
-      <AIAnalysisPanel view="subject-summary" />
+      <AIAnalysisPanel view="subject-summary" examId={examId} />
     </div>
   )
 }

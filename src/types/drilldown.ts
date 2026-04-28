@@ -2,6 +2,7 @@
 export interface ClassSubjectItem {
   subjectId: string
   subjectName: string
+  studentCount: number
   fullScore: number
   classAvgScore: number
   gradeAvgScore: number
@@ -10,6 +11,9 @@ export interface ClassSubjectItem {
   classLowest: number
   classRank: number
   totalClasses: number
+  difficulty: number
+  stdDev: number
+  discrimination: number
 }
 
 export interface ClassSubjectSummaryResponse {

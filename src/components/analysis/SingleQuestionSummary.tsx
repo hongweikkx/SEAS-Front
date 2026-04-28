@@ -142,7 +142,7 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           </table>
         </div>
       )}
-      <AIAnalysisPanel view="single-question-summary" />
+      <AIAnalysisPanel view="single-question-summary" examId={examId} />
     </div>
   )
 }

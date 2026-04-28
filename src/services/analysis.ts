@@ -10,9 +10,9 @@ import type {
 
 export const examService = {
   // 获取考试列表
-  listExams: (pageIndex: number = 1, pageSize: number = 20): Promise<ExamsResponse> =>
+  listExams: (pageIndex: number = 1, pageSize: number = 20, keyword?: string): Promise<ExamsResponse> =>
     apiClient.get('/exams', {
-      params: { page_index: pageIndex, page_size: pageSize },
+      params: { page_index: pageIndex, page_size: pageSize, ...(keyword && { keyword }) },
     }),
 
   // 获取考试关联的学科列表

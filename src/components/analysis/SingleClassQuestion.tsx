@@ -54,8 +54,6 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
         </div>
         <AIAnalysisTrigger view="single-class-question" examId={examId} />
       </div>
-      <p className="text-xs text-muted-foreground">各题目得分情况与年级对比</p>
-
       {isLoading && !data ? (
         <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -111,7 +109,7 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
           </table>
         </div>
       )}
-      <AIAnalysisPanel view="single-class-question" />
+      <AIAnalysisPanel view="single-class-question" examId={examId} />
     </div>
   )
 }

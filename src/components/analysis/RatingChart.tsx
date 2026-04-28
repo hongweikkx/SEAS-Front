@@ -193,7 +193,7 @@ export default function RatingChart({ examId }: RatingChartProps) {
           </div>
         )}
       </div>
-      <AIAnalysisPanel view="rating-analysis" />
+      <AIAnalysisPanel view="rating-analysis" examId={examId} />
     </div>
   )
 }

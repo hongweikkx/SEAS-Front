@@ -42,10 +42,10 @@ interface AnalysisState {
   resetDrillDown: () => void
   updateLastDrillDownLabel: (label: string) => void
 
-  aiAnalysisResults: Record<AnalysisView, AIAnalysisResult | null>
-  aiAnalysisLoading: Record<AnalysisView, boolean>
+  aiAnalysisResults: Record<string, AIAnalysisResult | null>
+  aiAnalysisLoading: Record<string, boolean>
   generateAIAnalysis: (view: AnalysisView, examId: string, params: AnalysisState['drillDownParams']) => Promise<void>
-  clearAIAnalysis: (view: AnalysisView) => void
+  clearAIAnalysis: (view: AnalysisView, examId: string) => void
   executeAILink: (link: import('@/types').AILink) => void
 
   reset: () => void
@@ -70,24 +70,8 @@ const defaultState = {
   currentView: 'class-summary' as AnalysisView,
   drillDownPath: [] as DrillDownNode[],
   drillDownParams: {} as AnalysisState['drillDownParams'],
-  aiAnalysisResults: {
-    'class-summary': null,
-    'subject-summary': null,
-    'rating-analysis': null,
-    'single-class-summary': null,
-    'single-class-question': null,
-    'single-question-summary': null,
-    'single-question-detail': null,
-  } as Record<AnalysisView, AIAnalysisResult | null>,
-  aiAnalysisLoading: {
-    'class-summary': false,
-    'subject-summary': false,
-    'rating-analysis': false,
-    'single-class-summary': false,
-    'single-class-question': false,
-    'single-question-summary': false,
-    'single-question-detail': false,
-  } as Record<AnalysisView, boolean>,
+  aiAnalysisResults: {} as Record<string, AIAnalysisResult | null>,
+  aiAnalysisLoading: {} as Record<string, boolean>,
 }
 
 export const useAnalysisStore = create<AnalysisState>()(
@@ -145,21 +129,22 @@ export const useAnalysisStore = create<AnalysisState>()(
         }),
 
       generateAIAnalysis: async (view, examId, params) => {
+        const key = `${examId}:${view}`
         set((state) => ({
-          aiAnalysisLoading: { ...state.aiAnalysisLoading, [view]: true },
+          aiAnalysisLoading: { ...state.aiAnalysisLoading, [key]: true },
         }))
         try {
           const { aiAnalysisService } = await import('@/services/aiAnalysis')
           const result = await aiAnalysisService.generate(view, examId, params)
           set((state) => ({
-            aiAnalysisResults: { ...state.aiAnalysisResults, [view]: result },
+            aiAnalysisResults: { ...state.aiAnalysisResults, [key]: result },
           }))
         } catch (err) {
           console.error('AI analysis failed:', err)
           set((state) => ({
             aiAnalysisResults: {
               ...state.aiAnalysisResults,
-              [view]: {
+              [key]: {
                 segments: [{ type: 'text' as const, content: '智能分析服务暂时不可用，请稍后重试。' }],
                 generatedAt: Date.now(),
               },
@@ -167,15 +152,17 @@ export const useAnalysisStore = create<AnalysisState>()(
           }))
         } finally {
           set((state) => ({
-            aiAnalysisLoading: { ...state.aiAnalysisLoading, [view]: false },
+            aiAnalysisLoading: { ...state.aiAnalysisLoading, [key]: false },
           }))
         }
       },
 
-      clearAIAnalysis: (view) =>
+      clearAIAnalysis: (view, examId) => {
+        const key = `${examId}:${view}`
         set((state) => ({
-          aiAnalysisResults: { ...state.aiAnalysisResults, [view]: null },
-        })),
+          aiAnalysisResults: { ...state.aiAnalysisResults, [key]: null },
+        }))
+      },
 
       executeAILink: (link) => {
         const { targetView, params } = link

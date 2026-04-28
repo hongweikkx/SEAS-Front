@@ -9,12 +9,14 @@ import { cn } from '@/lib/utils'
 
 interface AIAnalysisPanelProps {
   view: AnalysisView
+  examId: string
 }
 
-export default function AIAnalysisPanel({ view }: AIAnalysisPanelProps) {
+export default function AIAnalysisPanel({ view, examId }: AIAnalysisPanelProps) {
   const { aiAnalysisResults, clearAIAnalysis, executeAILink } = useAnalysisStore()
   const [expanded, setExpanded] = useState(true)
-  const result = aiAnalysisResults[view]
+  const key = `${examId}:${view}`
+  const result = aiAnalysisResults[key]
 
   if (!result) return null
 
@@ -37,7 +39,7 @@ export default function AIAnalysisPanel({ view }: AIAnalysisPanelProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => clearAIAnalysis(view)}
+            onClick={() => clearAIAnalysis(view, examId)}
             className="h-7 w-7 rounded-lg p-0 text-blue-600 dark:text-blue-400"
             title="清除分析"
           >
