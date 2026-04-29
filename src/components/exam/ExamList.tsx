@@ -1,8 +1,11 @@
 'use client'
 
 import { useExams } from '@/hooks/useAnalysis'
+import { examService } from '@/services/analysis'
 import { Loader2, FileQuestion } from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ExamCard } from './ExamCard'
+import { useState } from 'react'
 
 interface ExamListProps {
   keyword?: string
@@ -10,6 +13,24 @@ interface ExamListProps {
 
 export default function ExamList({ keyword }: ExamListProps) {
   const { data, isLoading, error } = useExams(1, 20, keyword)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const queryClient = useQueryClient()
+
+  const deleteMutation = useMutation({
+    mutationFn: (examId: string) => examService.deleteExam(examId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['exams'] })
+      setDeletingId(null)
+    },
+    onError: () => {
+      setDeletingId(null)
+    },
+  })
+
+  const handleDelete = (examId: string) => {
+    setDeletingId(examId)
+    deleteMutation.mutate(examId)
+  }
 
   if (isLoading) {
     return (
@@ -40,7 +61,12 @@ export default function ExamList({ keyword }: ExamListProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {data?.exams.map((exam) => (
-        <ExamCard key={exam.id} exam={exam} />
+        <ExamCard
+          key={exam.id}
+          exam={exam}
+          onDelete={handleDelete}
+          isDeleting={deletingId === exam.id}
+        />
       ))}
     </div>
   )

@@ -33,7 +33,7 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
     setDrillDownParam('questionId', questionId)
     pushDrillDown({
       view: 'single-question-detail',
-      label: `单科班级题目第${questionNumber}题`,
+      label: `单科班级题目 ${questionNumber}`,
       params: {
         questionId,
         classId: String(classId),
@@ -64,7 +64,6 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
                 <th className="py-3 px-5 text-left font-medium text-muted-foreground">题号</th>
-                <th className="py-3 px-5 text-left font-medium text-muted-foreground">题型</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">分值</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级均分</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">得分率</th>
@@ -73,7 +72,10 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
               </tr>
             </thead>
             <tbody>
-              {data?.questions.map((q) => (
+              {data?.questions
+                .slice()
+                .sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, undefined, { numeric: true }))
+                .map((q) => (
                 <tr
                   key={q.questionId}
                   className="border-b border-border/40 transition-colors hover:bg-muted/20"
@@ -83,10 +85,9 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
                       onClick={() => handleQuestionClick(q.questionId, q.questionNumber)}
                       className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
                     >
-                      第{q.questionNumber}题
+                      {q.questionNumber}
                     </button>
                   </td>
-                  <td className="py-3 px-5">{q.questionType}</td>
                   <td className="py-3 px-5 text-right">{q.fullScore}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(q.classAvgScore)}</td>
                   <td className="py-3 px-5 text-right">{formatNumber(q.scoreRate)}%</td>
@@ -100,7 +101,7 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
               ))}
               {(!data?.questions || data.questions.length === 0) && (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={6} className="py-8 text-center text-sm text-muted-foreground">
                     暂无数据
                   </td>
                 </tr>

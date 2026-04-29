@@ -35,7 +35,7 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">
-            {data?.className || '班级'} {data?.subjectName || '学科'} — 第{data?.questionNumber ?? ''}题学生得分详情
+            {data?.className || '班级'} {data?.subjectName || '学科'} — {data?.questionNumber ?? ''} 学生得分详情
           </h2>
         </div>
         <AIAnalysisTrigger view="single-question-detail" examId={examId} />

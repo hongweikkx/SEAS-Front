@@ -20,6 +20,10 @@ export const examService = {
     apiClient.get(`/exams/${examId}/subjects`, {
       params: { page_index: pageIndex, page_size: pageSize },
     }),
+
+  // 删除考试
+  deleteExam: (examId: string): Promise<{ success: boolean; message: string }> =>
+    apiClient.delete(`/exams/${examId}`),
 }
 
 export const analysisService = {

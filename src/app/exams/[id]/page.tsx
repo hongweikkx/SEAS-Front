@@ -102,6 +102,22 @@ export default function ExamDetailPage({ params }: PageProps) {
     window.history.replaceState({}, '', url.toString())
   }, [currentView, drillDownParams])
 
+  // 当进入单科视图但未选择学科时，自动选择第一个学科
+  useEffect(() => {
+    const singleSubjectViews: AnalysisView[] = [
+      'single-class-summary',
+      'single-class-question',
+      'single-question-summary',
+      'single-question-detail',
+    ]
+    if (singleSubjectViews.includes(currentView) && !selectedSubjectId && subjectsData?.subjects && subjectsData.subjects.length > 0) {
+      const firstSubject = sortBySubjectName(subjectsData.subjects)[0]
+      setSelectedScope('single_subject')
+      setSelectedSubjectId(firstSubject.id)
+      setSelectedSubjectName(firstSubject.name)
+    }
+  }, [currentView, selectedSubjectId, subjectsData, setSelectedScope, setSelectedSubjectId, setSelectedSubjectName])
+
   const renderModule = () => {
     const Component = viewComponentMap[currentView] || ClassSummary
     return <Component examId={examId} />

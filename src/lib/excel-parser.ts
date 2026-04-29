@@ -38,6 +38,7 @@ export function parseExamExcel(arrayBuffer: ArrayBuffer): ParseResult {
     students: [],
     subjectDetails: [],
     warnings: [],
+    subjectFullScores: {},
   }
 
   // 确定总成绩 sheet

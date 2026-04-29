@@ -24,7 +24,7 @@ export const useExams = (pageIndex: number = 1, pageSize: number = 20, keyword?:
   return useQuery({
     queryKey: ['exams', pageIndex, pageSize, keyword],
     queryFn: () => examService.listExams(pageIndex, pageSize, keyword),
-    staleTime: 5 * 60 * 1000, // 5分钟缓存
+    staleTime: 10 * 1000, // 10秒缓存，列表数据需要较新鲜
   })
 }
 

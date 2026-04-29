@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { FileUploadZone } from '@/components/create/FileUploadZone'
 import { Button } from '@/components/ui/button'
 import { Zap, CheckCircle, AlertTriangle } from 'lucide-react'
@@ -13,6 +14,7 @@ import { cn } from '@/lib/utils'
 
 export default function CreatePage() {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const [file, setFile] = useState<File | null>(null)
   const [parseResult, setParseResult] = useState<ParseResult | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
@@ -71,13 +73,16 @@ export default function CreatePage() {
       // 3. 上传成绩文件
       await importScores(exam.examId, file)
 
-      // 4. 跳转到分析页
+      // 4. 清空考试列表缓存，确保列表页能显示新创建的分析
+      queryClient.invalidateQueries({ queryKey: ['exams'] })
+
+      // 5. 跳转到分析页
       router.push(`/exams/${exam.examId}`)
     } catch (err) {
       setParseError(err instanceof Error ? err.message : '上传失败，请稍后重试')
       setIsUploading(false)
     }
-  }, [file, parseResult, subjectFullScores, router])
+  }, [file, parseResult, subjectFullScores, router, queryClient])
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
