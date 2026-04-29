@@ -115,41 +115,43 @@ export default function CreatePage() {
 
           {/* 满分编辑 — 表格样式 */}
           <div className="pt-4 border-t border-green-200/60 dark:border-green-900/40">
-            <div
-              className="grid gap-1"
-              style={{ gridTemplateColumns: `repeat(${parseResult.subjects.length + 1}, 1fr)` }}
-            >
-              {/* 表头：学科名 + 总分满分 */}
-              {parseResult.subjects.map((subject) => (
-                <div key={`h-${subject}`} className="text-center text-xs text-muted-foreground py-1">
-                  {subject}
-                </div>
-              ))}
-              <div className="text-center text-xs text-muted-foreground py-1">总分满分</div>
+            <div className="inline-block rounded-lg border border-green-200 dark:border-green-900 overflow-hidden">
+              <div
+                className="grid"
+                style={{ gridTemplateColumns: `80px repeat(${parseResult.subjects.length + 1}, minmax(72px, 1fr))` }}
+              >
+                {/* 表头行 */}
+                <div className="bg-green-100/60 dark:bg-green-950/30 text-center text-xs text-muted-foreground py-2 px-2"></div>
+                {parseResult.subjects.map((subject) => (
+                  <div key={`h-${subject}`} className="bg-green-100/60 dark:bg-green-950/30 text-center text-xs font-medium text-foreground py-2 px-1 border-l border-green-200/60 dark:border-green-900/40">
+                    {subject}
+                  </div>
+                ))}
+                <div className="bg-green-100/60 dark:bg-green-950/30 text-center text-xs font-medium text-foreground py-2 px-1 border-l border-green-200/60 dark:border-green-900/40">全科</div>
 
-              {/* 数据行：满分输入 + 总分（只读） */}
-              {parseResult.subjects.map((subject) => (
-                <div key={`v-${subject}`} className="flex items-center justify-center gap-0.5">
-                  <Input
-                    type="number"
-                    min={1}
-                    value={subjectFullScores[subject] ?? 100}
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value)
-                      if (!isNaN(val) && val > 0) {
-                        setSubjectFullScores((prev) => ({ ...prev, [subject]: val }))
-                      }
-                    }}
-                    className="h-7 w-16 text-sm text-center bg-white/70 dark:bg-background/70 px-1"
-                  />
-                  <span className="text-xs text-muted-foreground">分</span>
+                {/* 数据行：满分 */}
+                <div className="bg-green-50/30 dark:bg-green-950/10 text-center text-xs text-muted-foreground py-2 px-2 border-t border-green-200/60 dark:border-green-900/40">满分：</div>
+                {parseResult.subjects.map((subject) => (
+                  <div key={`v-${subject}`} className="flex items-center justify-center border-l border-t border-green-200/60 dark:border-green-900/40 py-1.5 px-1">
+                    <Input
+                      type="number"
+                      min={1}
+                      value={subjectFullScores[subject] ?? 100}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value)
+                        if (!isNaN(val) && val > 0) {
+                          setSubjectFullScores((prev) => ({ ...prev, [subject]: val }))
+                        }
+                      }}
+                      className="h-7 w-14 text-sm text-center bg-white dark:bg-background px-1"
+                    />
+                  </div>
+                ))}
+                <div className="flex items-center justify-center border-l border-t border-green-200/60 dark:border-green-900/40 py-1.5 px-1">
+                  <span className="text-sm font-semibold text-green-700 dark:text-green-400">
+                    {parseResult.subjects.reduce((sum, s) => sum + (subjectFullScores[s] ?? 100), 0)}
+                  </span>
                 </div>
-              ))}
-              <div className="flex items-center justify-center gap-0.5">
-                <span className="text-sm font-semibold text-green-700 dark:text-green-400">
-                  {parseResult.subjects.reduce((sum, s) => sum + (subjectFullScores[s] ?? 100), 0)}
-                </span>
-                <span className="text-xs text-muted-foreground">分</span>
               </div>
             </div>
           </div>
