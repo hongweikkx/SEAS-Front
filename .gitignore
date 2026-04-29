@@ -52,4 +52,5 @@ next-env.d.ts
 integration-test-*.png
 
 # superpowers docs
-docs/superpowers/
+docs/superpowers/*
+!docs/superpowers/specs/
