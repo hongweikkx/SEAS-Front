@@ -9,7 +9,6 @@ import { downloadSimpleTemplate, downloadFullTemplate } from '@/lib/templates'
 import { parseExamExcel, type ParseResult } from '@/lib/excel-parser'
 import { createExam, importScores, updateSubjectFullScores } from '@/services/examImport'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 export default function CreatePage() {
@@ -91,7 +90,7 @@ export default function CreatePage() {
         parseError={parseError}
       />
 
-      {/* 识别结果 */}
+      {/* 识别结果 + 满分确认 */}
       {parseResult && (
         <div className="rounded-xl border border-green-200 bg-green-50/50 p-5 dark:border-green-900 dark:bg-green-950/20">
           <div className="flex items-center gap-2 mb-3">
@@ -121,6 +120,38 @@ export default function CreatePage() {
               </span>
             </div>
           </div>
+
+          {/* 满分编辑 — 直接融入识别卡片 */}
+          <div className="mt-4 pt-4 border-t border-green-200/60 dark:border-green-900/40">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {parseResult.subjects.map((subject) => (
+                <div key={subject} className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground shrink-0">{subject}</span>
+                  <Input
+                    type="number"
+                    min={1}
+                    value={subjectFullScores[subject] ?? 100}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value)
+                      if (!isNaN(val) && val > 0) {
+                        setSubjectFullScores((prev) => ({ ...prev, [subject]: val }))
+                      }
+                    }}
+                    className="h-7 text-sm bg-white/70 dark:bg-background/70"
+                  />
+                  <span className="text-xs text-muted-foreground shrink-0">分</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-sm text-green-700 dark:text-green-400">
+              总分满分：
+              <span className="font-semibold">
+                {parseResult.subjects.reduce((sum, s) => sum + (subjectFullScores[s] ?? 100), 0)}
+              </span>
+              <span className="text-xs opacity-70 ml-1">（自动计算）</span>
+            </p>
+          </div>
+
           {parseResult.warnings.length > 0 && (
             <div className="mt-3 space-y-1">
               {parseResult.warnings.map((w, i) => (
@@ -131,46 +162,6 @@ export default function CreatePage() {
               ))}
             </div>
           )}
-        </div>
-      )}
-
-      {/* 满分确认 */}
-      {parseResult && (
-        <div className="rounded-xl border border-border/60 bg-card p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-4">
-            确认各科满分
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {parseResult.subjects.map((subject) => (
-              <div key={subject} className="space-y-1.5">
-                <Label htmlFor={`fullscore-${subject}`} className="text-xs text-muted-foreground">
-                  {subject}
-                </Label>
-                <Input
-                  id={`fullscore-${subject}`}
-                  type="number"
-                  min={1}
-                  value={subjectFullScores[subject] ?? 100}
-                  onChange={(e) => {
-                    const val = parseFloat(e.target.value)
-                    if (!isNaN(val) && val > 0) {
-                      setSubjectFullScores((prev) => ({ ...prev, [subject]: val }))
-                    }
-                  }}
-                  className="h-8 text-sm"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 pt-3 border-t border-border/40">
-            <p className="text-sm text-muted-foreground">
-              总分满分：
-              <span className="font-semibold text-foreground">
-                {parseResult.subjects.reduce((sum, s) => sum + (subjectFullScores[s] ?? 100), 0)}
-              </span>
-              <span className="text-xs text-muted-foreground ml-1">（自动计算）</span>
-            </p>
-          </div>
         </div>
       )}
 
