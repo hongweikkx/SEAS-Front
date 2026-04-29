@@ -19,6 +19,10 @@ export interface ImportScoresResponse {
   warnings: string[]
 }
 
+export interface SubjectFullScoresRequest {
+  fullScores: Record<string, number>
+}
+
 export async function createExam(data: CreateExamRequest): Promise<CreateExamResponse> {
   return apiClient.post('/exams', data)
 }
@@ -27,9 +31,13 @@ export async function importScores(examId: string, file: File): Promise<ImportSc
   const formData = new FormData()
   formData.append('file', file)
 
-  return apiClient.post(`/exams/${examId}/scores/import`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  })
+  // 不手动设置 Content-Type，让 Axios 根据 FormData 自动设置含 boundary 的 multipart/form-data
+  return apiClient.post(`/exams/${examId}/scores/import`, formData)
+}
+
+export async function updateSubjectFullScores(
+  examId: string,
+  data: SubjectFullScoresRequest
+): Promise<void> {
+  return apiClient.put(`/exams/${examId}/subjects/full-scores`, data)
 }
