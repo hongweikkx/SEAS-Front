@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Zap, CheckCircle, Users, BookOpen, AlertTriangle } from 'lucide-react'
 import { downloadSimpleTemplate, downloadFullTemplate } from '@/lib/templates'
 import { parseExamExcel, type ParseResult } from '@/lib/excel-parser'
-import { createExam, importScores } from '@/services/examImport'
+import { createExam, importScores, updateSubjectFullScores } from '@/services/examImport'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 export default function CreatePage() {
@@ -17,6 +19,7 @@ export default function CreatePage() {
   const [parseError, setParseError] = useState<string | null>(null)
   const [isParsing, setIsParsing] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [subjectFullScores, setSubjectFullScores] = useState<Record<string, number>>({})
 
   const handleFileSelect = useCallback(async (selectedFile: File) => {
     setFile(selectedFile)
@@ -38,6 +41,7 @@ export default function CreatePage() {
       const arrayBuffer = await selectedFile.arrayBuffer()
       const result = parseExamExcel(arrayBuffer)
       setParseResult(result)
+      setSubjectFullScores({ ...result.subjectFullScores })
     } catch (err) {
       setParseError(err instanceof Error ? err.message : '解析失败，请检查文件格式')
     } finally {
@@ -49,6 +53,7 @@ export default function CreatePage() {
     setFile(null)
     setParseResult(null)
     setParseError(null)
+    setSubjectFullScores({})
   }, [])
 
   const handleGenerate = useCallback(async () => {
@@ -61,16 +66,19 @@ export default function CreatePage() {
       const examName = file.name.replace(/\.xlsx$/i, '')
       const exam = await createExam({ name: examName, examDate: today })
 
-      // 2. 上传成绩文件
+      // 2. 保存满分配置（必须先成功）
+      await updateSubjectFullScores(exam.examId, { fullScores: subjectFullScores })
+
+      // 3. 上传成绩文件
       await importScores(exam.examId, file)
 
-      // 3. 跳转到分析页
+      // 4. 跳转到分析页
       router.push(`/exams/${exam.examId}`)
     } catch (err) {
       setParseError(err instanceof Error ? err.message : '上传失败，请稍后重试')
       setIsUploading(false)
     }
-  }, [file, parseResult, router])
+  }, [file, parseResult, subjectFullScores, router])
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -123,6 +131,46 @@ export default function CreatePage() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* 满分确认 */}
+      {parseResult && (
+        <div className="rounded-xl border border-border/60 bg-card p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">
+            确认各科满分
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {parseResult.subjects.map((subject) => (
+              <div key={subject} className="space-y-1.5">
+                <Label htmlFor={`fullscore-${subject}`} className="text-xs text-muted-foreground">
+                  {subject}
+                </Label>
+                <Input
+                  id={`fullscore-${subject}`}
+                  type="number"
+                  min={1}
+                  value={subjectFullScores[subject] ?? 100}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value)
+                    if (!isNaN(val) && val > 0) {
+                      setSubjectFullScores((prev) => ({ ...prev, [subject]: val }))
+                    }
+                  }}
+                  className="h-8 text-sm"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-3 border-t border-border/40">
+            <p className="text-sm text-muted-foreground">
+              总分满分：
+              <span className="font-semibold text-foreground">
+                {parseResult.subjects.reduce((sum, s) => sum + (subjectFullScores[s] ?? 100), 0)}
+              </span>
+              <span className="text-xs text-muted-foreground ml-1">（自动计算）</span>
+            </p>
+          </div>
         </div>
       )}
 
