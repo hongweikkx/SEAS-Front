@@ -113,12 +113,23 @@ export default function CreatePage() {
             学生人数：<span className="font-medium text-foreground">{parseResult.students.length} 人</span>
           </p>
 
-          {/* 满分编辑 */}
+          {/* 满分编辑 — 表格样式 */}
           <div className="pt-4 border-t border-green-200/60 dark:border-green-900/40">
-            <div className="grid grid-cols-2 gap-3">
+            <div
+              className="grid gap-1"
+              style={{ gridTemplateColumns: `repeat(${parseResult.subjects.length + 1}, 1fr)` }}
+            >
+              {/* 表头：学科名 + 总分满分 */}
               {parseResult.subjects.map((subject) => (
-                <div key={subject} className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground shrink-0 w-10">{subject}</span>
+                <div key={`h-${subject}`} className="text-center text-xs text-muted-foreground py-1">
+                  {subject}
+                </div>
+              ))}
+              <div className="text-center text-xs text-muted-foreground py-1">总分满分</div>
+
+              {/* 数据行：满分输入 + 总分（只读） */}
+              {parseResult.subjects.map((subject) => (
+                <div key={`v-${subject}`} className="flex items-center justify-center gap-0.5">
                   <Input
                     type="number"
                     min={1}
@@ -129,19 +140,18 @@ export default function CreatePage() {
                         setSubjectFullScores((prev) => ({ ...prev, [subject]: val }))
                       }
                     }}
-                    className="h-7 text-sm bg-white/70 dark:bg-background/70"
+                    className="h-7 w-16 text-sm text-center bg-white/70 dark:bg-background/70 px-1"
                   />
-                  <span className="text-xs text-muted-foreground shrink-0">分</span>
+                  <span className="text-xs text-muted-foreground">分</span>
                 </div>
               ))}
+              <div className="flex items-center justify-center gap-0.5">
+                <span className="text-sm font-semibold text-green-700 dark:text-green-400">
+                  {parseResult.subjects.reduce((sum, s) => sum + (subjectFullScores[s] ?? 100), 0)}
+                </span>
+                <span className="text-xs text-muted-foreground">分</span>
+              </div>
             </div>
-            <p className="mt-3 text-sm text-green-700 dark:text-green-400">
-              总分满分：
-              <span className="font-semibold">
-                {parseResult.subjects.reduce((sum, s) => sum + (subjectFullScores[s] ?? 100), 0)}
-              </span>
-              <span className="text-xs opacity-70 ml-1">（自动计算）</span>
-            </p>
           </div>
 
           {parseResult.warnings.length > 0 && (
