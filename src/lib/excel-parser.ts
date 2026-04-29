@@ -19,6 +19,8 @@ export interface ParseResult {
   students: ParsedStudent[]
   subjectDetails: ParsedSubjectDetail[]
   warnings: string[]
+  // 新增：各科默认满分
+  subjectFullScores: Record<string, number>
 }
 
 export function parseExamExcel(arrayBuffer: ArrayBuffer): ParseResult {
@@ -76,6 +78,12 @@ export function parseExamExcel(arrayBuffer: ArrayBuffer): ParseResult {
 
   if (subjectCols.length === 0) {
     throw new Error('未识别到学科成绩列，请检查表头格式')
+  }
+
+  // 初始化各科默认满分为 100
+  result.subjectFullScores = {}
+  for (const { name: subjectName } of subjectCols) {
+    result.subjectFullScores[subjectName] = 100
   }
 
   // 解析学生数据
