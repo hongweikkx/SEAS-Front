@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SEAS 智能学业分析系统前端，基于 Next.js 16 + React 19 + TypeScript 构建，为教师提供考试成绩分析、数据可视化与 AI 智能对话功能。
 
+## 后端项目
+
+- **位置**：`/Users/kk/go/src/SEAS`（与前端目录同级）
+- **技术栈**：Go + Kratos 框架 + Protobuf
+- **API 定义**：`api/seas/v1/*.proto`，生成代码在 `api/seas/v1/*.pb.go`
+- **HTTP 路由注册**：`internal/server/http.go`
+- **说明**：当前后端服务与前端的接口联调是开发常态。当问题涉及后端路由、接口格式、文件上传处理等时，**可以直接同步修改后端代码**，无需额外请示。
+
 ## 常用命令
 
 ```bash
