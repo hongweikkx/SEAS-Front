@@ -7,6 +7,7 @@ import { useAnalysisStore } from '@/store/analysisStore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatNumber, ratingTierBadgeClass } from '@/utils/format'
+import { sortByClassName } from '@/utils/sort'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
@@ -27,6 +28,7 @@ export default function RatingChart({ examId }: RatingChartProps) {
     selectedSubjectId ?? undefined
   )
   const canQuery = !!examId && (selectedScope !== 'single_subject' || !!selectedSubjectId)
+  const sortedClassDetails = data?.classDetails ? sortByClassName(data.classDetails) : []
 
   useEffect(() => {
     setDraftConfig(ratingConfig)
@@ -155,7 +157,7 @@ export default function RatingChart({ examId }: RatingChartProps) {
                     </td>
                   </tr>
                 )}
-                {data?.classDetails.map((cls) => (
+                {sortedClassDetails.map((cls) => (
                   <tr key={cls.classId} className="border-b border-border/40 transition-colors hover:bg-muted/20">
                     <td className="py-3 px-5">{cls.className}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(cls.avgScore)}</td>

@@ -3,6 +3,7 @@
 import { useClassSummary } from '@/hooks/useAnalysis'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
+import { sortByClassName } from '@/utils/sort'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
@@ -21,6 +22,8 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
     setDrillDownParam,
     pushDrillDown,
   } = useAnalysisStore()
+
+  const sortedClassDetails = data?.classDetails ? sortByClassName(data.classDetails) : []
 
   const handleClassClick = (classId: number, className: string) => {
     setDrillDownParam('classId', String(classId))
@@ -78,7 +81,7 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
                   <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.discrimination)}</td>
                 </tr>
               )}
-              {data?.classDetails.map((cls) => (
+              {sortedClassDetails.map((cls) => (
                 <tr
                   key={cls.classId}
                   className="border-b border-border/40 transition-colors hover:bg-muted/20"

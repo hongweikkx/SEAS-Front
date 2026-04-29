@@ -36,7 +36,6 @@ export interface SubjectSummary {
   lowestScore: number
   difficulty: number
   studentCount: number
-  scoreDeviation: number
   stdDev: number
   discrimination: number
 }
@@ -48,7 +47,6 @@ export interface SubjectSummaryResponse {
   totalParticipants: number
   subjectsInvolved?: number
   classesInvolved?: number
-  overall?: SubjectSummary
   subjects: SubjectSummary[]
 }
 

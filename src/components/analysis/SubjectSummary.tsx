@@ -4,6 +4,7 @@ import { useSubjectSummary, useClassSummary } from '@/hooks/useAnalysis'
 import { useClassSubjectSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
+import { sortByClassName, sortBySubjectName, sortBySubjectItemName } from '@/utils/sort'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
@@ -37,6 +38,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
 
   const { data, isLoading } = useSubjectSummary(examId, selectedScope, selectedSubjectId ?? undefined)
   const { data: classSummaryData } = useClassSummary(examId, 'all_subjects')
+  const sortedClassDetails = classSummaryData?.classDetails ? sortByClassName(classSummaryData.classDetails) : []
   const { data: classSubjectData, isLoading: classSubjectLoading } = useClassSubjectSummary(examId, classId)
 
   const handleSubjectClick = (subjectId: string, subjectName: string) => {
@@ -90,7 +92,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
           >
             全年级
           </button>
-          {classSummaryData.classDetails.map((cls) => (
+          {sortedClassDetails.map((cls) => (
             <button
               key={cls.classId}
               onClick={() => setDrillDownParam('classId', String(cls.classId))}
@@ -125,28 +127,13 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">平均分</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">最高分</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">最低分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">离均差</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.overall && (
-                    <tr className="border-b border-border/40 bg-primary/5 font-semibold">
-                      <td className="py-3 px-5">{data.overall.name}</td>
-                      <td className="py-3 px-5 text-right">{data.overall.studentCount}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.fullScore)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.avgScore)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.highestScore)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.lowestScore)}</td>
-                      <td className="py-3 px-5 text-right">—</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.difficulty)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.stdDev)}</td>
-                      <td className="py-3 px-5 text-right">{formatNumber(data.overall.discrimination)}</td>
-                    </tr>
-                  )}
-                  {data?.subjects.map((subject) => (
+                  {(data?.subjects ? sortBySubjectName(data.subjects) : []).map((subject) => (
                     <tr key={subject.id} className="border-b border-border/40 transition-colors hover:bg-muted/20">
                       <td className="py-3 px-5">
                         {selectedScope === 'all_subjects' ? (
@@ -165,12 +152,6 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                       <td className="py-3 px-5 text-right font-medium">{formatNumber(subject.avgScore)}</td>
                       <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.highestScore)}</td>
                       <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.lowestScore)}</td>
-                      <td className={cn(
-                        'py-3 px-5 text-right font-medium',
-                        subject.scoreDeviation >= 0 ? 'text-emerald-600' : 'text-red-600'
-                      )}>
-                        {subject.scoreDeviation >= 0 ? '+' : ''}{formatNumber(subject.scoreDeviation)}
-                      </td>
                       <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.difficulty)}</td>
                       <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.stdDev)}</td>
                       <td className="py-3 px-5 text-right text-muted-foreground">{formatNumber(subject.discrimination)}</td>
@@ -178,7 +159,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                   ))}
                   {(!data?.subjects || data.subjects.length === 0) && (
                     <tr>
-                      <td colSpan={10} className="py-8 text-center text-sm text-muted-foreground">
+                      <td colSpan={9} className="py-8 text-center text-sm text-muted-foreground">
                         暂无学科数据
                       </td>
                     </tr>
@@ -236,7 +217,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                       <td className="py-3 px-5 text-right">{classSubjectData.overall.classRank}/{classSubjectData.overall.totalClasses}</td>
                     </tr>
                   )}
-                  {classSubjectData?.subjects.map((subject) => (
+                  {(classSubjectData?.subjects ? sortBySubjectItemName(classSubjectData.subjects) : []).map((subject) => (
                     <tr
                       key={subject.subjectId}
                       className="border-b border-border/40 transition-colors hover:bg-muted/20"

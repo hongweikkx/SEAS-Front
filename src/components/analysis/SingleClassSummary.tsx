@@ -3,6 +3,7 @@
 import { useSingleClassSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
+import { sortByClassName } from '@/utils/sort'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
@@ -15,6 +16,7 @@ interface SingleClassSummaryProps {
 export default function SingleClassSummary({ examId }: SingleClassSummaryProps) {
   const { selectedSubjectId } = useAnalysisStore()
   const { data, isLoading } = useSingleClassSummary(examId, selectedSubjectId ?? undefined)
+  const sortedClasses = data?.classes ? sortByClassName(data.classes) : []
 
   const {
     setCurrentView,
@@ -79,7 +81,7 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
                   <td className="py-3 px-5 text-right">{formatNumber(data.overall.discrimination)}</td>
                 </tr>
               )}
-              {data?.classes.map((cls) => (
+              {sortedClasses.map((cls) => (
                 <tr
                   key={cls.classId}
                   className="border-b border-border/40 transition-colors hover:bg-muted/20"

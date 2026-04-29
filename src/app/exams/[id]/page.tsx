@@ -13,6 +13,7 @@ import { use, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Download, Share2 } from 'lucide-react'
 import { useSubjects } from '@/hooks/useAnalysis'
+import { sortBySubjectName } from '@/utils/sort'
 import { cn } from '@/lib/utils'
 import type { AnalysisView } from '@/types'
 
@@ -128,7 +129,7 @@ export default function ExamDetailPage({ params }: PageProps) {
             >
               全科
             </button>
-            {subjectsData.subjects.map((subject) => (
+            {sortBySubjectName(subjectsData.subjects).map((subject) => (
               <button
                 key={subject.id}
                 onClick={() => {

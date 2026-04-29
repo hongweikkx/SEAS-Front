@@ -3,6 +3,7 @@
 import { useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
+import { sortByClassName } from '@/utils/sort'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
@@ -39,6 +40,7 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
 
   // 从数据中提取班级列表
   const classList = data?.questions[0]?.classBreakdown ?? []
+  const sortedClassList = sortByClassName(classList)
 
   return (
     <div className="space-y-4">
@@ -64,7 +66,7 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           >
             全年级
           </button>
-          {classList.map((cls) => (
+          {sortedClassList.map((cls) => (
             <button
               key={cls.classId}
               onClick={() => setDrillDownParam('classId', String(cls.classId))}

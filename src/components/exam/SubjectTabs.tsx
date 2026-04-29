@@ -3,6 +3,7 @@
 import { useSubjects } from '@/hooks/useAnalysis'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { Button } from '@/components/ui/button'
+import { sortBySubjectName } from '@/utils/sort'
 import { Loader2 } from 'lucide-react'
 
 interface SubjectTabsProps {
@@ -38,7 +39,7 @@ export default function SubjectTabs({ examId }: SubjectTabsProps) {
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden />
         ) : (
-          data?.subjects.map((subject) => (
+          (data?.subjects ? sortBySubjectName(data.subjects) : []).map((subject) => (
             <Button
               key={subject.id}
               variant={
