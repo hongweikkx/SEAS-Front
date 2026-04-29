@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileUploadZone } from '@/components/create/FileUploadZone'
 import { Button } from '@/components/ui/button'
-import { Zap, CheckCircle, Users, BookOpen, AlertTriangle } from 'lucide-react'
+import { Zap, CheckCircle, AlertTriangle } from 'lucide-react'
 import { downloadSimpleTemplate, downloadFullTemplate } from '@/lib/templates'
 import { parseExamExcel, type ParseResult } from '@/lib/excel-parser'
 import { createExam, importScores, updateSubjectFullScores } from '@/services/examImport'
@@ -93,40 +93,32 @@ export default function CreatePage() {
       {/* 识别结果 + 满分确认 */}
       {parseResult && (
         <div className="rounded-xl border border-green-200 bg-green-50/50 p-5 dark:border-green-900 dark:bg-green-950/20">
-          <div className="flex items-center gap-2 mb-3">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <h3 className="text-sm font-semibold text-green-800 dark:text-green-300">
-              识别成功
-            </h3>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              <h3 className="text-sm font-semibold text-green-800 dark:text-green-300">
+                识别成功
+              </h3>
+            </div>
+            <span className={cn(
+              'text-xs px-2 py-0.5 rounded-full font-medium',
+              parseResult.mode === 'full'
+                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+            )}>
+              {parseResult.mode === 'full' ? '完整模式' : '简单模式'}
+            </span>
           </div>
-          <div className="grid grid-cols-3 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">学科：</span>
-              <span className="font-medium">{parseResult.subjects.join('、')}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">学生：</span>
-              <span className="font-medium">{parseResult.students.length} 人</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">模式：</span>
-              <span className={cn(
-                'font-medium',
-                parseResult.mode === 'full' ? 'text-blue-600' : 'text-amber-600'
-              )}>
-                {parseResult.mode === 'full' ? '完整模式' : '简单模式'}
-              </span>
-            </div>
-          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            学生人数：<span className="font-medium text-foreground">{parseResult.students.length} 人</span>
+          </p>
 
-          {/* 满分编辑 — 直接融入识别卡片 */}
-          <div className="mt-4 pt-4 border-t border-green-200/60 dark:border-green-900/40">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {/* 满分编辑 */}
+          <div className="pt-4 border-t border-green-200/60 dark:border-green-900/40">
+            <div className="grid grid-cols-2 gap-3">
               {parseResult.subjects.map((subject) => (
                 <div key={subject} className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground shrink-0">{subject}</span>
+                  <span className="text-sm text-muted-foreground shrink-0 w-10">{subject}</span>
                   <Input
                     type="number"
                     min={1}
