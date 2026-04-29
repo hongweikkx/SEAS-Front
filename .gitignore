@@ -54,3 +54,4 @@ integration-test-*.png
 # superpowers docs
 docs/superpowers/*
 !docs/superpowers/specs/
+!docs/superpowers/plans/
