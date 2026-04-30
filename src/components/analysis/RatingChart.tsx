@@ -112,54 +112,54 @@ export default function RatingChart({ examId }: RatingChartProps) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/30">
-                  <th className="py-3 px-5 text-left font-medium text-muted-foreground">班级</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">总人数</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">均分</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">优秀人数</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">优秀占比</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">良好人数</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">良好占比</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">中等人数</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">中等占比</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">及格人数</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">及格占比</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">低分人数</th>
-                  <th className="py-3 px-5 text-right font-medium text-muted-foreground">低分占比</th>
+                  <th className="py-2.5 px-3 text-left font-medium text-muted-foreground">班级</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">总人数</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">均分</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">优秀人数</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">优秀占比</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">良好人数</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">良好占比</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">中等人数</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">中等占比</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">及格人数</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">及格占比</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">低分人数</th>
+                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">低分占比</th>
                 </tr>
               </thead>
               <tbody>
                 {data?.overallGrade && (
                   <tr className="border-b border-border/40 bg-primary/5 font-semibold">
-                    <td className="py-3 px-5">{data.overallGrade.className}</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.totalStudents}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.avgScore)}</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.excellent.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.excellent.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.good.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.good.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.medium.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.medium.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.pass.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.pass.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.lowScore.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.lowScore.percentage)}%</td>
+                    <td className="py-2.5 px-3">{data.overallGrade.className}</td>
+                    <td className="py-2.5 px-3 text-right">{data.overallGrade.totalStudents}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.avgScore)}</td>
+                    <td className="py-2.5 px-3 text-right">{data.overallGrade.excellent.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.excellent.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{data.overallGrade.good.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.good.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{data.overallGrade.medium.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.medium.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{data.overallGrade.pass.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.pass.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{data.overallGrade.lowScore.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.lowScore.percentage)}%</td>
                   </tr>
                 )}
                 {sortedClassDetails.map((cls) => (
                   <tr key={cls.classId} className="border-b border-border/40 transition-colors hover:bg-muted/20">
-                    <td className="py-3 px-5">{cls.className}</td>
-                    <td className="py-3 px-5 text-right">{cls.totalStudents}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(cls.avgScore)}</td>
-                    <td className="py-3 px-5 text-right">{cls.excellent.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(cls.excellent.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.good.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(cls.good.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.medium.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(cls.medium.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.pass.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(cls.pass.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.lowScore.count}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(cls.lowScore.percentage)}%</td>
+                    <td className="py-2.5 px-3">{cls.className}</td>
+                    <td className="py-2.5 px-3 text-right">{cls.totalStudents}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.avgScore)}</td>
+                    <td className="py-2.5 px-3 text-right">{cls.excellent.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.excellent.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{cls.good.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.good.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{cls.medium.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.medium.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{cls.pass.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.pass.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-right">{cls.lowScore.count}</td>
+                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.lowScore.percentage)}%</td>
                   </tr>
                 ))}
                 {(!data?.classDetails || data.classDetails.length === 0) && (
