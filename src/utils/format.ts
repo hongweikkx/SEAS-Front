@@ -1,5 +1,3 @@
-import type { RatingConfig } from '@/types'
-
 // 格式化日期
 export const formatDate = (dateString: string): string => {
   try {
@@ -34,36 +32,6 @@ export const getDifficultyColor = (difficulty: number): string => {
   if (difficulty >= 60) return 'text-amber-600 dark:text-amber-400'
   if (difficulty >= 40) return 'text-orange-600 dark:text-orange-400'
   return 'text-destructive'
-}
-
-// 获取成绩等级
-export const getGradeLevel = (score: number, config?: RatingConfig): string => {
-  const excellentThreshold = config?.excellent_threshold ?? 90
-  const goodThreshold = config?.good_threshold ?? 70
-  const passThreshold = config?.pass_threshold ?? 60
-
-  if (score >= excellentThreshold) return '优秀'
-  if (score >= goodThreshold) return '良好'
-  if (score >= passThreshold) return '合格'
-  return '低分'
-}
-
-// 获取成绩等级颜色
-export const getGradeLevelColor = (score: number, config?: RatingConfig): string => {
-  const excellentThreshold = config?.excellent_threshold ?? 90
-  const goodThreshold = config?.good_threshold ?? 70
-  const passThreshold = config?.pass_threshold ?? 60
-
-  if (score >= excellentThreshold) {
-    return 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300'
-  }
-  if (score >= goodThreshold) {
-    return 'bg-primary/15 text-primary'
-  }
-  if (score >= passThreshold) {
-    return 'bg-amber-500/15 text-amber-900 dark:text-amber-200'
-  }
-  return 'bg-destructive/15 text-destructive'
 }
 
 // 难度标签映射
