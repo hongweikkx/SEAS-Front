@@ -133,15 +133,15 @@ export default function RatingChart({ examId }: RatingChartProps) {
                     <td className="py-3 px-5">{data.overallGrade.className}</td>
                     <td className="py-3 px-5 text-right">{data.overallGrade.totalStudents}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.avgScore)}</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.excellent.count} ({formatNumber(data.overallGrade.excellent.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{data.overallGrade.excellent.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.excellent.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.good.count} ({formatNumber(data.overallGrade.good.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{data.overallGrade.good.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.good.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.medium.count} ({formatNumber(data.overallGrade.medium.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{data.overallGrade.medium.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.medium.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.pass.count} ({formatNumber(data.overallGrade.pass.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{data.overallGrade.pass.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.pass.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{data.overallGrade.lowScore.count} ({formatNumber(data.overallGrade.lowScore.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{data.overallGrade.lowScore.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(data.overallGrade.lowScore.percentage)}%</td>
                   </tr>
                 )}
@@ -150,15 +150,15 @@ export default function RatingChart({ examId }: RatingChartProps) {
                     <td className="py-3 px-5">{cls.className}</td>
                     <td className="py-3 px-5 text-right">{cls.totalStudents}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(cls.avgScore)}</td>
-                    <td className="py-3 px-5 text-right">{cls.excellent.count} ({formatNumber(cls.excellent.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{cls.excellent.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(cls.excellent.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.good.count} ({formatNumber(cls.good.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{cls.good.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(cls.good.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.medium.count} ({formatNumber(cls.medium.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{cls.medium.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(cls.medium.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.pass.count} ({formatNumber(cls.pass.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{cls.pass.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(cls.pass.percentage)}%</td>
-                    <td className="py-3 px-5 text-right">{cls.lowScore.count} ({formatNumber(cls.lowScore.percentage)}%)</td>
+                    <td className="py-3 px-5 text-right">{cls.lowScore.count}</td>
                     <td className="py-3 px-5 text-right">{formatNumber(cls.lowScore.percentage)}%</td>
                   </tr>
                 ))}
