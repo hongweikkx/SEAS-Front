@@ -61,9 +61,11 @@ const defaultState = {
   selectedSubjectName: null as string | null,
   selectedScope: 'all_subjects' as const,
   ratingConfig: {
-    excellent_threshold: 90,
-    good_threshold: 70,
+    excellent_threshold: 85,
+    good_threshold: 76,
+    medium_threshold: 68,
     pass_threshold: 60,
+    low_score_threshold: 40,
   },
   classSummaryConfig: { showDeviation: true, showStdDev: true },
   subjectSummaryConfig: { showDifficulty: true, showStudentCount: true },

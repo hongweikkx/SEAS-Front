@@ -67,7 +67,9 @@ export const analysisService = {
         ...(config && {
           excellent_threshold: config.excellent_threshold,
           good_threshold: config.good_threshold,
+          medium_threshold: config.medium_threshold,
           pass_threshold: config.pass_threshold,
+          low_score_threshold: config.low_score_threshold,
         }),
       },
     }),

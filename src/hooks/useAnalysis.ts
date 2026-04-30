@@ -15,7 +15,9 @@ export const ratingDistributionQueryKey = (
     scope,
     config?.excellent_threshold,
     config?.good_threshold,
+    config?.medium_threshold,
     config?.pass_threshold,
+    config?.low_score_threshold,
     subjectId,
   ] as const
 

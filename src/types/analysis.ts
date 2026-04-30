@@ -87,14 +87,17 @@ export interface ClassRatingDistribution {
   avgScore: number
   excellent: RatingItem
   good: RatingItem
+  medium: RatingItem
   pass: RatingItem
-  fail: RatingItem
+  lowScore: RatingItem
 }
 
 export interface RatingConfig {
   excellent_threshold: number
   good_threshold: number
+  medium_threshold: number
   pass_threshold: number
+  low_score_threshold: number
 }
 
 export interface RatingDistributionResponse {
