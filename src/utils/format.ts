@@ -66,15 +66,6 @@ export const getGradeLevelColor = (score: number, config?: RatingConfig): string
   return 'bg-destructive/15 text-destructive'
 }
 
-/** 四率表格中各等级的徽章样式（与主题 token 一致） */
-export const ratingTierBadgeClass = {
-  excellent:
-    'rounded bg-emerald-500/15 px-2 py-1 text-emerald-800 dark:text-emerald-300',
-  good: 'rounded bg-primary/15 px-2 py-1 text-primary',
-  pass: 'rounded bg-amber-500/15 px-2 py-1 text-amber-900 dark:text-amber-200',
-  fail: 'rounded bg-destructive/15 px-2 py-1 text-destructive',
-} as const
-
 // 难度标签映射
 export const difficultyLabel: Record<string, { label: string; className: string }> = {
   easy: { label: '易', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },

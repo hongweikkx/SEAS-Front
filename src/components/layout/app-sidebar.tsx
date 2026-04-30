@@ -10,6 +10,7 @@ import {
   PlusCircle,
   Users,
   ClipboardList,
+  TrendingUp,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAnalysisStore } from '@/store/analysisStore'
@@ -36,8 +37,10 @@ const allAnalysisDimensions: Array<{
 }> = [
   { key: 'class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'subject-summary', label: '学科情况汇总', icon: <LayoutList className="h-[15px] w-[15px]" />, scope: 'all' },
+  { key: 'rating-analysis', label: '一分四率', icon: <TrendingUp className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'single-class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
   { key: 'single-question-summary', label: '试题分析', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'rating-analysis', label: '一分四率', icon: <TrendingUp className="h-[15px] w-[15px]" />, scope: 'single' },
 ]
 
 export function AppSidebar() {
