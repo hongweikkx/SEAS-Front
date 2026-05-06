@@ -5,6 +5,7 @@ import SubjectSummary from '@/components/analysis/SubjectSummary'
 import ClassSummary from '@/components/analysis/ClassSummary'
 import RatingChart from '@/components/analysis/RatingChart'
 import ScoreSegment from '@/components/analysis/ScoreSegment'
+import RankSegment from '@/components/analysis/RankSegment'
 import SingleClassSummary from '@/components/analysis/SingleClassSummary'
 import SingleClassQuestion from '@/components/analysis/SingleClassQuestion'
 import SingleQuestionSummary from '@/components/analysis/SingleQuestionSummary'
@@ -29,6 +30,7 @@ const viewComponentMap: Record<AnalysisView, React.ComponentType<{ examId: strin
   'subject-summary': SubjectSummary,
   'rating-analysis': RatingChart,
   'score-segment': ScoreSegment,
+  'rank-segment': RankSegment,
   'single-class-summary': SingleClassSummary,
   'single-class-question': SingleClassQuestion,
   'single-question-summary': SingleQuestionSummary,
