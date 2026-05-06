@@ -52,6 +52,7 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
     rules.every((r) => r.end > r.start && r.step > 0) &&
     (selectedScope !== 'single_subject' || !!selectedSubjectId)
 
+  // 按班级名称自然序排序（如 1班、2班、10班）
   const sortedClassDetails = data?.classDetails
     ? sortByClassName(data.classDetails)
     : []
@@ -117,6 +118,7 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
     }
     cls.segments.forEach((seg) => {
       row[seg.label] = getClassPercentage(seg.count, cls.totalStudents)
+      row[`${seg.label}_count`] = seg.count
     })
     return row
   })
@@ -135,6 +137,17 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
   })
 
   const segmentLabels = data?.overallGrade?.segments.map((s) => s.label) ?? []
+
+  // 为分数段分配语义化颜色：低分偏红，高分偏蓝绿
+  const getSegmentColor = (label: string): string => {
+    const allSegments = data?.overallGrade?.segments ?? []
+    const sorted = [...allSegments].sort((a, b) => a.min - b.min)
+    const index = sorted.findIndex((s) => s.label === label)
+    const total = sorted.length
+    const ratio = total > 1 && index >= 0 ? index / (total - 1) : 0
+    const hue = ratio * 200 // 0=red → 200=blue
+    return `hsl(${hue}, 72%, 56%)`
+  }
 
   // 为每个班级生成颜色
   const classColors = [
@@ -366,13 +379,13 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
             {/* 图表区域 */}
             {sortedClassDetails.length > 0 && segmentLabels.length > 0 && (
               <div className="border-t border-border/40 px-5 py-6 space-y-8">
-                {/* 班级内部结构图 — 纵向百分比堆叠柱状图 */}
+                {/* 班级内部分数占比图 — 纵向百分比堆叠柱状图 */}
                 <div>
                   <h3 className="text-base font-semibold text-foreground mb-4">
-                    班级内部结构（百分比堆叠柱状图）
+                    班级内部分数占比图
                   </h3>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
+                  <div className="h-80 min-w-0 w-full">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                       <BarChart
                         data={structureChartData}
                         margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
@@ -384,20 +397,24 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                           tickFormatter={(v) => `${v}%`}
                         />
                         <Tooltip
-                          formatter={(value) =>
-                            typeof value === 'number'
-                              ? `${formatNumber(value)}%`
-                              : String(value)
-                          }
+                          formatter={(value, _name, props) => {
+                            const pct =
+                              typeof value === 'number' ? value : Number(value) || 0
+                            const label = props?.dataKey as string
+                            const rawCount = props?.payload?.[`${label}_count`]
+                            const count =
+                              typeof rawCount === 'number' ? rawCount : Number(rawCount) || 0
+                            return `${count}人 (${formatNumber(pct)}%)`
+                          }}
                         />
-                        <Legend />
+                        <Legend itemSorter={null} />
                         {segmentLabels.map((label, i) => (
                           <Bar
                             key={label}
                             dataKey={label}
                             name={`${label}分`}
                             stackId="a"
-                            fill={`hsl(${210 + i * 25}, 70%, ${60 - i * 5}%)`}
+                            fill={getSegmentColor(label)}
                           />
                         ))}
                       </BarChart>
@@ -408,10 +425,10 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                 {/* 分数段贡献图 — 堆叠面积图 */}
                 <div>
                   <h3 className="text-base font-semibold text-foreground mb-4">
-                    分数段贡献分布（堆叠面积图）
+                    分数段贡献分布图
                   </h3>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
+                  <div className="h-80 min-w-0 w-full">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                       <AreaChart
                         data={contributionChartData}
                         margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
@@ -419,8 +436,24 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                         <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                         <XAxis dataKey="label" />
                         <YAxis />
-                        <Tooltip />
-                        <Legend />
+                        <Tooltip
+                          formatter={(value, name, props) => {
+                            const dataKey = props?.dataKey as string
+                            const rawCount = props?.payload?.[dataKey]
+                            const count =
+                              typeof rawCount === 'number'
+                                ? rawCount
+                                : Number(rawCount) || 0
+                            const segmentLabel = props?.payload?.label as string
+                            const total =
+                              data?.overallGrade?.segments.find(
+                                (s) => s.label === segmentLabel
+                              )?.count ?? 0
+                            const pct = total > 0 ? (count / total) * 100 : 0
+                            return `${count}人 (${formatNumber(pct)}%)`
+                          }}
+                        />
+                        <Legend itemSorter={null} />
                         {sortedClassDetails.map((cls, i) => (
                           <Area
                             key={cls.classId}
