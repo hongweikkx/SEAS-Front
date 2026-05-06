@@ -9,7 +9,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
-import { Loader2, Plus, Trash2 } from 'lucide-react'
+import { Loader2, Plus, Trash2, HelpCircle } from 'lucide-react'
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import {
   BarChart,
   Bar,
@@ -143,15 +149,25 @@ export default function RankSegment({ examId }: RankSegmentProps) {
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">名次段分析</h2>
         </div>
+        <TooltipProvider delayDuration={100}>
+          <UITooltip>
+            <TooltipTrigger asChild>
+              <button className="text-muted-foreground hover:text-foreground transition-colors">
+                <HelpCircle className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="end">
+              <p>start=0 表示「前 end 名」</p>
+              <p>start&gt;0 表示「第 start+1 ~ end 名」</p>
+            </TooltipContent>
+          </UITooltip>
+        </TooltipProvider>
       </div>
 
       <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
         {/* 配置面板 */}
         <div className="border-b border-border/40 bg-muted/30 px-5 py-4">
           <div className="space-y-3">
-            <div className="text-sm font-medium text-muted-foreground">
-              名次段规则配置 (start=0 表示「前 end 名」;start&gt;0 表示「第 start+1 ~ end 名」)
-            </div>
             {rules.map((rule, index) => (
               <div key={index} className="flex items-end gap-2">
                 <div className="flex items-center gap-1.5">
