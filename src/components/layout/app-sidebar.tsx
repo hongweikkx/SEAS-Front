@@ -38,9 +38,11 @@ const allAnalysisDimensions: Array<{
   { key: 'class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'subject-summary', label: '学科情况汇总', icon: <LayoutList className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'rating-analysis', label: '一分四率', icon: <TrendingUp className="h-[15px] w-[15px]" />, scope: 'all' },
+  { key: 'score-segment', label: '分数段分析', icon: <TrendingUp className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'single-class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
   { key: 'single-question-summary', label: '试题分析', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
   { key: 'rating-analysis', label: '一分四率', icon: <TrendingUp className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'score-segment', label: '分数段分析', icon: <TrendingUp className="h-[15px] w-[15px]" />, scope: 'single' },
 ]
 
 export function AppSidebar() {
@@ -133,7 +135,7 @@ export function AppSidebar() {
             <div className="flex flex-col gap-0.5">
               {availableDimensions.map((dimension) => (
                 <button
-                  key={dimension.key}
+                  key={`${dimension.key}-${dimension.scope}`}
                   onClick={() => handleDimensionClick(dimension)}
                   className={cn(
                     'flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',

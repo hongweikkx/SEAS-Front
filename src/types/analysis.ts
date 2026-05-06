@@ -2,6 +2,7 @@ export type AnalysisView =
   | 'class-summary'
   | 'subject-summary'
   | 'rating-analysis'
+  | 'score-segment'
   | 'single-class-summary'
   | 'single-class-question'
   | 'single-question-summary'
@@ -108,5 +109,36 @@ export interface RatingDistributionResponse {
   config: RatingConfig
   overallGrade: ClassRatingDistribution
   classDetails: ClassRatingDistribution[]
+}
+
+// 分数段分析相关类型定义
+export interface SegmentConfig {
+  start: number
+  end: number
+  step: number
+}
+
+export interface ScoreSegmentItem {
+  label: string
+  min: number
+  max: number
+  count: number
+}
+
+export interface ClassScoreSegment {
+  classId: number
+  className: string
+  totalStudents: number
+  segments: ScoreSegmentItem[]
+}
+
+export interface ScoreSegmentResponse {
+  examId: string
+  examName: string
+  scope: 'all_subjects' | 'single_subject'
+  totalParticipants: number
+  config: SegmentConfig[]
+  overallGrade: ClassScoreSegment
+  classDetails: ClassScoreSegment[]
 }
 

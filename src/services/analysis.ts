@@ -6,6 +6,8 @@ import type {
   ClassSummaryResponse,
   RatingDistributionResponse,
   RatingConfig,
+  ScoreSegmentResponse,
+  SegmentConfig,
 } from '@/types'
 
 export const examService = {
@@ -72,6 +74,19 @@ export const analysisService = {
           low_score_threshold: config.low_score_threshold,
         }),
       },
+    }),
+
+  // 获取分数段分析
+  getScoreSegment: (
+    examId: string,
+    scope: 'all_subjects' | 'single_subject',
+    segments: SegmentConfig[],
+    subjectId?: string
+  ): Promise<ScoreSegmentResponse> =>
+    apiClient.post(`/exams/${examId}/analysis/score-segment`, {
+      scope,
+      segments,
+      ...(subjectId && { subject_id: subjectId }),
     }),
 }
 
