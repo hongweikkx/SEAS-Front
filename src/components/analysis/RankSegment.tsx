@@ -353,7 +353,7 @@ export default function RankSegment({ examId }: RankSegmentProps) {
                 <div className="h-80 min-w-0 w-full">
                   <ResponsiveContainer
                     width="100%"
-                    height="100%"
+                    height={320}
                     minWidth={0}
                     minHeight={0}
                   >
