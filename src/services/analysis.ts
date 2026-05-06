@@ -8,6 +8,8 @@ import type {
   RatingConfig,
   ScoreSegmentResponse,
   SegmentConfig,
+  RankSegmentResponse,
+  RankSegmentConfig,
 } from '@/types'
 
 export const examService = {
@@ -84,6 +86,19 @@ export const analysisService = {
     subjectId?: string
   ): Promise<ScoreSegmentResponse> =>
     apiClient.post(`/exams/${examId}/analysis/score-segment`, {
+      scope,
+      segments,
+      ...(subjectId && { subject_id: subjectId }),
+    }),
+
+  // 获取名次段分析
+  getRankSegment: (
+    examId: string,
+    scope: 'all_subjects' | 'single_subject',
+    segments: RankSegmentConfig[],
+    subjectId?: string
+  ): Promise<RankSegmentResponse> =>
+    apiClient.post(`/exams/${examId}/analysis/rank-segment`, {
       scope,
       segments,
       ...(subjectId && { subject_id: subjectId }),
