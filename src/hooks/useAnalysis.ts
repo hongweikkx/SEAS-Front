@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { examService, analysisService } from '@/services/analysis'
-import type { RatingConfig, SegmentConfig } from '@/types'
+import type { RatingConfig, SegmentConfig, RankSegmentConfig } from '@/types'
 
 /** 与 useRatingDistribution 一致，供手动 fetch / invalidate 使用 */
 export const ratingDistributionQueryKey = (
@@ -94,6 +94,25 @@ export const useScoreSegment = (
   return useQuery({
     queryKey: ['scoreSegment', examId, scope, segments, subjectId],
     queryFn: () => analysisService.getScoreSegment(examId, scope, segments, subjectId),
+    staleTime: 5 * 60 * 1000,
+    enabled:
+      !!examId &&
+      segments.length > 0 &&
+      (scope !== 'single_subject' || !!subjectId),
+    placeholderData: keepPreviousData,
+  })
+}
+
+// 获取名次段分析
+export const useRankSegment = (
+  examId: string,
+  scope: 'all_subjects' | 'single_subject',
+  segments: RankSegmentConfig[],
+  subjectId?: string
+) => {
+  return useQuery({
+    queryKey: ['rankSegment', examId, scope, segments, subjectId],
+    queryFn: () => analysisService.getRankSegment(examId, scope, segments, subjectId),
     staleTime: 5 * 60 * 1000,
     enabled:
       !!examId &&
