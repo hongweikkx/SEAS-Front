@@ -3,6 +3,7 @@ export type AnalysisView =
   | 'subject-summary'
   | 'rating-analysis'
   | 'score-segment'
+  | 'rank-segment'
   | 'single-class-summary'
   | 'single-class-question'
   | 'single-question-summary'
@@ -140,5 +141,35 @@ export interface ScoreSegmentResponse {
   config: SegmentConfig[]
   overallGrade: ClassScoreSegment
   classDetails: ClassScoreSegment[]
+}
+
+// 名次段分析相关类型定义
+export interface RankSegmentConfig {
+  start: number
+  end: number
+}
+
+export interface RankSegmentItem {
+  label: string
+  start: number
+  end: number
+  count: number
+}
+
+export interface ClassRankSegment {
+  classId: number
+  className: string
+  totalStudents: number
+  segments: RankSegmentItem[]
+}
+
+export interface RankSegmentResponse {
+  examId: string
+  examName: string
+  scope: 'all_subjects' | 'single_subject'
+  totalParticipants: number
+  config: RankSegmentConfig[]
+  overallGrade: ClassRankSegment
+  classDetails: ClassRankSegment[]
 }
 
