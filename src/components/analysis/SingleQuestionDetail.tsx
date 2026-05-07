@@ -7,7 +7,7 @@ import { formatNumber } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
-import QuestionPager from '@/components/analysis/QuestionPager'
+import QuestionCombobox from '@/components/analysis/QuestionCombobox'
 
 interface SingleQuestionDetailProps {
   examId: string
@@ -66,7 +66,7 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
       )}
 
       <div className="flex items-center gap-4 flex-wrap">
-        <QuestionPager
+        <QuestionCombobox
           questions={allQuestions.map((q) => ({ questionId: q.questionId, questionNumber: q.questionNumber }))}
           currentQuestionId={effectiveQuestionId}
           onChange={handleQuestionChange}

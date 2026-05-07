@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
-import QuestionPager from '@/components/analysis/QuestionPager'
+import QuestionCombobox from '@/components/analysis/QuestionCombobox'
 
 interface SingleQuestionClassCompareProps {
   examId: string
@@ -63,8 +63,7 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">
-            试题班级对比 — {data?.subjectName || '学科'} · 第 {data?.questionNumber ?? currentQuestion?.questionNumber ?? ''} 题
-            {data?.fullScore ? `(满分 ${formatNumber(data.fullScore)} 分)` : ''}
+            试题班级对比
           </h2>
         </div>
         <AIAnalysisTrigger view="single-question-class-compare" examId={examId} />
@@ -74,7 +73,7 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
         <p className="text-xs text-muted-foreground">题目内容：{data.questionContent}</p>
       )}
 
-      <QuestionPager
+      <QuestionCombobox
         questions={allQuestions.map((q) => ({ questionId: q.questionId, questionNumber: q.questionNumber }))}
         currentQuestionId={effectiveQuestionId}
         onChange={handleQuestionChange}
@@ -114,17 +113,7 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
                       </button>
                     </td>
                     <td className="py-3 px-4 text-right whitespace-nowrap">{data.overall.participants}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">
-                      <div className="flex items-center gap-2 justify-end">
-                        <div className="h-2 w-16 rounded-full bg-muted overflow-hidden">
-                          <div
-                            className="h-full rounded-full bg-muted-foreground/40"
-                            style={{ width: `${(data.overall.avgScore / data.fullScore) * 100}%` }}
-                          />
-                        </div>
-                        {formatNumber(data.overall.avgScore)}
-                      </div>
-                    </td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.avgScore)}</td>
                     <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.scoreRate)}%</td>
                     <td className="py-3 px-4 text-right whitespace-nowrap">—</td>
                     <td className="py-3 px-4 text-right whitespace-nowrap">—</td>
@@ -147,17 +136,7 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
                         </button>
                       </td>
                       <td className="py-3 px-4 text-right whitespace-nowrap">{cls.participants}</td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">
-                        <div className="flex items-center gap-2 justify-end">
-                          <div className="h-2 w-16 rounded-full bg-muted overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-primary/60"
-                              style={{ width: `${(cls.avgScore / data.fullScore) * 100}%` }}
-                            />
-                          </div>
-                          {formatNumber(cls.avgScore)}
-                        </div>
-                      </td>
+                      <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(cls.avgScore)}</td>
                       <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(cls.scoreRate)}%</td>
                       <td className="py-3 px-4 text-right whitespace-nowrap">
                         {cls.scoreDiff === 0 ? (
