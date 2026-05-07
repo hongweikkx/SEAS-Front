@@ -38,7 +38,6 @@ export default function QuestionCombobox({
 
   const handleInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      // cmdk 会在 Enter 时触发 onSelect，但如果输入的值直接匹配某个题号，也支持跳转
       const target = e.target as HTMLInputElement
       const trimmed = target.value.trim()
       if (!trimmed) {
@@ -61,36 +60,19 @@ export default function QuestionCombobox({
   }
 
   return (
-    <div className="flex items-center gap-1.5">
-      <button
-        onClick={() => {
-          if (effectiveIndex > 0) {
-            const q = questions[effectiveIndex - 1]
-            onChange(q.questionId, q.questionNumber)
-          }
-        }}
-        disabled={effectiveIndex <= 0}
-        className={cn(
-          'h-8 w-8 flex items-center justify-center rounded-md text-sm font-medium transition-all',
-          effectiveIndex > 0
-            ? 'bg-muted text-muted-foreground hover:bg-muted/80'
-            : 'bg-muted/40 text-muted-foreground/30 cursor-not-allowed'
-        )}
-      >
-        ‹
-      </button>
-
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-muted-foreground">题目:</span>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
             className={cn(
-              'h-8 min-w-[100px] px-3 flex items-center justify-between gap-2 rounded-md text-sm font-medium transition-all border',
+              'h-8 min-w-[80px] px-3 flex items-center justify-between gap-2 rounded-md text-sm font-medium transition-all border',
               invalid
                 ? 'border-red-400 bg-red-50 text-red-700'
                 : 'border-border bg-muted text-foreground hover:bg-muted/80'
             )}
           >
-            <span>第 {currentQuestion?.questionNumber ?? ''} 题</span>
+            <span>{currentQuestion?.questionNumber ?? ''}</span>
             <svg
               width="12"
               height="12"
@@ -102,7 +84,7 @@ export default function QuestionCombobox({
             </svg>
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0" align="start">
+        <PopoverContent className="w-[160px] p-0" align="start">
           <Command>
             <CommandInput
               placeholder="输入题号..."
@@ -121,7 +103,7 @@ export default function QuestionCombobox({
                       currentQuestionId === q.questionId && 'bg-primary/10 text-primary font-medium'
                     )}
                   >
-                    第 {q.questionNumber} 题
+                    {q.questionNumber}
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -129,24 +111,6 @@ export default function QuestionCombobox({
           </Command>
         </PopoverContent>
       </Popover>
-
-      <button
-        onClick={() => {
-          if (effectiveIndex < questions.length - 1) {
-            const q = questions[effectiveIndex + 1]
-            onChange(q.questionId, q.questionNumber)
-          }
-        }}
-        disabled={effectiveIndex >= questions.length - 1}
-        className={cn(
-          'h-8 w-8 flex items-center justify-center rounded-md text-sm font-medium transition-all',
-          effectiveIndex < questions.length - 1
-            ? 'bg-muted text-muted-foreground hover:bg-muted/80'
-            : 'bg-muted/40 text-muted-foreground/30 cursor-not-allowed'
-        )}
-      >
-        ›
-      </button>
     </div>
   )
 }

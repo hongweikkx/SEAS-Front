@@ -69,10 +69,6 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
         <AIAnalysisTrigger view="single-question-class-compare" examId={examId} />
       </div>
 
-      {data?.questionContent && (
-        <p className="text-xs text-muted-foreground">题目内容：{data.questionContent}</p>
-      )}
-
       <QuestionCombobox
         questions={allQuestions.map((q) => ({ questionId: q.questionId, questionNumber: q.questionNumber }))}
         currentQuestionId={effectiveQuestionId}
