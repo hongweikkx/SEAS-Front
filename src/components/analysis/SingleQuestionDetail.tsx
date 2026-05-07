@@ -46,15 +46,13 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
     !studentNameFilter || s.studentName.toLowerCase().includes(studentNameFilter.toLowerCase())
   ) || []
 
-  const displayClassName = data?.className || (classIdStr === 'all' ? '全年级' : '班级')
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">
-            {displayClassName} {data?.subjectName || '学科'} — {data?.questionNumber ?? ''} 学生得分详情
+            学生得分详情
           </h2>
         </div>
         <AIAnalysisTrigger view="single-question-detail" examId={examId} />
@@ -71,13 +69,16 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           currentQuestionId={effectiveQuestionId}
           onChange={handleQuestionChange}
         />
-        <input
-          type="text"
-          placeholder="搜索学生姓名..."
-          value={studentNameFilter}
-          onChange={(e) => setStudentNameFilter(e.target.value)}
-          className="h-8 rounded-lg border border-border/60 bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-        />
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">学生:</span>
+          <input
+            type="text"
+            placeholder="搜索学生姓名..."
+            value={studentNameFilter}
+            onChange={(e) => setStudentNameFilter(e.target.value)}
+            className="h-8 rounded-lg border border-border/60 bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
       </div>
 
       {isLoading && !data ? (
