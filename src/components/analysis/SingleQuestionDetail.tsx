@@ -1,11 +1,13 @@
 'use client'
 
-import { useSingleQuestionDetail } from '@/hooks/useDrilldown'
+import { useState } from 'react'
+import { useSingleQuestionDetail, useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { Loader2 } from 'lucide-react'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
+import QuestionPager from '@/components/analysis/QuestionPager'
 
 interface SingleQuestionDetailProps {
   examId: string
@@ -18,16 +20,33 @@ const getScoreClass = (scoreRate: number) => {
 }
 
 export default function SingleQuestionDetail({ examId }: SingleQuestionDetailProps) {
-  const { selectedSubjectId, drillDownParams } = useAnalysisStore()
-  const classId = drillDownParams.classId ? Number(drillDownParams.classId) : undefined
+  const { selectedSubjectId, drillDownParams, setDrillDownParam, updateLastDrillDownLabel } = useAnalysisStore()
+  const classIdStr = drillDownParams.classId ?? 'all'
   const questionId = drillDownParams.questionId
+  const [studentNameFilter, setStudentNameFilter] = useState('')
 
+  const { data: questionSummary } = useSingleQuestionSummary(examId, selectedSubjectId ?? undefined)
+  const allQuestions = questionSummary?.questions || []
+  const effectiveQuestionId = questionId || allQuestions[0]?.questionId
+
+  const classId = classIdStr === 'all' ? 0 : Number(classIdStr)
   const { data, isLoading } = useSingleQuestionDetail(
     examId,
     selectedSubjectId ?? undefined,
     classId,
-    questionId
+    effectiveQuestionId
   )
+
+  const handleQuestionChange = (newQuestionId: string, newQuestionNumber: string) => {
+    setDrillDownParam('questionId', newQuestionId)
+    updateLastDrillDownLabel(`学生得分详情 第${newQuestionNumber}题`)
+  }
+
+  const filteredStudents = data?.students.filter((s) =>
+    !studentNameFilter || s.studentName.toLowerCase().includes(studentNameFilter.toLowerCase())
+  ) || []
+
+  const displayClassName = data?.className || (classIdStr === 'all' ? '全年级' : '班级')
 
   return (
     <div className="space-y-4">
@@ -35,7 +54,7 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">
-            {data?.className || '班级'} {data?.subjectName || '学科'} — {data?.questionNumber ?? ''} 学生得分详情
+            {displayClassName} {data?.subjectName || '学科'} — {data?.questionNumber ?? ''} 学生得分详情
           </h2>
         </div>
         <AIAnalysisTrigger view="single-question-detail" examId={examId} />
@@ -45,6 +64,21 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           题目内容：{data.questionContent}
         </p>
       )}
+
+      <div className="flex items-center gap-4 flex-wrap">
+        <QuestionPager
+          questions={allQuestions.map((q) => ({ questionId: q.questionId, questionNumber: q.questionNumber }))}
+          currentQuestionId={effectiveQuestionId}
+          onChange={handleQuestionChange}
+        />
+        <input
+          type="text"
+          placeholder="搜索学生姓名..."
+          value={studentNameFilter}
+          onChange={(e) => setStudentNameFilter(e.target.value)}
+          className="h-8 rounded-lg border border-border/60 bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+      </div>
 
       {isLoading && !data ? (
         <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
@@ -65,7 +99,7 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
               </tr>
             </thead>
             <tbody>
-              {data?.students.map((student) => (
+              {filteredStudents.map((student) => (
                 <tr
                   key={student.studentId}
                   className="border-b border-border/40 transition-colors hover:bg-muted/20"
@@ -81,10 +115,10 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
                   <td className="py-3 px-5">{student.answerContent || '—'}</td>
                 </tr>
               ))}
-              {(!data?.students || data.students.length === 0) && (
+              {filteredStudents.length === 0 && (
                 <tr>
                   <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
-                    暂无数据
+                    {studentNameFilter ? '未找到匹配的学生' : '暂无数据'}
                   </td>
                 </tr>
               )}
