@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   BarChart3,
   BookOpen,
+  GitCompare,
   GraduationCap,
   Home,
   LayoutList,
@@ -43,10 +44,12 @@ const allAnalysisDimensions: Array<{
   { key: 'score-segment', label: '分数段分析', icon: <BarChart3 className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'rank-segment', label: '名次段分析', icon: <ListOrdered className="h-[15px] w-[15px]" />, scope: 'all' },
   { key: 'single-class-summary', label: '班级情况汇总', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
-  { key: 'single-question-summary', label: '试题分析', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
   { key: 'rating-analysis', label: '一分四率', icon: <TrendingUp className="h-[15px] w-[15px]" />, scope: 'single' },
   { key: 'score-segment', label: '分数段分析', icon: <BarChart3 className="h-[15px] w-[15px]" />, scope: 'single' },
   { key: 'rank-segment', label: '名次段分析', icon: <ListOrdered className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-question-summary', label: '试题分析', icon: <ClipboardList className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-question-class-compare', label: '试题班级对比', icon: <GitCompare className="h-[15px] w-[15px]" />, scope: 'single' },
+  { key: 'single-question-detail', label: '学生得分详情', icon: <Users className="h-[15px] w-[15px]" />, scope: 'single' },
 ]
 
 export function AppSidebar() {
@@ -94,6 +97,14 @@ export function AppSidebar() {
     }
     if (dimension.key === 'single-class-summary') {
       setDrillDownParam('classId', undefined)
+      setDrillDownParam('questionId', undefined)
+    }
+    if (dimension.key === 'single-question-class-compare') {
+      setDrillDownParam('classId', undefined)
+      setDrillDownParam('questionId', undefined)
+    }
+    if (dimension.key === 'single-question-detail') {
+      setDrillDownParam('classId', 'all')
       setDrillDownParam('questionId', undefined)
     }
   }
