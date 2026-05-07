@@ -13,7 +13,6 @@ interface SingleQuestionSummaryProps {
   examId: string
 }
 
-import { getDifficultyLevel, getDifficultyColor } from '@/utils/format'
 
 export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryProps) {
   const { selectedSubjectId, drillDownParams, setDrillDownParam } = useAnalysisStore()
@@ -28,14 +27,14 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
   const handleQuestionClick = (questionId: string, questionNumber: string) => {
     setDrillDownParam('questionId', questionId)
     pushDrillDown({
-      view: 'single-question-detail',
-      label: `试题分析 ${questionNumber}`,
+      view: 'single-question-class-compare',
+      label: `试题班级对比 第${questionNumber}题`,
       params: {
         questionId,
         subjectId: selectedSubjectId || '',
       },
     })
-    setCurrentView('single-question-detail')
+    setCurrentView('single-question-class-compare')
   }
 
   // 从数据中提取班级列表
@@ -88,17 +87,22 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="rounded-xl border border-border/60 bg-card overflow-hidden overflow-x-auto">
+          <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <th className="py-3 px-5 text-left font-medium text-muted-foreground">题号</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">分值</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">
+                <th className="py-3 px-4 text-left font-medium text-muted-foreground whitespace-nowrap">题号</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">参考人数</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">满分</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">
                   {selectedClassId === 'all' ? '年级均分' : '班级均分'}
                 </th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">得分率</th>
-                <th className="py-3 px-5 text-center font-medium text-muted-foreground">难度</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">最高分</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">最低分</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">得分率</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">难度</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">标准差</th>
+                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">区分度</th>
               </tr>
             </thead>
             <tbody>
@@ -110,12 +114,17 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
                   ? null
                   : q.classBreakdown.find((c) => String(c.classId) === selectedClassId)
                 const avgScore = classBreakdown?.avgScore ?? q.gradeAvgScore
+                const participants = classBreakdown?.participants ?? q.participants
+                const scoreRate = classBreakdown
+                  ? parseFloat(((classBreakdown.avgScore / q.fullScore) * 100).toFixed(2))
+                  : q.scoreRate
+                const stdDev = classBreakdown?.stdDev ?? q.stdDev
                 return (
                   <tr
                     key={q.questionId}
                     className="border-b border-border/40 transition-colors hover:bg-muted/20"
                   >
-                    <td className="py-3 px-5">
+                    <td className="py-3 px-4 whitespace-nowrap">
                       <button
                         onClick={() => handleQuestionClick(q.questionId, q.questionNumber)}
                         className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
@@ -123,20 +132,21 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
                         {q.questionNumber}
                       </button>
                     </td>
-                    <td className="py-3 px-5 text-right">{q.fullScore}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(avgScore)}</td>
-                    <td className="py-3 px-5 text-right">{formatNumber(q.scoreRate)}%</td>
-                    <td className="py-3 px-5 text-center">
-                      <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium', getDifficultyColor(q.difficulty))}>
-                        {getDifficultyLevel(q.difficulty)}
-                      </span>
-                    </td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{participants}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{q.fullScore}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(avgScore)}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(q.highestScore)}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(q.lowestScore)}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(scoreRate)}%</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(scoreRate)}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(stdDev)}</td>
+                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(q.discrimination)}</td>
                   </tr>
                 )
               })}
               {(!data?.questions || data.questions.length === 0) && (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={10} className="py-8 text-center text-sm text-muted-foreground">
                     暂无数据
                   </td>
                 </tr>

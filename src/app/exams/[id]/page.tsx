@@ -10,6 +10,7 @@ import SingleClassSummary from '@/components/analysis/SingleClassSummary'
 import SingleClassQuestion from '@/components/analysis/SingleClassQuestion'
 import SingleQuestionSummary from '@/components/analysis/SingleQuestionSummary'
 import SingleQuestionDetail from '@/components/analysis/SingleQuestionDetail'
+import SingleQuestionClassCompare from '@/components/analysis/SingleQuestionClassCompare'
 import BreadcrumbNav from '@/components/analysis/BreadcrumbNav'
 import { use, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
@@ -34,6 +35,7 @@ const viewComponentMap: Record<AnalysisView, React.ComponentType<{ examId: strin
   'single-class-summary': SingleClassSummary,
   'single-class-question': SingleClassQuestion,
   'single-question-summary': SingleQuestionSummary,
+  'single-question-class-compare': SingleQuestionClassCompare,
   'single-question-detail': SingleQuestionDetail,
 }
 
@@ -112,6 +114,7 @@ export default function ExamDetailPage({ params }: PageProps) {
       'single-class-summary',
       'single-class-question',
       'single-question-summary',
+      'single-question-class-compare',
       'single-question-detail',
     ]
     if (singleSubjectViews.includes(currentView) && !selectedSubjectId && subjectsData?.subjects && subjectsData.subjects.length > 0) {
