@@ -44,6 +44,17 @@ export const useSingleQuestionDetail = (
     queryKey: ['singleQuestionDetail', examId, subjectId, classId, questionId],
     queryFn: () => drilldownService.getSingleQuestionDetail(examId, subjectId!, classId!, questionId!),
     staleTime: 5 * 60 * 1000,
-    enabled: !!examId && !!subjectId && !!classId && !!questionId,
+    enabled: !!examId && !!subjectId && classId !== undefined && !!questionId,
+  })
+}
+
+export const useSingleQuestionClassCompare = (
+  examId?: string, subjectId?: string, questionId?: string
+) => {
+  return useQuery({
+    queryKey: ['singleQuestionClassCompare', examId, subjectId, questionId],
+    queryFn: () => drilldownService.getSingleQuestionClassCompare(examId!, subjectId!, questionId!),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!examId && !!subjectId && !!questionId,
   })
 }

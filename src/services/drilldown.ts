@@ -5,6 +5,7 @@ import type {
   SingleClassQuestionResponse,
   SingleQuestionSummaryResponse,
   SingleQuestionDetailResponse,
+  SingleQuestionClassCompareResponse,
 } from '@/types'
 
 export const drilldownService = {
@@ -31,4 +32,10 @@ export const drilldownService = {
     examId: string, subjectId: string, classId: number, questionId: string
   ): Promise<SingleQuestionDetailResponse> =>
     apiClient.get(`/exams/${examId}/subjects/${subjectId}/classes/${classId}/questions/${questionId}`),
+
+  // 视图9：试题班级对比
+  getSingleQuestionClassCompare: async (
+    examId: string, subjectId: string, questionId: string
+  ): Promise<SingleQuestionClassCompareResponse> =>
+    apiClient.get(`/exams/${examId}/subjects/${subjectId}/questions/${questionId}/class-compare`),
 }
