@@ -7,6 +7,7 @@ export type AnalysisView =
   | 'single-class-summary'
   | 'single-class-question'
   | 'single-question-summary'
+  | 'single-question-class-compare'
   | 'single-question-detail'
 
 export interface DrillDownNode {

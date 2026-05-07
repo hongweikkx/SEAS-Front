@@ -62,6 +62,8 @@ export interface QuestionClassBreakdown {
   classId: number
   className: string
   avgScore: number
+  participants: number
+  stdDev: number
 }
 
 export interface SingleQuestionSummaryItem {
@@ -73,6 +75,11 @@ export interface SingleQuestionSummaryItem {
   classBreakdown: QuestionClassBreakdown[]
   scoreRate: number
   difficulty: number
+  participants: number
+  highestScore: number
+  lowestScore: number
+  stdDev: number
+  discrimination: number
 }
 
 export interface SingleQuestionSummaryResponse {
@@ -108,4 +115,33 @@ export interface SingleQuestionDetailResponse {
   fullScore: number
   questionContent?: string
   students: StudentQuestionDetail[]
+}
+
+// 视图9：试题班级对比
+export interface SingleQuestionClassCompareItem {
+  classId: number
+  className: string
+  participants: number
+  avgScore: number
+  scoreRate: number
+  scoreDiff: number
+  classRank: number | null
+  totalClasses: number
+  highestScore: number
+  lowestScore: number
+  stdDev: number
+}
+
+export interface SingleQuestionClassCompareResponse {
+  examId: string
+  examName: string
+  subjectId: string
+  subjectName: string
+  questionId: string
+  questionNumber: string
+  questionType: string
+  fullScore: number
+  questionContent?: string
+  overall: SingleQuestionClassCompareItem
+  classes: SingleQuestionClassCompareItem[]
 }
