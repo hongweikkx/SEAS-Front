@@ -96,7 +96,6 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">得分率</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级排名</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级排名</th>
-                <th className="py-3 px-5 text-left font-medium text-muted-foreground">作答情况</th>
               </tr>
             </thead>
             <tbody>
@@ -113,12 +112,11 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
                   <td className="py-3 px-5 text-right">{formatNumber(student.scoreRate)}%</td>
                   <td className="py-3 px-5 text-right">{student.classRank}</td>
                   <td className="py-3 px-5 text-right">{student.gradeRank}</td>
-                  <td className="py-3 px-5">{student.answerContent || '—'}</td>
                 </tr>
               ))}
               {filteredStudents.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                  <td colSpan={6} className="py-8 text-center text-sm text-muted-foreground">
                     {studentNameFilter ? '未找到匹配的学生' : '暂无数据'}
                   </td>
                 </tr>

@@ -59,7 +59,7 @@ export default function RatingChart({ examId }: RatingChartProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-5 w-1 rounded-full bg-primary" />
-          <h2 className="text-lg font-semibold text-foreground">四率分析</h2>
+          <h2 className="text-lg font-semibold text-foreground">一分四率</h2>
         </div>
         <AIAnalysisTrigger view="rating-analysis" examId={examId} />
       </div>
