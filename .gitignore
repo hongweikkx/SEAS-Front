@@ -50,10 +50,6 @@ next-env.d.ts
 .playwright-mcp/
 .playwright-cli/
 
-/docs/*
-!/docs/superpowers/
-/docs/superpowers/*
-!/docs/superpowers/specs/
-!/docs/superpowers/plans/
+/docs/
 
 integration-test-*.png
