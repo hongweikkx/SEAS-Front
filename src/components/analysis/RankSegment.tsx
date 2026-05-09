@@ -247,10 +247,10 @@ export default function RankSegment({ examId }: RankSegmentProps) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
-                    <th className="py-2.5 px-3 text-left font-medium text-muted-foreground whitespace-nowrap">
+                    <th rowSpan={2} className="py-2.5 px-3 text-left font-medium text-muted-foreground whitespace-nowrap">
                       班级
                     </th>
-                    <th className="py-2.5 px-3 text-right font-medium text-muted-foreground whitespace-nowrap">
+                    <th rowSpan={2} className="py-2.5 px-3 text-right font-medium text-muted-foreground whitespace-nowrap">
                       总人数
                     </th>
                     {segmentLabels.map((label) => (
@@ -264,8 +264,6 @@ export default function RankSegment({ examId }: RankSegmentProps) {
                     ))}
                   </tr>
                   <tr className="border-b border-border/60 bg-muted/20">
-                    <th className="py-2 px-3" />
-                    <th className="py-2 px-3" />
                     {segmentLabels.map((label) => (
                       <th
                         key={label}

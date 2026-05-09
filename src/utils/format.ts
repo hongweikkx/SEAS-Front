@@ -12,10 +12,11 @@ export const formatDate = (dateString: string): string => {
   }
 }
 
-// 格式化数字到2位小数
+// 格式化数字：最多保留2位小数，去掉末尾无意义的0
 export const formatNumber = (num: number | string): string => {
   const n = typeof num === 'string' ? parseFloat(num) : num
-  return isNaN(n) ? '0.00' : n.toFixed(2)
+  if (isNaN(n)) return '0'
+  return parseFloat(n.toFixed(2)).toString()
 }
 
 // 获取难度等级描述
