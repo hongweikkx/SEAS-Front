@@ -4,7 +4,10 @@ import { useState } from 'react'
 import { useSingleQuestionDetail, useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 import QuestionCombobox from '@/components/analysis/QuestionCombobox'
@@ -46,6 +49,25 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
     !studentNameFilter || s.studentName.toLowerCase().includes(studentNameFilter.toLowerCase())
   ) || []
 
+  const handleExport = () => {
+    if (!data?.students) return
+
+    const rows = filteredStudents.map((s) => ({
+      学生姓名: s.studentName,
+      得分: s.score,
+      满分: s.fullScore,
+      得分率: `${s.scoreRate}%`,
+      班级排名: s.classRank,
+      年级排名: s.gradeRank,
+    }))
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '学生得分详情')
+    const examName = data.examName || '考试'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-学生得分详情.xlsx`)
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -55,7 +77,19 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
             学生得分详情
           </h2>
         </div>
-        <AIAnalysisTrigger view="single-question-detail" examId={examId} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={!data || filteredStudents.length === 0}
+            className="h-8 w-8 p-0"
+            title="导出Excel"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+          <AIAnalysisTrigger view="single-question-detail" examId={examId} />
+        </div>
       </div>
       {data?.questionContent && (
         <p className="text-xs text-muted-foreground">

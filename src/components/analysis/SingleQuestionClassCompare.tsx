@@ -3,8 +3,11 @@
 import { useSingleQuestionClassCompare, useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 import QuestionCombobox from '@/components/analysis/QuestionCombobox'
@@ -57,6 +60,42 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
     setCurrentView('single-question-detail')
   }
 
+  const handleExport = () => {
+    if (!data) return
+
+    const rows = []
+    rows.push({
+      班级: '全年级',
+      参与人数: data.overall.participants,
+      班级均分: data.overall.avgScore,
+      得分率: `${data.overall.scoreRate}%`,
+      与年级差距: '—',
+      班级排名: '—',
+      最高分: data.overall.highestScore,
+      最低分: data.overall.lowestScore,
+      标准差: data.overall.stdDev,
+    })
+    data.classes.forEach((cls) => {
+      rows.push({
+        班级: cls.className,
+        参与人数: cls.participants,
+        班级均分: cls.avgScore,
+        得分率: `${cls.scoreRate}%`,
+        与年级差距: cls.scoreDiff,
+        班级排名: cls.classRank !== null ? `${cls.classRank}/${cls.totalClasses}` : '—',
+        最高分: cls.highestScore,
+        最低分: cls.lowestScore,
+        标准差: cls.stdDev,
+      })
+    })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '试题班级对比')
+    const examName = data.examName || '考试'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-试题班级对比.xlsx`)
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -66,7 +105,19 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
             试题班级对比
           </h2>
         </div>
-        <AIAnalysisTrigger view="single-question-class-compare" examId={examId} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={!data}
+            className="h-8 w-8 p-0"
+            title="导出Excel"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+          <AIAnalysisTrigger view="single-question-class-compare" examId={examId} />
+        </div>
       </div>
 
       <QuestionCombobox
