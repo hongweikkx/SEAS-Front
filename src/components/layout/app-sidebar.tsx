@@ -26,7 +26,7 @@ interface NavItem {
 }
 
 const mainNavItems: NavItem[] = [
-  { label: '主页', href: '/', icon: <Home className="h-[18px] w-[18px]" /> },
+  { label: '首页', href: '/', icon: <Home className="h-[18px] w-[18px]" /> },
   { label: '分析列表', href: '/exams', icon: <BookOpen className="h-[18px] w-[18px]" /> },
   { label: '新建分析', href: '/create', icon: <PlusCircle className="h-[18px] w-[18px]" /> },
 ]

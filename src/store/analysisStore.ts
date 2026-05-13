@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { AnalysisView, DrillDownNode, RatingConfig, AIAnalysisResult } from '@/types'
 
-export type ExamType = '期中' | '期末' | '月考' | '模拟' | '其他'
+export type ExamType = '期中' | '期末' | '月考' | '模拟' | '示例' | '其他'
 
 interface AnalysisState {
   isAuthenticated: boolean

@@ -40,7 +40,7 @@ export function ExamCard({ exam, onDelete, isDeleting }: ExamCardProps) {
     <div className="group relative flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/60 p-5 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
       <Link href={`/exams/${exam.id}`} className="flex flex-col gap-3">
         <div className="flex items-start gap-3">
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 pr-8">
             <div className="flex items-center gap-2">
               <h3 className="truncate text-base font-semibold text-foreground">{exam.name}</h3>
               <ExamTypeBadge name={exam.name} />

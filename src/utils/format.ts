@@ -43,7 +43,8 @@ export const difficultyLabel: Record<string, { label: string; className: string 
 }
 
 // 考试分类检测
-export function detectExamType(name: string): '期中' | '期末' | '月考' | '模拟' | '其他' {
+export function detectExamType(name: string): '期中' | '期末' | '月考' | '模拟' | '示例' | '其他' {
+  if (name.includes('示例') || name.includes('样例')) return '示例'
   if (name.includes('期中')) return '期中'
   if (name.includes('期末')) return '期末'
   if (name.includes('月考')) return '月考'
@@ -57,5 +58,6 @@ export const examTypeColors: Record<string, string> = {
   期末: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
   月考: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
   模拟: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+  示例: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300',
   其他: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
 } as const

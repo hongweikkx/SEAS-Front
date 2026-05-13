@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bell, GraduationCap } from 'lucide-react'
+import { GraduationCap } from 'lucide-react'
 
 import { useExams } from '@/hooks/useAnalysis'
 import { AppSidebar } from '@/components/layout/app-sidebar'
@@ -45,12 +45,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-3">
             <div>
               {isHome ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <GraduationCap className="h-[18px] w-[18px] text-primary" />
-                  <span className="font-semibold text-foreground">SEAS</span>
-                  <span className="text-border">|</span>
-                  <span>智能学业分析系统</span>
-                </div>
+                <span className="text-sm font-semibold text-foreground">智能学业分析系统</span>
               ) : (
                 <Breadcrumb className="text-sm">
                   <BreadcrumbList>
@@ -82,14 +77,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 </Breadcrumb>
               )}
             </div>
-            <div className="flex items-center gap-3">
-              <button className="relative rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-                <Bell className="h-5 w-5" />
-                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500" />
-              </button>
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">
-                智
-              </div>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+              <GraduationCap className="h-4 w-4 text-primary" />
             </div>
           </div>
         </header>
