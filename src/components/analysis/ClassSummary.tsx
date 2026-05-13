@@ -4,8 +4,11 @@ import { useClassSummary } from '@/hooks/useAnalysis'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
@@ -25,6 +28,46 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
 
   const sortedClassDetails = data?.classDetails ? sortByClassName(data.classDetails) : []
 
+  const handleExport = () => {
+    if (!data) return
+
+    const rows = []
+    if (data.overallGrade) {
+      rows.push({
+        班级: data.overallGrade.className,
+        参考人数: data.overallGrade.totalStudents,
+        满分: data.overallGrade.fullScore,
+        平均分: data.overallGrade.avgScore,
+        最高分: data.overallGrade.highestScore,
+        最低分: data.overallGrade.lowestScore,
+        离均差: '—',
+        难度: data.overallGrade.difficulty,
+        标准差: data.overallGrade.stdDev,
+        区分度: data.overallGrade.discrimination,
+      })
+    }
+    sortedClassDetails.forEach((cls) => {
+      rows.push({
+        班级: cls.className,
+        参考人数: cls.totalStudents,
+        满分: cls.fullScore,
+        平均分: cls.avgScore,
+        最高分: cls.highestScore,
+        最低分: cls.lowestScore,
+        离均差: cls.scoreDeviation,
+        难度: cls.difficulty,
+        标准差: cls.stdDev,
+        区分度: cls.discrimination,
+      })
+    })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '班级情况汇总')
+    const examName = data.examName || '考试'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-班级情况汇总.xlsx`)
+  }
+
   const handleClassClick = (classId: number, className: string) => {
     setDrillDownParam('classId', String(classId))
     pushDrillDown({
@@ -42,7 +85,19 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">班级情况汇总</h2>
         </div>
-        <AIAnalysisTrigger view="class-summary" examId={examId} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={!data}
+            className="h-8 w-8 p-0"
+            title="导出Excel"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+          <AIAnalysisTrigger view="class-summary" examId={examId} />
+        </div>
       </div>
 
       {isLoading && !data ? (

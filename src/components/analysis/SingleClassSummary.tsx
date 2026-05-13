@@ -4,8 +4,11 @@ import { useSingleClassSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
@@ -17,6 +20,46 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
   const { selectedSubjectId } = useAnalysisStore()
   const { data, isLoading } = useSingleClassSummary(examId, selectedSubjectId ?? undefined)
   const sortedClasses = data?.classes ? sortByClassName(data.classes) : []
+
+  const handleExport = () => {
+    if (!data) return
+
+    const rows = []
+    if (data.overall) {
+      rows.push({
+        班级: data.overall.className,
+        参考人数: data.overall.totalStudents,
+        满分: data.overall.fullScore,
+        平均分: data.overall.avgScore,
+        最高分: data.overall.highestScore,
+        最低分: data.overall.lowestScore,
+        离均差: '—',
+        难度: data.overall.difficulty,
+        标准差: data.overall.stdDev,
+        区分度: data.overall.discrimination,
+      })
+    }
+    sortedClasses.forEach((cls) => {
+      rows.push({
+        班级: cls.className,
+        参考人数: cls.totalStudents,
+        满分: cls.fullScore,
+        平均分: cls.avgScore,
+        最高分: cls.highestScore,
+        最低分: cls.lowestScore,
+        离均差: cls.scoreDeviation,
+        难度: cls.difficulty,
+        标准差: cls.stdDev,
+        区分度: cls.discrimination,
+      })
+    })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '班级情况汇总')
+    const examName = data.examName || '考试'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-单科班级汇总.xlsx`)
+  }
 
   const {
     setCurrentView,
@@ -43,7 +86,19 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
             班级情况汇总
           </h2>
         </div>
-        <AIAnalysisTrigger view="single-class-summary" examId={examId} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={!data}
+            className="h-8 w-8 p-0"
+            title="导出Excel"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+          <AIAnalysisTrigger view="single-class-summary" examId={examId} />
+        </div>
       </div>
       {isLoading && !data ? (
         <div className="flex h-40 items-center justify-center rounded-xl border border-border/60 bg-card">
