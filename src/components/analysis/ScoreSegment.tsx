@@ -37,7 +37,7 @@ const DEFAULT_RULES: SegmentConfig[] = [
 
 export default function ScoreSegment({ examId }: ScoreSegmentProps) {
   const queryClient = useQueryClient()
-  const { selectedScope, selectedSubjectId } = useAnalysisStore()
+  const { selectedScope, selectedSubjectId, selectedSubjectName } = useAnalysisStore()
   const [rules, setRules] = useState<SegmentConfig[]>(DEFAULT_RULES)
   const [queryRules, setQueryRules] = useState<SegmentConfig[]>(DEFAULT_RULES)
 
@@ -168,7 +168,8 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '分数段分析')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-分数段分析.xlsx`)
+    const subjectName = selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-分数段分析.xlsx`)
   }
 
   // 为分数段分配语义化颜色：低分偏红，高分偏蓝绿

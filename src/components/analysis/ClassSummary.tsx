@@ -17,7 +17,7 @@ interface ClassSummaryProps {
 }
 
 export default function ClassSummary({ examId }: ClassSummaryProps) {
-  const { selectedScope, selectedSubjectId } = useAnalysisStore()
+  const { selectedScope, selectedSubjectId, selectedSubjectName } = useAnalysisStore()
   const { data, isLoading } = useClassSummary(examId, selectedScope, selectedSubjectId ?? undefined)
 
   const {
@@ -65,7 +65,8 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '班级情况汇总')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-班级情况汇总.xlsx`)
+    const subjectName = selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-班级情况汇总.xlsx`)
   }
 
   const handleClassClick = (classId: number, className: string) => {
@@ -86,6 +87,7 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
           <h2 className="text-lg font-semibold text-foreground">班级情况汇总</h2>
         </div>
         <div className="flex items-center gap-2">
+          <AIAnalysisTrigger view="class-summary" examId={examId} />
           <Button
             variant="ghost"
             size="sm"
@@ -96,7 +98,6 @@ export default function ClassSummary({ examId }: ClassSummaryProps) {
           >
             <Download className="h-4 w-4" />
           </Button>
-          <AIAnalysisTrigger view="class-summary" examId={examId} />
         </div>
       </div>
 

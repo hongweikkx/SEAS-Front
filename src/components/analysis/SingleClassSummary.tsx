@@ -17,7 +17,7 @@ interface SingleClassSummaryProps {
 }
 
 export default function SingleClassSummary({ examId }: SingleClassSummaryProps) {
-  const { selectedSubjectId } = useAnalysisStore()
+  const { selectedSubjectId, selectedSubjectName } = useAnalysisStore()
   const { data, isLoading } = useSingleClassSummary(examId, selectedSubjectId ?? undefined)
   const sortedClasses = data?.classes ? sortByClassName(data.classes) : []
 
@@ -58,7 +58,8 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '班级情况汇总')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-单科班级汇总.xlsx`)
+    const subjectName = data.subjectName || selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-班级情况汇总.xlsx`)
   }
 
   const {
@@ -87,6 +88,7 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
           </h2>
         </div>
         <div className="flex items-center gap-2">
+          <AIAnalysisTrigger view="single-class-summary" examId={examId} />
           <Button
             variant="ghost"
             size="sm"
@@ -97,7 +99,6 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
           >
             <Download className="h-4 w-4" />
           </Button>
-          <AIAnalysisTrigger view="single-class-summary" examId={examId} />
         </div>
       </div>
       {isLoading && !data ? (

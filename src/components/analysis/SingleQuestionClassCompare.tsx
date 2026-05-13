@@ -93,7 +93,8 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '试题班级对比')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-试题班级对比.xlsx`)
+    const subjectName = selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-试题班级对比.xlsx`)
   }
 
   return (
@@ -106,6 +107,7 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
           </h2>
         </div>
         <div className="flex items-center gap-2">
+          <AIAnalysisTrigger view="single-question-class-compare" examId={examId} />
           <Button
             variant="ghost"
             size="sm"
@@ -116,7 +118,6 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
           >
             <Download className="h-4 w-4" />
           </Button>
-          <AIAnalysisTrigger view="single-question-class-compare" examId={examId} />
         </div>
       </div>
 

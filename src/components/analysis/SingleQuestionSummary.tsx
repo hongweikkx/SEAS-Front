@@ -63,7 +63,8 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '试题分析')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-试题分析.xlsx`)
+    const subjectName = selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-试题分析.xlsx`)
   }
 
   const handleQuestionClick = (questionId: string, questionNumber: string) => {
@@ -91,6 +92,7 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           <h2 className="text-lg font-semibold text-foreground">试题分析</h2>
         </div>
         <div className="flex items-center gap-2">
+          <AIAnalysisTrigger view="single-question-summary" examId={examId} />
           <Button
             variant="ghost"
             size="sm"
@@ -101,7 +103,6 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           >
             <Download className="h-4 w-4" />
           </Button>
-          <AIAnalysisTrigger view="single-question-summary" examId={examId} />
         </div>
       </div>
 

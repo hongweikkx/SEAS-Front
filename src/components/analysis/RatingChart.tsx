@@ -21,7 +21,7 @@ interface RatingChartProps {
 
 export default function RatingChart({ examId }: RatingChartProps) {
   const queryClient = useQueryClient()
-  const { selectedScope, selectedSubjectId, ratingConfig, setRatingConfig } = useAnalysisStore()
+  const { selectedScope, selectedSubjectId, selectedSubjectName, ratingConfig, setRatingConfig } = useAnalysisStore()
   const [draftConfig, setDraftConfig] = useState(ratingConfig)
   const { data, isLoading, isFetching } = useRatingDistribution(
     examId,
@@ -75,7 +75,8 @@ export default function RatingChart({ examId }: RatingChartProps) {
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '四率分析')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-四率分析.xlsx`)
+    const subjectName = selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-一分四率.xlsx`)
   }
 
   useEffect(() => {
@@ -110,6 +111,7 @@ export default function RatingChart({ examId }: RatingChartProps) {
           <h2 className="text-lg font-semibold text-foreground">一分四率</h2>
         </div>
         <div className="flex items-center gap-2">
+          <AIAnalysisTrigger view="rating-analysis" examId={examId} />
           <Button
             variant="ghost"
             size="sm"
@@ -120,7 +122,6 @@ export default function RatingChart({ examId }: RatingChartProps) {
           >
             <Download className="h-4 w-4" />
           </Button>
-          <AIAnalysisTrigger view="rating-analysis" examId={examId} />
         </div>
       </div>
 

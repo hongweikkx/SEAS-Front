@@ -65,7 +65,8 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '学生得分详情')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-学生得分详情.xlsx`)
+    const subjectName = selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-学生得分详情.xlsx`)
   }
 
   return (
@@ -78,6 +79,7 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           </h2>
         </div>
         <div className="flex items-center gap-2">
+          <AIAnalysisTrigger view="single-question-detail" examId={examId} />
           <Button
             variant="ghost"
             size="sm"
@@ -88,7 +90,6 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           >
             <Download className="h-4 w-4" />
           </Button>
-          <AIAnalysisTrigger view="single-question-detail" examId={examId} />
         </div>
       </div>
       {data?.questionContent && (

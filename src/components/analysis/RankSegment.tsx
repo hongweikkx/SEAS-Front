@@ -57,7 +57,7 @@ const CLASS_COLORS = [
 
 export default function RankSegment({ examId }: RankSegmentProps) {
   const queryClient = useQueryClient()
-  const { selectedScope, selectedSubjectId } = useAnalysisStore()
+  const { selectedScope, selectedSubjectId, selectedSubjectName } = useAnalysisStore()
   const [rules, setRules] = useState<RankSegmentConfig[]>(DEFAULT_RULES)
   const [queryRules, setQueryRules] = useState<RankSegmentConfig[]>(DEFAULT_RULES)
 
@@ -110,7 +110,8 @@ export default function RankSegment({ examId }: RankSegmentProps) {
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, '名次段分析')
     const examName = data.examName || '考试'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-名次段分析.xlsx`)
+    const subjectName = selectedSubjectName || '全科'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-名次段分析.xlsx`)
   }
 
   const handleAddRule = () => {

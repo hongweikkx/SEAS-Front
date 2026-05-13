@@ -93,7 +93,8 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, '学科情况汇总')
       const examName = data.examName || '考试'
-      downloadWorkbook(wb, `${sanitizeFilename(examName)}-学科情况汇总.xlsx`)
+      const subjectName = selectedSubjectName || '全科'
+      downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-学科情况汇总.xlsx`)
     } else if (classId && classSubjectData?.subjects) {
       // 班级模式
       const sortedSubjects = sortBySubjectItemName(classSubjectData.subjects)
@@ -117,7 +118,8 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, '班级学科汇总')
       const examName = classSubjectData.examName || '考试'
-      downloadWorkbook(wb, `${sanitizeFilename(examName)}-班级学科汇总.xlsx`)
+      const subjectName = selectedSubjectName || '全科'
+      downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-班级学科汇总.xlsx`)
     }
   }
 
@@ -129,6 +131,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
           <h2 className="text-lg font-semibold text-foreground">学科情况汇总</h2>
         </div>
         <div className="flex items-center gap-2">
+          <AIAnalysisTrigger view="subject-summary" examId={examId} />
           <Button
             variant="ghost"
             size="sm"
@@ -139,7 +142,6 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
           >
             <Download className="h-4 w-4" />
           </Button>
-          <AIAnalysisTrigger view="subject-summary" examId={examId} />
         </div>
       </div>
 
