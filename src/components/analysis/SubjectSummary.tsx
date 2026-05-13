@@ -28,6 +28,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
   const {
     selectedScope,
     selectedSubjectId,
+    selectedSubjectName,
     setSelectedScope,
     setSelectedSubjectId,
     setSelectedSubjectName,
