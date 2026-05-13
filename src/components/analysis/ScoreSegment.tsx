@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
-import { Loader2, Plus, Trash2 } from 'lucide-react'
+import { Loader2, Plus, Trash2, Download } from 'lucide-react'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 import {
   BarChart,
   Bar,
@@ -138,6 +140,37 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
 
   const segmentLabels = data?.overallGrade?.segments.map((s) => s.label) ?? []
 
+  const handleExport = () => {
+    if (!data) return
+
+    const allClasses = data.overallGrade
+      ? [data.overallGrade, ...sortedClassDetails]
+      : sortedClassDetails
+
+    const rows = allClasses.map((cls) => {
+      const row: Record<string, number | string> = {
+        班级: cls.className,
+        总人数: cls.totalStudents,
+      }
+      cls.segments.forEach((seg) => {
+        const gradeSeg = data.overallGrade?.segments.find((s) => s.label === seg.label)
+        const classPct = cls.totalStudents > 0 ? (seg.count / cls.totalStudents) * 100 : 0
+        const gradeContrib = gradeSeg && gradeSeg.count > 0 ? (seg.count / gradeSeg.count) * 100 : 0
+        const isOverall = cls.classId === data.overallGrade?.classId
+        row[`${seg.label}分-人数`] = seg.count
+        row[`${seg.label}分-班内占比`] = `${classPct.toFixed(2)}%`
+        row[`${seg.label}分-年级贡献`] = isOverall ? '—' : `${gradeContrib.toFixed(2)}%`
+      })
+      return row
+    })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '分数段分析')
+    const examName = data.examName || '考试'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-分数段分析.xlsx`)
+  }
+
   // 为分数段分配语义化颜色：低分偏红，高分偏蓝绿
   const getSegmentColor = (label: string): string => {
     const allSegments = data?.overallGrade?.segments ?? []
@@ -170,6 +203,16 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">分数段分析</h2>
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleExport}
+          disabled={!data}
+          className="h-8 w-8 p-0"
+          title="导出Excel"
+        >
+          <Download className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
