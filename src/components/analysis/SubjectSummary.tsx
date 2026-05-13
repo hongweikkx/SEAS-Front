@@ -12,6 +12,8 @@ import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
 import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 
 interface SubjectSummaryProps {
   examId: string
@@ -44,6 +46,22 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
   const { data: classSummaryData } = useClassSummary(examId, 'all_subjects')
   const sortedClassDetails = classSummaryData?.classDetails ? sortByClassName(classSummaryData.classDetails) : []
   const { data: classSubjectData, isLoading: classSubjectLoading } = useClassSubjectSummary(examId, classId)
+
+  const {
+    sortState: gradeSortState,
+    toggleSort: gradeToggleSort,
+    sortedData: gradeSortedData,
+  } = useTableSort({
+    defaultSort: { column: 'name', direction: 'asc' },
+  })
+
+  const {
+    sortState: classSortState,
+    toggleSort: classToggleSort,
+    sortedData: classSortedData,
+  } = useTableSort({
+    defaultSort: { column: 'subjectName', direction: 'asc' },
+  })
 
   const handleSubjectClick = (subjectId: string, subjectName: string) => {
     setSelectedScope('single_subject')
@@ -191,19 +209,19 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
-                    <th className="py-3 px-5 text-left font-medium text-muted-foreground">学科</th>
+                    <SortableHeader columnKey="name" label="学科" align="left" sortState={gradeSortState} onSort={gradeToggleSort} className="py-3 px-5" />
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">平均分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">最高分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">最低分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
+                    <SortableHeader columnKey="avgScore" label="平均分" align="right" sortState={gradeSortState} onSort={gradeToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="highestScore" label="最高分" align="right" sortState={gradeSortState} onSort={gradeToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="lowestScore" label="最低分" align="right" sortState={gradeSortState} onSort={gradeToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="difficulty" label="难度" align="right" sortState={gradeSortState} onSort={gradeToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={gradeSortState} onSort={gradeToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="discrimination" label="区分度" align="right" sortState={gradeSortState} onSort={gradeToggleSort} className="py-3 px-5" />
                   </tr>
                 </thead>
                 <tbody>
-                  {(data?.subjects ? sortBySubjectName(data.subjects) : []).map((subject) => (
+                  {(data?.subjects ? gradeSortedData(sortBySubjectName(data.subjects)) : []).map((subject) => (
                     <tr key={subject.id} className="border-b border-border/40 transition-colors hover:bg-muted/20">
                       <td className="py-3 px-5">
                         {selectedScope === 'all_subjects' ? (
@@ -251,18 +269,18 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
-                    <th className="py-3 px-5 text-left font-medium text-muted-foreground">学科</th>
+                    <SortableHeader columnKey="subjectName" label="学科" align="left" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
                     <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级均分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级均分</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">分差</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级最高</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级最低</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
-                    <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级排名</th>
+                    <SortableHeader columnKey="classAvgScore" label="班级均分" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="gradeAvgScore" label="年级均分" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="scoreDiff" label="分差" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="classHighest" label="班级最高" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="classLowest" label="班级最低" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="difficulty" label="难度" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="discrimination" label="区分度" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
+                    <SortableHeader columnKey="classRank" label="班级排名" align="right" sortState={classSortState} onSort={classToggleSort} className="py-3 px-5" />
                   </tr>
                 </thead>
                 <tbody>
@@ -287,7 +305,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
                       <td className="py-3 px-5 text-right">{classSubjectData.overall.classRank}/{classSubjectData.overall.totalClasses}</td>
                     </tr>
                   )}
-                  {(classSubjectData?.subjects ? sortBySubjectItemName(classSubjectData.subjects) : []).map((subject) => (
+                  {(classSubjectData?.subjects ? classSortedData(sortBySubjectItemName(classSubjectData.subjects)) : []).map((subject) => (
                     <tr
                       key={subject.subjectId}
                       className="border-b border-border/40 transition-colors hover:bg-muted/20"
