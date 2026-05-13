@@ -13,8 +13,6 @@ import SingleQuestionDetail from '@/components/analysis/SingleQuestionDetail'
 import SingleQuestionClassCompare from '@/components/analysis/SingleQuestionClassCompare'
 import BreadcrumbNav from '@/components/analysis/BreadcrumbNav'
 import { use, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Download, Share2 } from 'lucide-react'
 import { useSubjects } from '@/hooks/useAnalysis'
 import { sortBySubjectName } from '@/utils/sort'
 import { cn } from '@/lib/utils'
@@ -175,16 +173,6 @@ export default function ExamDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Button variant="outline" size="sm" className="rounded-lg gap-2">
-            <Download className="h-4 w-4" />
-            PDF
-          </Button>
-          <Button size="sm" className="rounded-lg gap-2">
-            <Share2 className="h-4 w-4" />
-            共享报告
-          </Button>
-        </div>
       </div>
 
       <BreadcrumbNav />
