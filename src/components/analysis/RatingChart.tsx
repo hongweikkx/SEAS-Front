@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 
 interface RatingChartProps {
   examId: string
@@ -29,6 +31,52 @@ export default function RatingChart({ examId }: RatingChartProps) {
   )
   const canQuery = !!examId && (selectedScope !== 'single_subject' || !!selectedSubjectId)
   const sortedClassDetails = data?.classDetails ? sortByClassName(data.classDetails) : []
+
+  const handleExport = () => {
+    if (!data) return
+
+    const rows = []
+    if (data.overallGrade) {
+      rows.push({
+        班级: data.overallGrade.className,
+        总人数: data.overallGrade.totalStudents,
+        均分: data.overallGrade.avgScore,
+        优秀人数: data.overallGrade.excellent.count,
+        优秀占比: `${data.overallGrade.excellent.percentage}%`,
+        良好人数: data.overallGrade.good.count,
+        良好占比: `${data.overallGrade.good.percentage}%`,
+        中等人数: data.overallGrade.medium.count,
+        中等占比: `${data.overallGrade.medium.percentage}%`,
+        及格人数: data.overallGrade.pass.count,
+        及格占比: `${data.overallGrade.pass.percentage}%`,
+        低分人数: data.overallGrade.lowScore.count,
+        低分占比: `${data.overallGrade.lowScore.percentage}%`,
+      })
+    }
+    sortedClassDetails.forEach((cls) => {
+      rows.push({
+        班级: cls.className,
+        总人数: cls.totalStudents,
+        均分: cls.avgScore,
+        优秀人数: cls.excellent.count,
+        优秀占比: `${cls.excellent.percentage}%`,
+        良好人数: cls.good.count,
+        良好占比: `${cls.good.percentage}%`,
+        中等人数: cls.medium.count,
+        中等占比: `${cls.medium.percentage}%`,
+        及格人数: cls.pass.count,
+        及格占比: `${cls.pass.percentage}%`,
+        低分人数: cls.lowScore.count,
+        低分占比: `${cls.lowScore.percentage}%`,
+      })
+    })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '四率分析')
+    const examName = data.examName || '考试'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-四率分析.xlsx`)
+  }
 
   useEffect(() => {
     setDraftConfig(ratingConfig)
@@ -61,7 +109,19 @@ export default function RatingChart({ examId }: RatingChartProps) {
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">一分四率</h2>
         </div>
-        <AIAnalysisTrigger view="rating-analysis" examId={examId} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={!data}
+            className="h-8 w-8 p-0"
+            title="导出Excel"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+          <AIAnalysisTrigger view="rating-analysis" examId={examId} />
+        </div>
       </div>
 
       <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
