@@ -18,7 +18,7 @@ interface SingleQuestionSummaryProps {
 
 
 export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryProps) {
-  const { selectedSubjectId, drillDownParams, setDrillDownParam } = useAnalysisStore()
+  const { selectedSubjectId, selectedSubjectName, drillDownParams, setDrillDownParam } = useAnalysisStore()
   const { data, isLoading } = useSingleQuestionSummary(examId, selectedSubjectId ?? undefined)
   const selectedClassId = drillDownParams.classId ?? 'all'
 
@@ -64,7 +64,10 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
     XLSX.utils.book_append_sheet(wb, ws, '试题分析')
     const examName = data.examName || '考试'
     const subjectName = selectedSubjectName || '全科'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-试题分析.xlsx`)
+    const classLabel = selectedClassId === 'all'
+      ? ''
+      : `-${sanitizeFilename(sortedClassList.find((c) => String(c.classId) === selectedClassId)?.className || '')}`
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-试题分析${classLabel}.xlsx`)
   }
 
   const handleQuestionClick = (questionId: string, questionNumber: string) => {

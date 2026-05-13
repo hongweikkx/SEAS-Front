@@ -23,7 +23,7 @@ const getScoreClass = (scoreRate: number) => {
 }
 
 export default function SingleQuestionDetail({ examId }: SingleQuestionDetailProps) {
-  const { selectedSubjectId, drillDownParams, setDrillDownParam, updateLastDrillDownLabel } = useAnalysisStore()
+  const { selectedSubjectId, selectedSubjectName, drillDownParams, setDrillDownParam, updateLastDrillDownLabel } = useAnalysisStore()
   const classIdStr = drillDownParams.classId ?? 'all'
   const questionId = drillDownParams.questionId
   const [studentNameFilter, setStudentNameFilter] = useState('')
@@ -66,7 +66,9 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
     XLSX.utils.book_append_sheet(wb, ws, '学生得分详情')
     const examName = data.examName || '考试'
     const subjectName = selectedSubjectName || '全科'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-学生得分详情.xlsx`)
+    const questionLabel = data.questionNumber ? `-第${data.questionNumber}题` : ''
+    const classLabel = data.className && data.className !== '全年级' ? `-${data.className}` : ''
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-学生得分详情${questionLabel}${classLabel}.xlsx`)
   }
 
   return (

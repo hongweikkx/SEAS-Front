@@ -120,7 +120,8 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
       XLSX.utils.book_append_sheet(wb, ws, '班级学科汇总')
       const examName = classSubjectData.examName || '考试'
       const subjectName = selectedSubjectName || '全科'
-      downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-班级学科汇总.xlsx`)
+      const className = classSubjectData.className || ''
+      downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-学科情况汇总-${sanitizeFilename(className)}.xlsx`)
     }
   }
 

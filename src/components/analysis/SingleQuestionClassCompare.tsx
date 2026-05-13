@@ -19,6 +19,7 @@ interface SingleQuestionClassCompareProps {
 export default function SingleQuestionClassCompare({ examId }: SingleQuestionClassCompareProps) {
   const {
     selectedSubjectId,
+    selectedSubjectName,
     drillDownParams,
     setDrillDownParam,
     setCurrentView,
@@ -94,7 +95,8 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
     XLSX.utils.book_append_sheet(wb, ws, '试题班级对比')
     const examName = data.examName || '考试'
     const subjectName = selectedSubjectName || '全科'
-    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-试题班级对比.xlsx`)
+    const questionLabel = data.questionNumber ? `-第${data.questionNumber}题` : ''
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-试题班级对比${questionLabel}.xlsx`)
   }
 
   return (
