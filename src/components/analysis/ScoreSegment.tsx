@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 import { Loader2, Plus, Trash2, Download } from 'lucide-react'
 import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
 import * as XLSX from 'xlsx'
@@ -54,14 +56,38 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
     rules.every((r) => r.end > r.start && r.step > 0) &&
     (selectedScope !== 'single_subject' || !!selectedSubjectId)
 
-  // 按班级名称自然序排序（如 1班、2班、10班）
-  const sortedClassDetails = data?.classDetails
-    ? sortByClassName(data.classDetails)
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'className', direction: 'asc' },
+  })
+
+  const getSegmentValue = (item: NonNullable<typeof data>['classDetails'][0], column: string) => {
+    if (column === 'className') return item.className
+    if (column === 'totalStudents') return item.totalStudents
+    if (column.startsWith('seg-')) {
+      const parts = column.split('-')
+      const field = parts[parts.length - 1]
+      const label = parts.slice(1, parts.length - 1).join('-')
+      const seg = item.segments.find((s) => s.label === label)
+      if (!seg) return 0
+      if (field === 'count') return seg.count
+      if (field === 'pct') {
+        return item.totalStudents > 0 ? (seg.count / item.totalStudents) * 100 : 0
+      }
+      if (field === 'contrib') {
+        const gradeSeg = data?.overallGrade?.segments.find((s) => s.label === label)
+        return gradeSeg && gradeSeg.count > 0 ? (seg.count / gradeSeg.count) * 100 : 0
+      }
+    }
+    return undefined
+  }
+
+  const sortedClassDetailsResult = data?.classDetails
+    ? sortedData(sortByClassName(data.classDetails), getSegmentValue)
     : []
 
   const allClasses = data?.overallGrade
-    ? [data.overallGrade, ...sortedClassDetails]
-    : sortedClassDetails
+    ? [data.overallGrade, ...sortedClassDetailsResult]
+    : sortedClassDetailsResult
 
   const handleAddRule = () => {
     setRules((prev) => [...prev, { start: 0, end: 100, step: 10 }])
@@ -113,7 +139,7 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
     gradeCount > 0 ? (classCount / gradeCount) * 100 : 0
 
   // 图表数据准备
-  const structureChartData = sortedClassDetails.map((cls) => {
+  const structureChartData = sortedClassDetailsResult.map((cls) => {
     const row: Record<string, number | string> = {
       name: cls.className,
       total: cls.totalStudents,
@@ -131,7 +157,7 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
       min: seg.min,
       max: seg.max,
     }
-    sortedClassDetails.forEach((cls) => {
+    sortedClassDetailsResult.forEach((cls) => {
       const s = cls.segments.find((s) => s.label === seg.label)
       row[cls.className] = s?.count ?? 0
     })
@@ -144,8 +170,8 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
     if (!data) return
 
     const allClasses = data.overallGrade
-      ? [data.overallGrade, ...sortedClassDetails]
-      : sortedClassDetails
+      ? [data.overallGrade, ...sortedClassDetailsResult]
+      : sortedClassDetailsResult
 
     const rows = allClasses.map((cls) => {
       const row: Record<string, number | string> = {
@@ -313,12 +339,8 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
-                    <th rowSpan={2} className="py-2.5 px-3 text-left font-medium text-muted-foreground whitespace-nowrap">
-                      班级
-                    </th>
-                    <th rowSpan={2} className="py-2.5 px-3 text-right font-medium text-muted-foreground whitespace-nowrap">
-                      总人数
-                    </th>
+                    <SortableHeader rowSpan={2} columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                    <SortableHeader rowSpan={2} columnKey="totalStudents" label="总人数" align="right" sortState={sortState} onSort={toggleSort} sortable={false} className="py-2.5 px-3" />
                     {segmentLabels.map((label) => (
                       <th
                         key={label}
@@ -337,15 +359,9 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                         className="border-l border-border/40"
                       >
                         <div className="flex">
-                          <span className="flex-1 py-1 px-3 text-center text-xs text-muted-foreground">
-                            人数
-                          </span>
-                          <span className="flex-1 py-1 px-3 text-center text-xs text-muted-foreground">
-                            班内占比
-                          </span>
-                          <span className="flex-1 py-1 px-3 text-center text-xs text-muted-foreground">
-                            年级贡献
-                          </span>
+                          <SortableHeader columnKey={`seg-${label}-count`} label="人数" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
+                          <SortableHeader columnKey={`seg-${label}-pct`} label="班内占比" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
+                          <SortableHeader columnKey={`seg-${label}-contrib`} label="年级贡献" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
                         </div>
                       </th>
                     ))}
@@ -419,7 +435,7 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
             </div>
 
             {/* 图表区域 */}
-            {sortedClassDetails.length > 0 && segmentLabels.length > 0 && (
+            {sortedClassDetailsResult.length > 0 && segmentLabels.length > 0 && (
               <div className="border-t border-border/40 px-5 py-6 space-y-8">
                 {/* 班级内部分数占比图 — 纵向百分比堆叠柱状图 */}
                 <div>
@@ -496,7 +512,7 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                           }}
                         />
                         <Legend itemSorter={null} />
-                        {sortedClassDetails.map((cls, i) => (
+                        {sortedClassDetailsResult.map((cls, i) => (
                           <Area
                             key={cls.classId}
                             type="monotone"

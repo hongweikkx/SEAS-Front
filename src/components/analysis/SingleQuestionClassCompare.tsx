@@ -3,6 +3,8 @@
 import { useSingleQuestionClassCompare, useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -40,6 +42,12 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
     selectedSubjectId ?? undefined,
     effectiveQuestionId
   )
+
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'className', direction: 'asc' },
+  })
+
+  const sortedClasses = data?.classes ? sortedData(data.classes) : []
 
   const handleQuestionChange = (newQuestionId: string, newQuestionNumber: string) => {
     setDrillDownParam('questionId', newQuestionId)
@@ -138,15 +146,15 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <th className="py-3 px-4 text-left font-medium text-muted-foreground whitespace-nowrap">班级</th>
+                <SortableHeader columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
                 <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">参与人数</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">班级均分</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">得分率</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">与年级差距</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">班级排名</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">最高分</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">最低分</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">标准差</th>
+                <SortableHeader columnKey="avgScore" label="班级均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="scoreDiff" label="与年级差距" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="classRank" label="班级排名" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="highestScore" label="最高分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="lowestScore" label="最低分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
               </tr>
             </thead>
             <tbody>
@@ -172,7 +180,7 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
                     <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.stdDev)}</td>
                   </tr>
                   {/* 班级行 */}
-                  {data.classes.map((cls) => (
+                  {sortedClasses.map((cls) => (
                     <tr
                       key={cls.classId}
                       className="border-b border-border/40 transition-colors hover:bg-muted/20"

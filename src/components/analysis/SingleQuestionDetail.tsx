@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useSingleQuestionDetail, useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 import { Loader2, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
@@ -45,9 +47,15 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
     updateLastDrillDownLabel(`学生得分详情 第${newQuestionNumber}题`)
   }
 
-  const filteredStudents = data?.students.filter((s) =>
-    !studentNameFilter || s.studentName.toLowerCase().includes(studentNameFilter.toLowerCase())
-  ) || []
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'classRank', direction: 'asc' },
+  })
+
+  const filteredStudents = sortedData(
+    data?.students.filter((s) =>
+      !studentNameFilter || s.studentName.toLowerCase().includes(studentNameFilter.toLowerCase())
+    ) || []
+  )
 
   const handleExport = () => {
     if (!data?.students) return
@@ -127,12 +135,12 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <th className="py-3 px-5 text-left font-medium text-muted-foreground">学生姓名</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">得分</th>
+                <SortableHeader columnKey="studentName" label="学生姓名" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="score" label="得分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">得分率</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级排名</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级排名</th>
+                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="classRank" label="班级排名" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="gradeRank" label="年级排名" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
               </tr>
             </thead>
             <tbody>

@@ -3,6 +3,8 @@
 import { useSingleClassQuestion } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -26,11 +28,23 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
     classId
   )
 
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'questionNumber', direction: 'asc' },
+  })
+
   const {
     setCurrentView,
     setDrillDownParam,
     pushDrillDown,
   } = useAnalysisStore()
+
+  const displayQuestions = data?.questions
+    ? sortedData(
+        [...data.questions].sort((a, b) =>
+          a.questionNumber.localeCompare(b.questionNumber, undefined, { numeric: true })
+        )
+      )
+    : []
 
   const handleQuestionClick = (questionId: string, questionNumber: string) => {
     setDrillDownParam('questionId', questionId)
@@ -102,19 +116,16 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <th className="py-3 px-5 text-left font-medium text-muted-foreground">题号</th>
+                <SortableHeader columnKey="questionNumber" label="题号" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">分值</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">班级均分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">得分率</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">年级均分</th>
-                <th className="py-3 px-5 text-center font-medium text-muted-foreground">难度</th>
+                <SortableHeader columnKey="classAvgScore" label="班级均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="gradeAvgScore" label="年级均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="difficulty" label="难度" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
               </tr>
             </thead>
             <tbody>
-              {data?.questions
-                .slice()
-                .sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, undefined, { numeric: true }))
-                .map((q) => (
+              {displayQuestions.map((q) => (
                 <tr
                   key={q.questionId}
                   className="border-b border-border/40 transition-colors hover:bg-muted/20"

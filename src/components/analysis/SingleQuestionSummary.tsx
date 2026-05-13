@@ -4,6 +4,8 @@ import { useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -26,6 +28,18 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
     setCurrentView,
     pushDrillDown,
   } = useAnalysisStore()
+
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'questionNumber', direction: 'asc' },
+  })
+
+  const baseQuestions = data?.questions
+    ? [...data.questions].sort((a, b) =>
+        a.questionNumber.localeCompare(b.questionNumber, undefined, { numeric: true })
+      )
+    : []
+
+  const displayQuestions = sortedData(baseQuestions)
 
   const handleExport = () => {
     if (!data?.questions) return
@@ -149,25 +163,20 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <th className="py-3 px-4 text-left font-medium text-muted-foreground whitespace-nowrap">题号</th>
+                <SortableHeader columnKey="questionNumber" label="题号" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
                 <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">参考人数</th>
                 <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">满分</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">
-                  {selectedClassId === 'all' ? '年级均分' : '班级均分'}
-                </th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">最高分</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">最低分</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">得分率</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">难度</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">标准差</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">区分度</th>
+                <SortableHeader columnKey="gradeAvgScore" label={selectedClassId === 'all' ? '年级均分' : '班级均分'} align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="highestScore" label="最高分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="lowestScore" label="最低分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="difficulty" label="难度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="discrimination" label="区分度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
               </tr>
             </thead>
             <tbody>
-              {data?.questions
-                .slice()
-                .sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, undefined, { numeric: true }))
-                .map((q) => {
+              {displayQuestions.map((q) => {
                 const classBreakdown = selectedClassId === 'all'
                   ? null
                   : q.classBreakdown.find((c) => String(c.classId) === selectedClassId)

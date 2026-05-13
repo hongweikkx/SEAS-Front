@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 import { Loader2, Download } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
@@ -30,7 +32,30 @@ export default function RatingChart({ examId }: RatingChartProps) {
     selectedSubjectId ?? undefined
   )
   const canQuery = !!examId && (selectedScope !== 'single_subject' || !!selectedSubjectId)
-  const sortedClassDetails = data?.classDetails ? sortByClassName(data.classDetails) : []
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'className', direction: 'asc' },
+  })
+
+  const getValue = (item: NonNullable<typeof data>['classDetails'][0], column: string) => {
+    if (column === 'className') return item.className
+    if (column === 'totalStudents') return item.totalStudents
+    if (column === 'avgScore') return item.avgScore
+    if (column === 'excellent.count') return item.excellent.count
+    if (column === 'excellent.percentage') return item.excellent.percentage
+    if (column === 'good.count') return item.good.count
+    if (column === 'good.percentage') return item.good.percentage
+    if (column === 'medium.count') return item.medium.count
+    if (column === 'medium.percentage') return item.medium.percentage
+    if (column === 'pass.count') return item.pass.count
+    if (column === 'pass.percentage') return item.pass.percentage
+    if (column === 'lowScore.count') return item.lowScore.count
+    if (column === 'lowScore.percentage') return item.lowScore.percentage
+    return undefined
+  }
+
+  const sortedClassDetails = data?.classDetails
+    ? sortedData(sortByClassName(data.classDetails), getValue)
+    : []
 
   const handleExport = () => {
     if (!data) return
@@ -173,19 +198,19 @@ export default function RatingChart({ examId }: RatingChartProps) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/30">
-                  <th className="py-2.5 px-3 text-left font-medium text-muted-foreground">班级</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">总人数</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">均分</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">优秀人数</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">优秀占比</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">良好人数</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">良好占比</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">中等人数</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">中等占比</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">及格人数</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">及格占比</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">低分人数</th>
-                  <th className="py-2.5 px-3 text-right font-medium text-muted-foreground">低分占比</th>
+                  <SortableHeader columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="totalStudents" label="总人数" align="right" sortState={sortState} onSort={toggleSort} sortable={false} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="avgScore" label="均分" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="excellent.count" label="优秀人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="excellent.percentage" label="优秀占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="good.count" label="良好人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="good.percentage" label="良好占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="medium.count" label="中等人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="medium.percentage" label="中等占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="pass.count" label="及格人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="pass.percentage" label="及格占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="lowScore.count" label="低分人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="lowScore.percentage" label="低分占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
                 </tr>
               </thead>
               <tbody>

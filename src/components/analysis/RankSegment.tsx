@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 import { Loader2, Plus, Trash2, HelpCircle, Download } from 'lucide-react'
 import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
 import * as XLSX from 'xlsx'
@@ -74,13 +76,35 @@ export default function RankSegment({ examId }: RankSegmentProps) {
     rules.every((r) => r.end > r.start && r.start >= 0) &&
     (selectedScope !== 'single_subject' || !!selectedSubjectId)
 
-  const sortedClassDetails = data?.classDetails
-    ? sortByClassName(data.classDetails)
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'className', direction: 'asc' },
+  })
+
+  const getSegmentValue = (item: NonNullable<typeof data>['classDetails'][0], column: string) => {
+    if (column === 'className') return item.className
+    if (column === 'totalStudents') return item.totalStudents
+    if (column.startsWith('seg-')) {
+      const parts = column.split('-')
+      const field = parts[parts.length - 1]
+      const label = parts.slice(1, parts.length - 1).join('-')
+      const seg = item.segments.find((s) => s.label === label)
+      if (!seg) return 0
+      if (field === 'count') return seg.count
+      if (field === 'contrib') {
+        const gradeSeg = data?.overallGrade?.segments.find((s) => s.label === label)
+        return gradeSeg && gradeSeg.count > 0 ? (seg.count / gradeSeg.count) * 100 : 0
+      }
+    }
+    return undefined
+  }
+
+  const sortedClassDetailsResult = data?.classDetails
+    ? sortedData(sortByClassName(data.classDetails), getSegmentValue)
     : []
 
   const allClasses = data?.overallGrade
-    ? [data.overallGrade, ...sortedClassDetails]
-    : sortedClassDetails
+    ? [data.overallGrade, ...sortedClassDetailsResult]
+    : sortedClassDetailsResult
 
   const segmentLabels = data?.overallGrade?.segments.map((s) => s.label) ?? []
 
@@ -88,8 +112,8 @@ export default function RankSegment({ examId }: RankSegmentProps) {
     if (!data) return
 
     const allClasses = data.overallGrade
-      ? [data.overallGrade, ...sortedClassDetails]
-      : sortedClassDetails
+      ? [data.overallGrade, ...sortedClassDetailsResult]
+      : sortedClassDetailsResult
 
     const rows = allClasses.map((cls) => {
       const row: Record<string, number | string> = {
@@ -167,7 +191,7 @@ export default function RankSegment({ examId }: RankSegmentProps) {
       label,
       gradeTotal: gradeSeg?.count ?? 0,
     }
-    sortedClassDetails.forEach((cls) => {
+    sortedClassDetailsResult.forEach((cls) => {
       const seg = cls.segments.find((s) => s.label === label)
       row[cls.className] = seg?.count ?? 0
     })
@@ -289,12 +313,8 @@ export default function RankSegment({ examId }: RankSegmentProps) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
-                    <th rowSpan={2} className="py-2.5 px-3 text-left font-medium text-muted-foreground whitespace-nowrap">
-                      班级
-                    </th>
-                    <th rowSpan={2} className="py-2.5 px-3 text-right font-medium text-muted-foreground whitespace-nowrap">
-                      总人数
-                    </th>
+                    <SortableHeader rowSpan={2} columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                    <SortableHeader rowSpan={2} columnKey="totalStudents" label="总人数" align="right" sortState={sortState} onSort={toggleSort} sortable={false} className="py-2.5 px-3" />
                     {segmentLabels.map((label) => (
                       <th
                         key={label}
@@ -313,12 +333,8 @@ export default function RankSegment({ examId }: RankSegmentProps) {
                         className="border-l border-border/40"
                       >
                         <div className="flex">
-                          <span className="flex-1 py-1 px-3 text-center text-xs text-muted-foreground">
-                            人数
-                          </span>
-                          <span className="flex-1 py-1 px-3 text-center text-xs text-muted-foreground">
-                            贡献度
-                          </span>
+                          <SortableHeader columnKey={`seg-${label}-count`} label="人数" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
+                          <SortableHeader columnKey={`seg-${label}-contrib`} label="贡献度" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
                         </div>
                       </th>
                     ))}
@@ -385,7 +401,7 @@ export default function RankSegment({ examId }: RankSegmentProps) {
             </div>
 
             {/* 图表: 堆叠柱状图,X=名次段,Y=人数,按班级堆叠 */}
-            {sortedClassDetails.length > 0 && segmentLabels.length > 0 && (
+            {sortedClassDetailsResult.length > 0 && segmentLabels.length > 0 && (
               <div className="border-t border-border/40 px-5 py-6">
                 <h3 className="text-base font-semibold text-foreground mb-4">
                   名次段班级分布
@@ -419,7 +435,7 @@ export default function RankSegment({ examId }: RankSegmentProps) {
                         }}
                       />
                       <Legend itemSorter={null} />
-                      {sortedClassDetails.map((cls, i) => (
+                      {sortedClassDetailsResult.map((cls, i) => (
                         <Bar
                           key={cls.classId}
                           dataKey={cls.className}
