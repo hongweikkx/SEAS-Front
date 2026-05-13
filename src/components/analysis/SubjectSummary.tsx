@@ -5,8 +5,11 @@ import { useClassSubjectSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName, sortBySubjectName, sortBySubjectItemName } from '@/utils/sort'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
@@ -67,6 +70,57 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
     setCurrentView('single-question-summary')
   }
 
+  const handleExport = () => {
+    const rows = []
+
+    if (!classId && data?.subjects) {
+      // 全年级模式
+      const sortedSubjects = sortBySubjectName(data.subjects)
+      sortedSubjects.forEach((subject) => {
+        rows.push({
+          学科: subject.name,
+          参考人数: subject.studentCount,
+          满分: subject.fullScore,
+          平均分: subject.avgScore,
+          最高分: subject.highestScore,
+          最低分: subject.lowestScore,
+          难度: subject.difficulty,
+          标准差: subject.stdDev,
+          区分度: subject.discrimination,
+        })
+      })
+      const ws = XLSX.utils.json_to_sheet(rows)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, '学科情况汇总')
+      const examName = data.examName || '考试'
+      downloadWorkbook(wb, `${sanitizeFilename(examName)}-学科情况汇总.xlsx`)
+    } else if (classId && classSubjectData?.subjects) {
+      // 班级模式
+      const sortedSubjects = sortBySubjectItemName(classSubjectData.subjects)
+      sortedSubjects.forEach((subject) => {
+        rows.push({
+          学科: subject.subjectName,
+          参考人数: subject.studentCount,
+          满分: subject.fullScore,
+          班级均分: subject.classAvgScore,
+          年级均分: subject.gradeAvgScore,
+          分差: subject.scoreDiff,
+          班级最高: subject.classHighest,
+          班级最低: subject.classLowest,
+          难度: subject.difficulty,
+          标准差: subject.stdDev,
+          区分度: subject.discrimination,
+          班级排名: `${subject.classRank}/${subject.totalClasses}`,
+        })
+      })
+      const ws = XLSX.utils.json_to_sheet(rows)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, '班级学科汇总')
+      const examName = classSubjectData.examName || '考试'
+      downloadWorkbook(wb, `${sanitizeFilename(examName)}-班级学科汇总.xlsx`)
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -74,7 +128,19 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">学科情况汇总</h2>
         </div>
-        <AIAnalysisTrigger view="subject-summary" examId={examId} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={(!classId && !data) || (classId && !classSubjectData)}
+            className="h-8 w-8 p-0"
+            title="导出Excel"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+          <AIAnalysisTrigger view="subject-summary" examId={examId} />
+        </div>
       </div>
 
       {/* 班级筛选器 */}
