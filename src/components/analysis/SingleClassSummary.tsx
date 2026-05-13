@@ -11,6 +11,8 @@ import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
 import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
+import { useTableSort } from '@/hooks/useTableSort'
+import { SortableHeader } from '@/components/ui/sortable-header'
 
 interface SingleClassSummaryProps {
   examId: string
@@ -19,7 +21,13 @@ interface SingleClassSummaryProps {
 export default function SingleClassSummary({ examId }: SingleClassSummaryProps) {
   const { selectedSubjectId, selectedSubjectName } = useAnalysisStore()
   const { data, isLoading } = useSingleClassSummary(examId, selectedSubjectId ?? undefined)
-  const sortedClasses = data?.classes ? sortByClassName(data.classes) : []
+  const { sortState, toggleSort, sortedData } = useTableSort({
+    defaultSort: { column: 'className', direction: 'asc' },
+  })
+
+  const sortedClasses = data?.classes
+    ? sortedData(sortByClassName(data.classes))
+    : []
 
   const handleExport = () => {
     if (!data) return
@@ -110,16 +118,16 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <th className="py-3 px-5 text-left font-medium text-muted-foreground">班级</th>
+                <SortableHeader columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
                 <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">平均分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">最高分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">最低分</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">离均差</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">难度</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">标准差</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">区分度</th>
+                <SortableHeader columnKey="avgScore" label="平均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="highestScore" label="最高分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="lowestScore" label="最低分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="scoreDeviation" label="离均差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="difficulty" label="难度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="discrimination" label="区分度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
               </tr>
             </thead>
             <tbody>
