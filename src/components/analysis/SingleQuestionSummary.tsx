@@ -4,8 +4,11 @@ import { useSingleQuestionSummary } from '@/hooks/useDrilldown'
 import { useAnalysisStore } from '@/store/analysisStore'
 import { formatNumber } from '@/utils/format'
 import { sortByClassName } from '@/utils/sort'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { downloadWorkbook, sanitizeFilename } from '@/lib/export-utils'
+import * as XLSX from 'xlsx'
 import AIAnalysisTrigger from '@/components/ai/AIAnalysisTrigger'
 import AIAnalysisPanel from '@/components/ai/AIAnalysisPanel'
 
@@ -23,6 +26,45 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
     setCurrentView,
     pushDrillDown,
   } = useAnalysisStore()
+
+  const handleExport = () => {
+    if (!data?.questions) return
+
+    const rows = data.questions
+      .slice()
+      .sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, undefined, { numeric: true }))
+      .map((q) => {
+        const classBreakdown = selectedClassId === 'all'
+          ? null
+          : q.classBreakdown.find((c) => String(c.classId) === selectedClassId)
+        const avgScore = classBreakdown?.avgScore ?? q.gradeAvgScore
+        const participants = classBreakdown?.participants ?? q.participants
+        const scoreRate = classBreakdown
+          ? parseFloat(((classBreakdown.avgScore / q.fullScore) * 100).toFixed(2))
+          : q.scoreRate
+        const stdDev = classBreakdown?.stdDev ?? q.stdDev
+
+        return {
+          题号: q.questionNumber,
+          题型: q.questionType,
+          参考人数: participants,
+          满分: q.fullScore,
+          [selectedClassId === 'all' ? '年级均分' : '班级均分']: avgScore,
+          最高分: q.highestScore,
+          最低分: q.lowestScore,
+          得分率: `${scoreRate}%`,
+          难度: q.difficulty,
+          标准差: stdDev,
+          区分度: q.discrimination,
+        }
+      })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, '试题分析')
+    const examName = data.examName || '考试'
+    downloadWorkbook(wb, `${sanitizeFilename(examName)}-试题分析.xlsx`)
+  }
 
   const handleQuestionClick = (questionId: string, questionNumber: string) => {
     setDrillDownParam('questionId', questionId)
@@ -48,7 +90,19 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           <div className="h-5 w-1 rounded-full bg-primary" />
           <h2 className="text-lg font-semibold text-foreground">试题分析</h2>
         </div>
-        <AIAnalysisTrigger view="single-question-summary" examId={examId} />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExport}
+            disabled={!data}
+            className="h-8 w-8 p-0"
+            title="导出Excel"
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+          <AIAnalysisTrigger view="single-question-summary" examId={examId} />
+        </div>
       </div>
 
       {/* 班级刷选项 */}
