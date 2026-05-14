@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRankSegment } from '@/hooks/useAnalysis'
 import { analysisService } from '@/services/analysis'
@@ -327,16 +327,10 @@ export default function RankSegment({ examId }: RankSegmentProps) {
                   </tr>
                   <tr className="border-b border-border/60 bg-muted/20">
                     {segmentLabels.map((label) => (
-                      <th
-                        key={label}
-                        colSpan={2}
-                        className="border-l border-border/40"
-                      >
-                        <div className="flex">
-                          <SortableHeader columnKey={`seg-${label}-count`} label="人数" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
-                          <SortableHeader columnKey={`seg-${label}-contrib`} label="贡献度" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
-                        </div>
-                      </th>
+                      <Fragment key={label}>
+                        <SortableHeader columnKey={`seg-${label}-count`} label="人数" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs border-l border-border/40" />
+                        <SortableHeader columnKey={`seg-${label}-contrib`} label="贡献度" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
+                      </Fragment>
                     ))}
                   </tr>
                 </thead>
@@ -365,22 +359,16 @@ export default function RankSegment({ examId }: RankSegmentProps) {
                             gradeSeg?.count ?? 0
                           )
                           return (
-                            <td
-                              key={seg.label}
-                              colSpan={2}
-                              className="border-l border-border/40"
-                            >
-                              <div className="flex">
-                                <span className="flex-1 py-2.5 px-3 text-center whitespace-nowrap">
-                                  {seg.count}
-                                </span>
-                                <span className="flex-1 py-2.5 px-3 text-center whitespace-nowrap">
-                                  {isOverall
-                                    ? '-'
-                                    : `${formatNumber(contrib)}%`}
-                                </span>
-                              </div>
-                            </td>
+                            <Fragment key={seg.label}>
+                              <td className="py-2.5 px-3 text-center whitespace-nowrap border-l border-border/40">
+                                {seg.count}
+                              </td>
+                              <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                                {isOverall
+                                  ? '-'
+                                  : `${formatNumber(contrib)}%`}
+                              </td>
+                            </Fragment>
                           )
                         })}
                       </tr>

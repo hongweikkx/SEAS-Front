@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useScoreSegment } from '@/hooks/useAnalysis'
 import { analysisService } from '@/services/analysis'
@@ -224,15 +224,20 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
     downloadWorkbook(wb, `${sanitizeFilename(examName)}-${sanitizeFilename(subjectName)}-分数段分析.xlsx`)
   }
 
-  // 为分数段分配语义化颜色：低分偏红，高分偏蓝绿
+  // 为分数段分配语义化颜色：低分偏红→高分偏紫
+  // 跨越完整色谱(0-300°)并让相邻段在饱和度/亮度上交替,
+  // 即使分段很多(默认 20 段)也能清晰区分,避免大量颜色聚集在绿色区间
   const getSegmentColor = (label: string): string => {
     const allSegments = data?.overallGrade?.segments ?? []
     const sorted = [...allSegments].sort((a, b) => a.min - b.min)
     const index = sorted.findIndex((s) => s.label === label)
     const total = sorted.length
-    const ratio = total > 1 && index >= 0 ? index / (total - 1) : 0
-    const hue = ratio * 200 // 0=red → 200=blue
-    return `hsl(${hue}, 72%, 56%)`
+    if (total <= 0 || index < 0) return 'hsl(0, 0%, 60%)'
+    const ratio = total > 1 ? index / (total - 1) : 0
+    const hue = ratio * 300 // 0=红 → 300=紫,避开循环回到红
+    const saturation = index % 2 === 0 ? 78 : 58
+    const lightness = index % 2 === 0 ? 50 : 66
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`
   }
 
   // 为每个班级生成颜色
@@ -379,17 +384,11 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                   </tr>
                   <tr className="border-b border-border/60 bg-muted/20">
                     {segmentLabels.map((label) => (
-                      <th
-                        key={label}
-                        colSpan={3}
-                        className="border-l border-border/40"
-                      >
-                        <div className="flex">
-                          <SortableHeader columnKey={`seg-${label}-count`} label="人数" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
-                          <SortableHeader columnKey={`seg-${label}-pct`} label="班内占比" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
-                          <SortableHeader columnKey={`seg-${label}-contrib`} label="年级贡献" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
-                        </div>
-                      </th>
+                      <Fragment key={label}>
+                        <SortableHeader columnKey={`seg-${label}-count`} label="人数" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs border-l border-border/40" />
+                        <SortableHeader columnKey={`seg-${label}-pct`} label="班内占比" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
+                        <SortableHeader columnKey={`seg-${label}-contrib`} label="年级贡献" align="center" sortState={sortState} onSort={toggleSort} className="py-1 px-3 text-xs" />
+                      </Fragment>
                     ))}
                   </tr>
                 </thead>
@@ -422,25 +421,19 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                             gradeSeg?.count ?? 0
                           )
                           return (
-                            <td
-                              key={seg.label}
-                              colSpan={3}
-                              className="border-l border-border/40"
-                            >
-                              <div className="flex">
-                                <span className="flex-1 py-2.5 px-3 text-center whitespace-nowrap">
-                                  {seg.count}
-                                </span>
-                                <span className="flex-1 py-2.5 px-3 text-center whitespace-nowrap">
-                                  {formatNumber(classPct)}%
-                                </span>
-                                <span className="flex-1 py-2.5 px-3 text-center whitespace-nowrap">
-                                  {isOverall
-                                    ? '-'
-                                    : `${formatNumber(gradeContrib)}%`}
-                                </span>
-                              </div>
-                            </td>
+                            <Fragment key={seg.label}>
+                              <td className="py-2.5 px-3 text-center whitespace-nowrap border-l border-border/40">
+                                {seg.count}
+                              </td>
+                              <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                                {formatNumber(classPct)}%
+                              </td>
+                              <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                                {isOverall
+                                  ? '-'
+                                  : `${formatNumber(gradeContrib)}%`}
+                              </td>
+                            </Fragment>
                           )
                         })}
                       </tr>
