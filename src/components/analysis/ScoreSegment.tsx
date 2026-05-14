@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useScoreSegment } from '@/hooks/useAnalysis'
 import { analysisService } from '@/services/analysis'
@@ -32,7 +32,13 @@ interface ScoreSegmentProps {
   examId: string
 }
 
-const DEFAULT_RULES: SegmentConfig[] = [
+// 全科默认分段（总分通常在 0-1000+ 范围，步长 50）
+const DEFAULT_ALL_SUBJECTS_RULES: SegmentConfig[] = [
+  { start: 0, end: 1000, step: 50 },
+]
+
+// 单科默认分段（单科满分通常 100/150 分）
+const DEFAULT_SINGLE_SUBJECT_RULES: SegmentConfig[] = [
   { start: 0, end: 60, step: 10 },
   { start: 60, end: 100, step: 5 },
 ]
@@ -40,8 +46,28 @@ const DEFAULT_RULES: SegmentConfig[] = [
 export default function ScoreSegment({ examId }: ScoreSegmentProps) {
   const queryClient = useQueryClient()
   const { selectedScope, selectedSubjectId, selectedSubjectName } = useAnalysisStore()
-  const [rules, setRules] = useState<SegmentConfig[]>(DEFAULT_RULES)
-  const [queryRules, setQueryRules] = useState<SegmentConfig[]>(DEFAULT_RULES)
+
+  const defaultRules =
+    selectedScope === 'all_subjects'
+      ? DEFAULT_ALL_SUBJECTS_RULES
+      : DEFAULT_SINGLE_SUBJECT_RULES
+
+  const [rules, setRules] = useState<SegmentConfig[]>(defaultRules)
+  const [queryRules, setQueryRules] = useState<SegmentConfig[]>(defaultRules)
+
+  // 切换全科/单科时重置分段规则
+  const prevScope = useRef(selectedScope)
+  useEffect(() => {
+    if (prevScope.current !== selectedScope) {
+      prevScope.current = selectedScope
+      const newRules =
+        selectedScope === 'all_subjects'
+          ? DEFAULT_ALL_SUBJECTS_RULES
+          : DEFAULT_SINGLE_SUBJECT_RULES
+      setRules(newRules)
+      setQueryRules(newRules)
+    }
+  }, [selectedScope])
 
   const { data, isLoading, isFetching } = useScoreSegment(
     examId,
