@@ -198,54 +198,54 @@ export default function RatingChart({ examId }: RatingChartProps) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/30">
-                  <SortableHeader columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="totalStudents" label="总人数" align="right" sortState={sortState} onSort={toggleSort} sortable={false} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="avgScore" label="均分" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="excellent.count" label="优秀人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="excellent.percentage" label="优秀占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="good.count" label="良好人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="good.percentage" label="良好占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="medium.count" label="中等人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="medium.percentage" label="中等占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="pass.count" label="及格人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="pass.percentage" label="及格占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="lowScore.count" label="低分人数" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                  <SortableHeader columnKey="lowScore.percentage" label="低分占比" align="right" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="className" label="班级" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="totalStudents" label="总人数" align="center" sortState={sortState} onSort={toggleSort} sortable={false} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="avgScore" label="均分" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="excellent.count" label="优秀人数" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="excellent.percentage" label="优秀占比" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="good.count" label="良好人数" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="good.percentage" label="良好占比" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="medium.count" label="中等人数" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="medium.percentage" label="中等占比" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="pass.count" label="及格人数" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="pass.percentage" label="及格占比" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="lowScore.count" label="低分人数" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                  <SortableHeader columnKey="lowScore.percentage" label="低分占比" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
                 </tr>
               </thead>
               <tbody>
                 {data?.overallGrade && (
                   <tr className="border-b border-border/40 bg-primary/5 font-semibold">
                     <td className="py-2.5 px-3">{data.overallGrade.className}</td>
-                    <td className="py-2.5 px-3 text-right">{data.overallGrade.totalStudents}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.avgScore)}</td>
-                    <td className="py-2.5 px-3 text-right">{data.overallGrade.excellent.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.excellent.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{data.overallGrade.good.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.good.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{data.overallGrade.medium.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.medium.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{data.overallGrade.pass.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.pass.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{data.overallGrade.lowScore.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(data.overallGrade.lowScore.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{data.overallGrade.totalStudents}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(data.overallGrade.avgScore)}</td>
+                    <td className="py-2.5 px-3 text-center">{data.overallGrade.excellent.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(data.overallGrade.excellent.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{data.overallGrade.good.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(data.overallGrade.good.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{data.overallGrade.medium.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(data.overallGrade.medium.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{data.overallGrade.pass.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(data.overallGrade.pass.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{data.overallGrade.lowScore.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(data.overallGrade.lowScore.percentage)}%</td>
                   </tr>
                 )}
                 {sortedClassDetails.map((cls) => (
                   <tr key={cls.classId} className="border-b border-border/40 transition-colors hover:bg-muted/20">
                     <td className="py-2.5 px-3">{cls.className}</td>
-                    <td className="py-2.5 px-3 text-right">{cls.totalStudents}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.avgScore)}</td>
-                    <td className="py-2.5 px-3 text-right">{cls.excellent.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.excellent.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{cls.good.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.good.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{cls.medium.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.medium.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{cls.pass.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.pass.percentage)}%</td>
-                    <td className="py-2.5 px-3 text-right">{cls.lowScore.count}</td>
-                    <td className="py-2.5 px-3 text-right">{formatNumber(cls.lowScore.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{cls.totalStudents}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(cls.avgScore)}</td>
+                    <td className="py-2.5 px-3 text-center">{cls.excellent.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(cls.excellent.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{cls.good.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(cls.good.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{cls.medium.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(cls.medium.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{cls.pass.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(cls.pass.percentage)}%</td>
+                    <td className="py-2.5 px-3 text-center">{cls.lowScore.count}</td>
+                    <td className="py-2.5 px-3 text-center">{formatNumber(cls.lowScore.percentage)}%</td>
                   </tr>
                 ))}
                 {(!data?.classDetails || data.classDetails.length === 0) && (

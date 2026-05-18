@@ -17,7 +17,7 @@ interface SortableHeaderProps {
 export function SortableHeader({
   columnKey,
   label,
-  align = 'left',
+  align = 'center',
   sortable = true,
   sortState,
   onSort,

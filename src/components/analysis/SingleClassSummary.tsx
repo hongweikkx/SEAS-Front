@@ -118,31 +118,31 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <SortableHeader columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">参考人数</th>
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
-                <SortableHeader columnKey="avgScore" label="平均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="highestScore" label="最高分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="lowestScore" label="最低分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="scoreDeviation" label="离均差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="difficulty" label="难度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="discrimination" label="区分度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="className" label="班级" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <th className="py-3 px-5 text-center font-medium text-muted-foreground">参考人数</th>
+                <th className="py-3 px-5 text-center font-medium text-muted-foreground">满分</th>
+                <SortableHeader columnKey="avgScore" label="平均分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="highestScore" label="最高分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="lowestScore" label="最低分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="scoreDeviation" label="离均差" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="difficulty" label="难度" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="stdDev" label="标准差" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="discrimination" label="区分度" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
               </tr>
             </thead>
             <tbody>
               {data?.overall && (
                 <tr className="border-b border-border/40 bg-primary/5 font-semibold">
                   <td className="py-3 px-5">{data.overall.className}</td>
-                  <td className="py-3 px-5 text-right">{data.overall.totalStudents}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.fullScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.avgScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.highestScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.lowestScore)}</td>
-                  <td className="py-3 px-5 text-right">—</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.difficulty)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.stdDev)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(data.overall.discrimination)}</td>
+                  <td className="py-3 px-5 text-center">{data.overall.totalStudents}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(data.overall.fullScore)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(data.overall.avgScore)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(data.overall.highestScore)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(data.overall.lowestScore)}</td>
+                  <td className="py-3 px-5 text-center">—</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(data.overall.difficulty)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(data.overall.stdDev)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(data.overall.discrimination)}</td>
                 </tr>
               )}
               {sortedClasses.map((cls) => (
@@ -158,20 +158,20 @@ export default function SingleClassSummary({ examId }: SingleClassSummaryProps) 
                       {cls.className}
                     </button>
                   </td>
-                  <td className="py-3 px-5 text-right">{cls.totalStudents}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.fullScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.avgScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.highestScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.lowestScore)}</td>
+                  <td className="py-3 px-5 text-center">{cls.totalStudents}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(cls.fullScore)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(cls.avgScore)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(cls.highestScore)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(cls.lowestScore)}</td>
                   <td className={cn(
-                    'py-3 px-5 text-right font-medium',
+                    'py-3 px-5 text-center font-medium',
                     cls.scoreDeviation >= 0 ? 'text-emerald-600' : 'text-red-600'
                   )}>
                     {cls.scoreDeviation >= 0 ? '+' : ''}{formatNumber(cls.scoreDeviation)}
                   </td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.difficulty)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.stdDev)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(cls.discrimination)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(cls.difficulty)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(cls.stdDev)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(cls.discrimination)}</td>
                 </tr>
               ))}
               {(!data?.classes || data.classes.length === 0) && (

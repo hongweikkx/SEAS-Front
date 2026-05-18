@@ -135,12 +135,12 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <SortableHeader columnKey="studentName" label="学生姓名" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="score" label="得分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">满分</th>
-                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="classRank" label="班级排名" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="gradeRank" label="年级排名" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="studentName" label="学生姓名" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="score" label="得分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <th className="py-3 px-5 text-center font-medium text-muted-foreground">满分</th>
+                <SortableHeader columnKey="scoreRate" label="得分率" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="classRank" label="班级排名" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="gradeRank" label="年级排名" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
               </tr>
             </thead>
             <tbody>
@@ -150,13 +150,13 @@ export default function SingleQuestionDetail({ examId }: SingleQuestionDetailPro
                   className="border-b border-border/40 transition-colors hover:bg-muted/20"
                 >
                   <td className="py-3 px-5">{student.studentName}</td>
-                  <td className={`py-3 px-5 text-right ${getScoreClass(student.scoreRate)}`}>
+                  <td className={`py-3 px-5 text-center ${getScoreClass(student.scoreRate)}`}>
                     {formatNumber(student.score)}
                   </td>
-                  <td className="py-3 px-5 text-right">{student.fullScore}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(student.scoreRate)}%</td>
-                  <td className="py-3 px-5 text-right">{student.classRank}</td>
-                  <td className="py-3 px-5 text-right">{student.gradeRank}</td>
+                  <td className="py-3 px-5 text-center">{student.fullScore}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(student.scoreRate)}%</td>
+                  <td className="py-3 px-5 text-center">{student.classRank}</td>
+                  <td className="py-3 px-5 text-center">{student.gradeRank}</td>
                 </tr>
               ))}
               {filteredStudents.length === 0 && (

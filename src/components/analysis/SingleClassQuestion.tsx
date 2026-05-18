@@ -116,11 +116,11 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <SortableHeader columnKey="questionNumber" label="题号" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <th className="py-3 px-5 text-right font-medium text-muted-foreground">分值</th>
-                <SortableHeader columnKey="classAvgScore" label="班级均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
-                <SortableHeader columnKey="gradeAvgScore" label="年级均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="questionNumber" label="题号" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <th className="py-3 px-5 text-center font-medium text-muted-foreground">分值</th>
+                <SortableHeader columnKey="classAvgScore" label="班级均分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="scoreRate" label="得分率" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
+                <SortableHeader columnKey="gradeAvgScore" label="年级均分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
                 <SortableHeader columnKey="difficulty" label="难度" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-5" />
               </tr>
             </thead>
@@ -138,10 +138,10 @@ export default function SingleClassQuestion({ examId }: SingleClassQuestionProps
                       {q.questionNumber}
                     </button>
                   </td>
-                  <td className="py-3 px-5 text-right">{q.fullScore}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(q.classAvgScore)}</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(q.scoreRate)}%</td>
-                  <td className="py-3 px-5 text-right">{formatNumber(q.gradeAvgScore)}</td>
+                  <td className="py-3 px-5 text-center">{q.fullScore}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(q.classAvgScore)}</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(q.scoreRate)}%</td>
+                  <td className="py-3 px-5 text-center">{formatNumber(q.gradeAvgScore)}</td>
                   <td className="py-3 px-5 text-center">
                     <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium', getDifficultyColor(q.difficulty))}>
                       {getDifficultyLevel(q.difficulty)}

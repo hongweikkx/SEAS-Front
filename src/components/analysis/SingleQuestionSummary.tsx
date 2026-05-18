@@ -163,16 +163,16 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <SortableHeader columnKey="questionNumber" label="题号" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">参考人数</th>
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">满分</th>
-                <SortableHeader columnKey="gradeAvgScore" label={selectedClassId === 'all' ? '年级均分' : '班级均分'} align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="highestScore" label="最高分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="lowestScore" label="最低分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="difficulty" label="难度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="discrimination" label="区分度" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="questionNumber" label="题号" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <th className="py-3 px-4 text-center font-medium text-muted-foreground whitespace-nowrap">参考人数</th>
+                <th className="py-3 px-4 text-center font-medium text-muted-foreground whitespace-nowrap">满分</th>
+                <SortableHeader columnKey="gradeAvgScore" label={selectedClassId === 'all' ? '年级均分' : '班级均分'} align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="highestScore" label="最高分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="lowestScore" label="最低分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="scoreRate" label="得分率" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="difficulty" label="难度" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="stdDev" label="标准差" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="discrimination" label="区分度" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
               </tr>
             </thead>
             <tbody>
@@ -199,15 +199,15 @@ export default function SingleQuestionSummary({ examId }: SingleQuestionSummaryP
                         {q.questionNumber}
                       </button>
                     </td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{participants}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{q.fullScore}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(avgScore)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(q.highestScore)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(q.lowestScore)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(scoreRate)}%</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(scoreRate)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(stdDev)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(q.discrimination)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{participants}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{q.fullScore}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(avgScore)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(q.highestScore)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(q.lowestScore)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(scoreRate)}%</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(scoreRate)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(stdDev)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(q.discrimination)}</td>
                   </tr>
                 )
               })}

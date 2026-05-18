@@ -146,15 +146,15 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/30">
-                <SortableHeader columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <th className="py-3 px-4 text-right font-medium text-muted-foreground whitespace-nowrap">参与人数</th>
-                <SortableHeader columnKey="avgScore" label="班级均分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="scoreRate" label="得分率" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="scoreDiff" label="与年级差距" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="classRank" label="班级排名" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="highestScore" label="最高分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="lowestScore" label="最低分" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
-                <SortableHeader columnKey="stdDev" label="标准差" align="right" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="className" label="班级" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <th className="py-3 px-4 text-center font-medium text-muted-foreground whitespace-nowrap">参与人数</th>
+                <SortableHeader columnKey="avgScore" label="班级均分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="scoreRate" label="得分率" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="scoreDiff" label="与年级差距" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="classRank" label="班级排名" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="highestScore" label="最高分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="lowestScore" label="最低分" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
+                <SortableHeader columnKey="stdDev" label="标准差" align="center" sortState={sortState} onSort={toggleSort} className="py-3 px-4" />
               </tr>
             </thead>
             <tbody>
@@ -170,14 +170,14 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
                         全年级
                       </button>
                     </td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{data.overall.participants}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.avgScore)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.scoreRate)}%</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">—</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">—</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.highestScore)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.lowestScore)}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(data.overall.stdDev)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{data.overall.participants}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(data.overall.avgScore)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(data.overall.scoreRate)}%</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">—</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">—</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(data.overall.highestScore)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(data.overall.lowestScore)}</td>
+                    <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(data.overall.stdDev)}</td>
                   </tr>
                   {/* 班级行 */}
                   {sortedClasses.map((cls) => (
@@ -193,10 +193,10 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
                           {cls.className}
                         </button>
                       </td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">{cls.participants}</td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(cls.avgScore)}</td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(cls.scoreRate)}%</td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">
+                      <td className="py-3 px-4 text-center whitespace-nowrap">{cls.participants}</td>
+                      <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(cls.avgScore)}</td>
+                      <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(cls.scoreRate)}%</td>
+                      <td className="py-3 px-4 text-center whitespace-nowrap">
                         {cls.scoreDiff === 0 ? (
                           '—'
                         ) : (
@@ -205,12 +205,12 @@ export default function SingleQuestionClassCompare({ examId }: SingleQuestionCla
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">
+                      <td className="py-3 px-4 text-center whitespace-nowrap">
                         {cls.classRank !== null ? `${cls.classRank}/${cls.totalClasses}` : '—'}
                       </td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(cls.highestScore)}</td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(cls.lowestScore)}</td>
-                      <td className="py-3 px-4 text-right whitespace-nowrap">{formatNumber(cls.stdDev)}</td>
+                      <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(cls.highestScore)}</td>
+                      <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(cls.lowestScore)}</td>
+                      <td className="py-3 px-4 text-center whitespace-nowrap">{formatNumber(cls.stdDev)}</td>
                     </tr>
                   ))}
                 </>

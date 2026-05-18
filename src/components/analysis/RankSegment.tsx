@@ -313,8 +313,8 @@ export default function RankSegment({ examId }: RankSegmentProps) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border/60 bg-muted/30">
-                    <SortableHeader rowSpan={2} columnKey="className" label="班级" align="left" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
-                    <SortableHeader rowSpan={2} columnKey="totalStudents" label="总人数" align="right" sortState={sortState} onSort={toggleSort} sortable={false} className="py-2.5 px-3" />
+                    <SortableHeader rowSpan={2} columnKey="className" label="班级" align="center" sortState={sortState} onSort={toggleSort} className="py-2.5 px-3" />
+                    <SortableHeader rowSpan={2} columnKey="totalStudents" label="总人数" align="center" sortState={sortState} onSort={toggleSort} sortable={false} className="py-2.5 px-3" />
                     {segmentLabels.map((label) => (
                       <th
                         key={label}
@@ -347,7 +347,7 @@ export default function RankSegment({ examId }: RankSegmentProps) {
                         <td className="py-2.5 px-3 whitespace-nowrap">
                           {cls.className}
                         </td>
-                        <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
                           {cls.totalStudents}
                         </td>
                         {cls.segments.map((seg) => {
