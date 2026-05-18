@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Loader2, FileQuestion } from 'lucide-react'
+import { FileQuestion } from 'lucide-react'
 import { useExams } from '@/hooks/useAnalysis'
 import { ExamCard } from '@/components/exam/ExamCard'
 

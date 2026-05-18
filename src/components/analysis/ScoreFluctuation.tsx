@@ -8,6 +8,7 @@ interface ScoreFluctuationProps {
 }
 
 export function ScoreFluctuation({ examId }: ScoreFluctuationProps) {
+  void examId
   return (
     <AnalysisModuleCard
       title="成绩波动"

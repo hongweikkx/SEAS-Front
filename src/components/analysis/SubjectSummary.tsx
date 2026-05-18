@@ -19,13 +19,6 @@ interface SubjectSummaryProps {
   examId: string
 }
 
-function getPerformanceTag(difficulty: number) {
-  if (difficulty >= 0.75) return { label: '领先', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
-  if (difficulty >= 0.65) return { label: '稳步', className: 'bg-blue-50 text-blue-700 border-blue-200' }
-  if (difficulty >= 0.55) return { label: '持平', className: 'bg-amber-50 text-amber-700 border-amber-200' }
-  return { label: '预警', className: 'bg-red-50 text-red-700 border-red-200' }
-}
-
 export default function SubjectSummary({ examId }: SubjectSummaryProps) {
   const {
     selectedScope,

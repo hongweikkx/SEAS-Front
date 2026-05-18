@@ -72,14 +72,18 @@ export default function LoginPage() {
   }, [loginStatus, countdown])
 
   // 页面加载时自动开始
+  const didStartRef = useRef(false)
   useEffect(() => {
-    startLogin()
+    if (didStartRef.current) return
+    didStartRef.current = true
+    queueMicrotask(() => startLogin())
     return () => {
       if (esRef.current) {
         esRef.current.close()
       }
     }
-  }, [startLogin])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -117,6 +121,7 @@ export default function LoginPage() {
                 {/* 二维码区域 */}
                 <div className="mt-6 flex h-48 w-48 items-center justify-center rounded-xl border-2 border-dashed border-border/60 bg-muted/30 overflow-hidden">
                   {qrUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={qrUrl} alt="公众号二维码" className="h-full w-full object-contain" />
                   ) : (
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

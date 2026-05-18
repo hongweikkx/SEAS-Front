@@ -26,7 +26,7 @@ import {
   AreaChart,
   Area,
 } from 'recharts'
-import type { SegmentConfig, ClassScoreSegment } from '@/types'
+import type { SegmentConfig } from '@/types'
 
 interface ScoreSegmentProps {
   examId: string
@@ -64,8 +64,10 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
         selectedScope === 'all_subjects'
           ? DEFAULT_ALL_SUBJECTS_RULES
           : DEFAULT_SINGLE_SUBJECT_RULES
-      setRules(newRules)
-      setQueryRules(newRules)
+      queueMicrotask(() => {
+        setRules(newRules)
+        setQueryRules(newRules)
+      })
     }
   }, [selectedScope])
 
@@ -485,7 +487,7 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                           }}
                         />
                         <Legend itemSorter={null} />
-                        {segmentLabels.map((label, i) => (
+                        {segmentLabels.map((label) => (
                           <Bar
                             key={label}
                             dataKey={label}
@@ -531,15 +533,15 @@ export default function ScoreSegment({ examId }: ScoreSegmentProps) {
                           }}
                         />
                         <Legend itemSorter={null} />
-                        {sortedClassDetailsResult.map((cls, i) => (
+                        {sortedClassDetailsResult.map((cls, idx) => (
                           <Area
                             key={cls.classId}
                             type="monotone"
                             dataKey={cls.className}
                             name={cls.className}
                             stackId="1"
-                            stroke={classColors[i % classColors.length]}
-                            fill={classColors[i % classColors.length]}
+                            stroke={classColors[idx % classColors.length]}
+                            fill={classColors[idx % classColors.length]}
                             fillOpacity={0.6}
                           />
                         ))}

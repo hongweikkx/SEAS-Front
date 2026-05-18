@@ -8,6 +8,7 @@ interface CriticalStudentsProps {
 }
 
 export function CriticalStudents({ examId }: CriticalStudentsProps) {
+  void examId
   return (
     <AnalysisModuleCard
       title="临界生分析"

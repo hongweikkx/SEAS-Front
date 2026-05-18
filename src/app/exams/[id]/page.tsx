@@ -58,7 +58,6 @@ export default function ExamDetailPage({ params }: PageProps) {
   }, [examId, setSelectedExamId])
 
   // Sync URL query param to store state on mount (intentionally run once)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const url = new URL(window.location.href)
     const viewParam = url.searchParams.get('view') as AnalysisView | null
@@ -78,6 +77,7 @@ export default function ExamDetailPage({ params }: PageProps) {
       useAnalysisStore.getState().setSelectedScope('single_subject')
     }
     if (qId) useAnalysisStore.getState().setDrillDownParam('questionId', qId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Sync store state to URL when it changes
