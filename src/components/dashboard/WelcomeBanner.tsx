@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -13,10 +14,12 @@ function getGreeting(hour: number) {
 }
 
 export function WelcomeBanner() {
-  // 在客户端直接计算问候语，避免 SSR 水合错位
-  const greeting = typeof window !== 'undefined'
-    ? getGreeting(new Date().getHours())
-    : '你好'
+  // SSR 和客户端首次渲染都用固定值，避免 hydration mismatch
+  const [greeting, setGreeting] = useState('你好')
+
+  useEffect(() => {
+    setGreeting(getGreeting(new Date().getHours()))
+  }, [])
 
   return (
     <div className="space-y-6">

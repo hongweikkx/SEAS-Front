@@ -36,7 +36,7 @@ export function RecentExamList() {
     )
   }
 
-  if (!data?.exams.length) {
+  if (!data?.exams?.length) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">

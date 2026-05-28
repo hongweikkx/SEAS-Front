@@ -25,7 +25,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { data: examsData } = useExams(1, 200)
 
   const examName = examId
-    ? examsData?.exams.find((exam) => String(exam.id) === examId)?.name ?? ''
+    ? examsData?.exams?.find((exam) => String(exam.id) === examId)?.name ?? ''
     : ''
 
   const getPageTitle = () => {

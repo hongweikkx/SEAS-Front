@@ -202,6 +202,7 @@ export const useAnalysisStore = create<AnalysisState>()(
     {
       name: 'analysis-store-ai',
       partialize: (state) => ({ aiAnalysisResults: state.aiAnalysisResults }),
+      skipHydration: true,
     }
   )
 )
