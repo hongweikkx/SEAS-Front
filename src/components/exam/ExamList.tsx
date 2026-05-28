@@ -48,7 +48,7 @@ export default function ExamList({ keyword }: ExamListProps) {
     )
   }
 
-  if (!data?.exams.length) {
+  if (!data?.exams?.length) {
     return (
       <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-border/60 bg-card/60 text-muted-foreground">
         <FileQuestion className="h-12 w-12 opacity-30" />
