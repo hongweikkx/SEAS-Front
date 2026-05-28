@@ -83,24 +83,20 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
   }
 
   const handleExport = () => {
-    const rows = []
-
     if (!classId && data?.subjects) {
       // 全年级模式
       const sortedSubjects = sortBySubjectName(data.subjects)
-      sortedSubjects.forEach((subject) => {
-        rows.push({
-          学科: subject.name,
-          参考人数: subject.studentCount,
-          满分: subject.fullScore,
-          平均分: subject.avgScore,
-          最高分: subject.highestScore,
-          最低分: subject.lowestScore,
-          难度: subject.difficulty,
-          标准差: subject.stdDev,
-          区分度: subject.discrimination,
-        })
-      })
+      const rows = sortedSubjects.map((subject) => ({
+        学科: subject.name,
+        参考人数: subject.studentCount,
+        满分: subject.fullScore,
+        平均分: subject.avgScore,
+        最高分: subject.highestScore,
+        最低分: subject.lowestScore,
+        难度: subject.difficulty,
+        标准差: subject.stdDev,
+        区分度: subject.discrimination,
+      }))
       const ws = XLSX.utils.json_to_sheet(rows)
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, '学科情况汇总')
@@ -110,22 +106,20 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
     } else if (classId && classSubjectData?.subjects) {
       // 班级模式
       const sortedSubjects = sortBySubjectItemName(classSubjectData.subjects)
-      sortedSubjects.forEach((subject) => {
-        rows.push({
-          学科: subject.subjectName,
-          参考人数: subject.studentCount,
-          满分: subject.fullScore,
-          班级均分: subject.classAvgScore,
-          年级均分: subject.gradeAvgScore,
-          分差: subject.scoreDiff,
-          班级最高: subject.classHighest,
-          班级最低: subject.classLowest,
-          难度: subject.difficulty,
-          标准差: subject.stdDev,
-          区分度: subject.discrimination,
-          班级排名: `${subject.classRank}/${subject.totalClasses}`,
-        })
-      })
+      const rows = sortedSubjects.map((subject) => ({
+        学科: subject.subjectName,
+        参考人数: subject.studentCount,
+        满分: subject.fullScore,
+        班级均分: subject.classAvgScore,
+        年级均分: subject.gradeAvgScore,
+        分差: subject.scoreDiff,
+        班级最高: subject.classHighest,
+        班级最低: subject.classLowest,
+        难度: subject.difficulty,
+        标准差: subject.stdDev,
+        区分度: subject.discrimination,
+        班级排名: `${subject.classRank}/${subject.totalClasses}`,
+      }))
       const ws = XLSX.utils.json_to_sheet(rows)
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, '班级学科汇总')
@@ -149,7 +143,7 @@ export default function SubjectSummary({ examId }: SubjectSummaryProps) {
             variant="ghost"
             size="sm"
             onClick={handleExport}
-            disabled={(!classId && !data) || (classId && !classSubjectData)}
+            disabled={(!classId && !data) || (!!classId && !classSubjectData)}
             className="h-8 w-8 p-0"
             title="导出Excel"
           >
