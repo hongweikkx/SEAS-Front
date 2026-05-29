@@ -11,6 +11,15 @@ export interface LoginStatus {
   token?: string
 }
 
+function setCookie(name: string, value: string, days = 7) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString()
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`
+}
+
+function removeCookie(name: string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+}
+
 /**
  * 请求生成登录验证码
  */
@@ -56,21 +65,25 @@ export function createLoginSSE(
 export async function logout(): Promise<void> {
   await apiClient.post('/auth/logout', {})
   localStorage.removeItem('token')
+  removeCookie('token')
 }
 
 /**
- * 获取存储的 token
+ * 获取存储的 token（优先从 cookie 读取，兼容 localStorage）
  */
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null
+  const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'))
+  if (match) return decodeURIComponent(match[2])
   return localStorage.getItem('token')
 }
 
 /**
- * 设置 token
+ * 设置 token（同时写入 localStorage 和 cookie，供 middleware 读取）
  */
 export function setToken(token: string): void {
   localStorage.setItem('token', token)
+  setCookie('token', token)
 }
 
 /**

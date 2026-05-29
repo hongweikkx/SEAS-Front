@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { GraduationCap, RefreshCw, Loader2 } from 'lucide-react'
+import { GraduationCap, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   requestLoginCode,
@@ -12,7 +12,6 @@ import {
 
 export default function LoginPage() {
   const [code, setCode] = useState<string>('')
-  const [qrUrl, setQrUrl] = useState<string>('')
   const [countdown, setCountdown] = useState<number>(300)
   const [loginStatus, setLoginStatus] = useState<LoginStatus['status']>('waiting')
   const [error, setError] = useState<string>('')
@@ -31,7 +30,6 @@ export default function LoginPage() {
     try {
       const resp = await requestLoginCode()
       setCode(resp.code)
-      setQrUrl(resp.qrUrl)
 
       // 建立 SSE 连接
       const es = createLoginSSE(
@@ -120,12 +118,8 @@ export default function LoginPage() {
               <>
                 {/* 二维码区域 */}
                 <div className="mt-6 flex h-48 w-48 items-center justify-center rounded-xl border-2 border-dashed border-border/60 bg-muted/30 overflow-hidden">
-                  {qrUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={qrUrl} alt="公众号二维码" className="h-full w-full object-contain" />
-                  ) : (
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/wechat-qr.jpg" alt="公众号二维码" className="h-full w-full object-contain" />
                 </div>
 
                 {/* 验证码显示 */}

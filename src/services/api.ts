@@ -5,11 +5,17 @@ const apiClient = axios.create({
   timeout: 30000,
 })
 
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+  return match ? decodeURIComponent(match[2]) : null
+}
+
 // 请求拦截器：自动附加 Authorization header
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token')
+      const token = getCookie('token') || localStorage.getItem('token')
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
