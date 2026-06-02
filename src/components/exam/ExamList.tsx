@@ -52,8 +52,8 @@ export default function ExamList({ keyword }: ExamListProps) {
     return (
       <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-border/60 bg-card/60 text-muted-foreground">
         <FileQuestion className="h-12 w-12 opacity-30" />
-        <p className="mt-3 text-sm">暂无可分析的考试数据</p>
-        <p className="mt-1 text-xs opacity-60">新建一个分析开始吧</p>
+        <p className="mt-3 text-sm">还没有上传过考试</p>
+        <p className="mt-1 text-xs opacity-60">点击&quot;新建分析&quot;上传成绩文件</p>
       </div>
     )
   }
