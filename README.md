@@ -113,6 +113,32 @@ npm run build
 npm start
 ```
 
+## 🐳 Docker 部署
+
+### 一键构建镜像
+```bash
+make docker-build
+# 或指定后端 API 地址
+make docker-build API_URL=http://your-server:8000/seas/api/v1
+```
+
+### 一键运行容器
+```bash
+make docker-run
+# 或指定宿主机端口
+make docker-run PORT=8080
+```
+
+### 常用命令
+| 命令 | 说明 |
+|------|------|
+| `make docker-build` | 构建 Docker 镜像 |
+| `make docker-run` | 运行容器（暴露 80 端口） |
+| `make docker-stop` | 停止并删除容器 |
+| `make docker-clean` | 清理镜像和容器 |
+
+> 基于 Next.js Standalone 模式构建，镜像包含 Node.js 运行时，支持 SSR 与后续扩展。
+
 ## 🔗 后端集成
 
 本前端应用与 [SEAS Backend](../SEAS/) 紧密集成：
