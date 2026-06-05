@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { GraduationCap, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,8 @@ import {
   type LoginStatus,
 } from '@/services/auth'
 
-export default function LoginPage() {
+// 登录内容组件（使用 useSearchParams，需在 Suspense 中）
+function LoginContent() {
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect') || '/'
 
@@ -196,5 +197,37 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// 登录骨架屏（加载态）
+function LoginSkeleton() {
+  return (
+    <div className="fixed inset-0 flex flex-col bg-background">
+      <div className="flex h-16 items-center px-8">
+        <div className="flex items-center gap-2.5 text-sm">
+          <GraduationCap className="h-[18px] w-[18px] text-primary" />
+          <span className="font-bold text-foreground">SEAS</span>
+        </div>
+      </div>
+      <div className="flex flex-1 items-center justify-center px-6">
+        <div className="w-full max-w-sm rounded-2xl border border-border/60 bg-card p-8 shadow-sm">
+          <div className="flex flex-col items-center text-center">
+            <div className="h-12 w-12 rounded-xl bg-primary/10 mb-4 animate-pulse" />
+            <div className="h-6 w-32 rounded bg-muted animate-pulse mb-1" />
+            <div className="h-4 w-48 rounded bg-muted animate-pulse mt-1" />
+            <div className="mt-6 h-48 w-48 rounded-xl bg-muted animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginSkeleton />}>
+      <LoginContent />
+    </Suspense>
   )
 }
