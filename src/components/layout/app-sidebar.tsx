@@ -17,7 +17,21 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAnalysisStore } from '@/store/analysisStore'
+import { isLoggedIn } from '@/services/auth'
 import type { AnalysisView } from '@/types'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 interface NavItem {
   label: string
@@ -54,8 +68,10 @@ const allAnalysisDimensions: Array<{
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const examMatch = pathname.match(/^\/exams\/([^/]+)$/)
   const examId = examMatch?.[1]
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false)
 
   const {
     currentView,
@@ -74,6 +90,14 @@ export function AppSidebar() {
   }
 
   const isExamDetail = !!examId
+
+  const handleCreateClick = () => {
+    if (!isLoggedIn()) {
+      setLoginDialogOpen(true)
+      return
+    }
+    router.push('/create')
+  }
 
   // 根据当前模式过滤维度
   const availableDimensions = allAnalysisDimensions.filter((d) =>
@@ -124,6 +148,24 @@ export function AppSidebar() {
         <div className="flex flex-col gap-0.5">
           {mainNavItems.map((item) => {
             const active = isActive(item.href)
+            // 新建分析：未登录时弹出登录提示
+            if (item.href === '/create') {
+              return (
+                <button
+                  key={item.href}
+                  onClick={handleCreateClick}
+                  className={cn(
+                    'flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium transition-all duration-150',
+                    active
+                      ? 'bg-primary/[0.08] text-primary'
+                      : 'text-sidebar-foreground/65 hover:bg-accent hover:text-sidebar-foreground'
+                  )}
+                >
+                  {item.icon}
+                  <span className="truncate">{item.label}</span>
+                </button>
+              )
+            }
             return (
               <Link
                 key={item.href}
@@ -167,6 +209,27 @@ export function AppSidebar() {
           </div>
         )}
       </nav>
+
+      {/* 未登录提示对话框 */}
+      <AlertDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>需要登录</AlertDialogTitle>
+            <AlertDialogDescription>
+              创建新的成绩分析需要先登录。登录后即可上传成绩文件并生成分析报告。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => router.push('/login?redirect=/create')}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              去登录
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </aside>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { GraduationCap, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,6 +12,9 @@ import {
 } from '@/services/auth'
 
 export default function LoginPage() {
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/'
+
   const [code, setCode] = useState<string>('')
   const [countdown, setCountdown] = useState<number>(300)
   const [loginStatus, setLoginStatus] = useState<LoginStatus['status']>('waiting')
@@ -40,7 +44,7 @@ export default function LoginPage() {
             setToken(status.token)
             // 延迟跳转，让用户看到成功提示
             setTimeout(() => {
-              window.location.href = '/'
+              window.location.href = redirectTo
             }, 800)
           }
         },
