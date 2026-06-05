@@ -2,8 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { isLoggedIn } from '@/services/auth'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 // 根据当前小时返回时段问候(不含称呼)
 function getGreeting(hour: number) {
@@ -14,12 +26,21 @@ function getGreeting(hour: number) {
 }
 
 export function WelcomeBanner() {
-  // SSR 和客户端首次渲染都用固定值，避免 hydration mismatch
+  const router = useRouter()
   const [greeting, setGreeting] = useState('你好')
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false)
 
   useEffect(() => {
     setGreeting(getGreeting(new Date().getHours()))
   }, [])
+
+  const handleCreateClick = () => {
+    if (!isLoggedIn()) {
+      setLoginDialogOpen(true)
+      return
+    }
+    router.push('/create')
+  }
 
   return (
     <div className="space-y-6">
@@ -34,13 +55,32 @@ export function WelcomeBanner() {
       </div>
 
       <div className="flex items-center gap-3">
-        <Button asChild className="rounded-lg gap-2">
-          <Link href="/create">
-            <Sparkles className="h-4 w-4" />
-            快速开始新分析
-          </Link>
+        <Button className="rounded-lg gap-2" onClick={handleCreateClick}>
+          <Sparkles className="h-4 w-4" />
+          快速开始新分析
         </Button>
       </div>
+
+      {/* 未登录提示对话框 */}
+      <AlertDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>需要登录</AlertDialogTitle>
+            <AlertDialogDescription>
+              创建新的成绩分析需要先登录。登录后即可上传成绩文件并生成分析报告。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => router.push('/login?redirect=/create')}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              去登录
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
