@@ -6,16 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { isLoggedIn } from '@/services/auth'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { LoginRequiredDialog } from '@/components/auth/LoginRequiredDialog'
 
 // 根据当前小时返回时段问候(不含称呼)
 function getGreeting(hour: number) {
@@ -62,25 +53,11 @@ export function WelcomeBanner() {
       </div>
 
       {/* 未登录提示对话框 */}
-      <AlertDialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>需要登录</AlertDialogTitle>
-            <AlertDialogDescription>
-              创建新的成绩分析需要先登录。登录后即可上传成绩文件并生成分析报告。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => router.push('/login?redirect=/create')}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              去登录
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <LoginRequiredDialog
+        open={loginDialogOpen}
+        onOpenChange={setLoginDialogOpen}
+        onLogin={() => router.push('/login?redirect=/create')}
+      />
     </div>
   )
 }
