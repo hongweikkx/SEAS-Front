@@ -2,6 +2,7 @@
 
 import { useExams } from '@/hooks/useAnalysis'
 import { examService } from '@/services/analysis'
+import { isLoggedIn } from '@/services/auth'
 import { Loader2, FileQuestion } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ExamCard } from './ExamCard'
@@ -15,6 +16,7 @@ export default function ExamList({ keyword }: ExamListProps) {
   const { data, isLoading, error } = useExams(1, 20, keyword)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const queryClient = useQueryClient()
+  const loggedIn = isLoggedIn()
 
   const deleteMutation = useMutation({
     mutationFn: (examId: string) => examService.deleteExam(examId),
@@ -64,7 +66,7 @@ export default function ExamList({ keyword }: ExamListProps) {
         <ExamCard
           key={exam.id}
           exam={exam}
-          onDelete={handleDelete}
+          onDelete={loggedIn ? handleDelete : undefined}
           isDeleting={deletingId === exam.id}
         />
       ))}
