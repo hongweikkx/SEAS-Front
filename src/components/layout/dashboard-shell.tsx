@@ -1,11 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { GraduationCap } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { GraduationCap, LogIn, LogOut, User } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 import { useExams } from '@/hooks/useAnalysis'
 import { AppSidebar } from '@/components/layout/app-sidebar'
+import { isLoggedIn, logout } from '@/services/auth'
+import { Button } from '@/components/ui/button'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -77,9 +80,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 </Breadcrumb>
               )}
             </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-              <GraduationCap className="h-4 w-4 text-primary" />
-            </div>
+            <UserAuthSection />
           </div>
         </header>
 
@@ -88,5 +89,46 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
     </div>
+  )
+}
+
+function UserAuthSection() {
+  const [loggedIn, setLoggedIn] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    setLoggedIn(isLoggedIn())
+  }, [])
+
+  const handleLogout = async () => {
+    await logout()
+    setLoggedIn(false)
+    window.location.reload()
+  }
+
+  if (!loggedIn) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-8 gap-1.5 rounded-lg text-xs"
+        onClick={() => router.push('/login')}
+      >
+        <LogIn className="h-3.5 w-3.5" />
+        登录
+      </Button>
+    )
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="h-8 gap-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground"
+      onClick={handleLogout}
+    >
+      <User className="h-3.5 w-3.5" />
+      退出
+    </Button>
   )
 }
