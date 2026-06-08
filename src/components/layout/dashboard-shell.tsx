@@ -87,6 +87,21 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <main className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8">
           {children}
         </main>
+
+        <footer className="border-t border-border/40 py-4">
+          <div className="mx-auto flex h-full items-center justify-center max-w-7xl px-6 text-xs text-muted-foreground">
+            <span>© 2026 SEAS 智能学业分析系统</span>
+            <span className="mx-2 opacity-40">|</span>
+            <a
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors"
+            >
+              晋ICP备2026006377号
+            </a>
+          </div>
+        </footer>
       </div>
     </div>
   )

@@ -188,13 +188,17 @@ function LoginContent() {
       </div>
 
       {/* 底部版权 */}
-      <div className="flex h-14 items-center justify-between px-8 text-xs text-muted-foreground">
-        <span>© 2024 SEAS 智能学业分析系统</span>
-        <div className="flex items-center gap-4">
-          <a href="#" className="hover:text-foreground transition-colors">帮助中心</a>
-          <a href="#" className="hover:text-foreground transition-colors">隐私政策</a>
-          <a href="#" className="hover:text-foreground transition-colors">服务条款</a>
-        </div>
+      <div className="flex h-14 items-center justify-center px-8 text-xs text-muted-foreground">
+        <span>© 2026 SEAS 智能学业分析系统</span>
+        <span className="mx-2 opacity-40">|</span>
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-foreground transition-colors"
+        >
+          晋ICP备2026006377号
+        </a>
       </div>
     </div>
   )
